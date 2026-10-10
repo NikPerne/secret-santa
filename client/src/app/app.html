@@ -36,7 +36,11 @@
     }
   </mat-menu>
   <a mat-icon-button routerLink="/settings" [attr.aria-label]="'settings.title' | transloco">
-    <mat-icon>settings</mat-icon>
+    @if (auth.user(); as me) {
+      <app-avatar [name]="me.name" [url]="me.avatar?.url ?? null" [size]="32" />
+    } @else {
+      <mat-icon>settings</mat-icon>
+    }
   </a>
 </mat-toolbar>
 

@@ -12,6 +12,7 @@ import { GroupsService } from '../../core/api/groups.service';
 import { InvitePreview } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { LocalDatePipe, MoneyPipe } from '../../shared/pipes';
+import { Avatar } from '../../shared/avatar';
 import { ThemeBadge } from '../../shared/theme-badge';
 import { MagicLinkSent } from '../auth/magic-link-sent';
 
@@ -30,6 +31,7 @@ import { MagicLinkSent } from '../auth/magic-link-sent';
     MoneyPipe,
     MagicLinkSent,
     ThemeBadge,
+    Avatar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './join.html',

@@ -28,6 +28,7 @@ import {
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { ExclusionsEditor } from '../../shared/exclusions-editor';
+import { Avatar } from '../../shared/avatar';
 import { InviteEmails } from '../../shared/invite-emails';
 import { InviteShare } from '../../shared/invite-share';
 
@@ -44,6 +45,7 @@ import { InviteShare } from '../../shared/invite-share';
     ExclusionsEditor,
     InviteShare,
     InviteEmails,
+    Avatar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.html',

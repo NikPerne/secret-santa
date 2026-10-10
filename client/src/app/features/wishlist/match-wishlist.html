@@ -7,6 +7,9 @@
     >
       <mat-icon>arrow_back</mat-icon>
     </a>
+    @if (match(); as m) {
+      <app-avatar [name]="m.name" [url]="m.avatarUrl" [size]="40" />
+    }
     <h1 class="page-title">
       @if (match(); as m) {
         {{ 'wishlist.theirTitle' | transloco: { name: m.name } }}

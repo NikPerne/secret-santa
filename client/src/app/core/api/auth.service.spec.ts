@@ -14,6 +14,7 @@ const ana: User = {
   pushEnabled: false,
   needsName: false,
   isAdmin: false,
+  avatar: null,
 };
 
 describe('AuthService', () => {

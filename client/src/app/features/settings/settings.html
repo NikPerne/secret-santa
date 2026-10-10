@@ -64,6 +64,36 @@
 
     <section class="surface-card stack" aria-labelledby="account-h">
       <h2 id="account-h">{{ 'settings.account' | transloco }}</h2>
+      <div class="photo-row">
+        <app-avatar [name]="user.name" [url]="user.avatar?.url ?? null" [size]="72" />
+        <div class="stack">
+          @if (uploads()) {
+            <label class="pick" mat-stroked-button>
+              <input
+                type="file"
+                accept="image/*"
+                class="visually-hidden"
+                (change)="onAvatar($event)"
+                [disabled]="busy()"
+              />
+              <mat-icon>add_a_photo</mat-icon>
+              <span>{{
+                (user.avatar ? 'profile.changePhoto' : 'profile.addPhoto') | transloco
+              }}</span>
+            </label>
+            @if (user.avatar) {
+              <button mat-button type="button" [disabled]="busy()" (click)="removeAvatar()">
+                {{ 'profile.removePhoto' | transloco }}
+              </button>
+            }
+            @if (avatarProgress() !== null) {
+              <mat-progress-bar mode="determinate" [value]="avatarProgress()" />
+            }
+          } @else {
+            <p class="muted small">{{ 'errors.uploads_disabled' | transloco }}</p>
+          }
+        </div>
+      </div>
       <p class="muted">{{ user.email }}</p>
       <form class="name-row" (ngSubmit)="saveName()">
         <mat-form-field appearance="outline">

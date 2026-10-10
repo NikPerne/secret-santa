@@ -22,7 +22,7 @@ invitesRouter.get('/:code', async (req, res) => {
   const { code } = parse(codeParam, req.params);
   const group = await findGroupByInvite(code);
   const [organizer, memberCount, alreadyMember] = await Promise.all([
-    UserModel.findById(group.organizerId, { name: 1 }),
+    UserModel.findById(group.organizerId, { name: 1, avatar: 1 }),
     MembershipModel.countDocuments({ groupId: group._id }),
     req.user ? MembershipModel.exists({ groupId: group._id, userId: req.user._id }) : null,
   ]);
@@ -38,6 +38,7 @@ invitesRouter.get('/:code', async (req, res) => {
       theme: { preset: group.theme?.preset ?? 'none', text: group.theme?.text ?? '' },
       status: group.status,
       organizerName: organizer?.name ?? '',
+      organizerAvatarUrl: organizer?.avatar?.url ?? null,
       memberCount,
       alreadyMember: Boolean(alreadyMember),
     },

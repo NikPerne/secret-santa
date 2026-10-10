@@ -13,6 +13,7 @@ export interface User {
   needsName: boolean;
   /** May open the admin health page (enforced by the API too). */
   isAdmin: boolean;
+  avatar: ImageRef | null;
   pushEnabled: boolean;
 }
 
@@ -101,6 +102,7 @@ export interface UnreadCounts {
 export interface Member {
   id: string;
   name: string;
+  avatarUrl?: string | null;
   role: Role;
   participates: boolean;
 }
@@ -131,6 +133,7 @@ export interface InvitePreview {
   theme: GroupTheme;
   status: GroupStatus;
   organizerName: string;
+  organizerAvatarUrl: string | null;
   memberCount: number;
   alreadyMember: boolean;
 }
@@ -159,6 +162,7 @@ export interface ApiErrorBody {
 export interface Match {
   id: string;
   name: string;
+  avatarUrl: string | null;
   shippingAddress: string | null;
 }
 
@@ -175,6 +179,7 @@ export type Feasibility = (
 export interface DashboardMember {
   id: string;
   name: string;
+  avatarUrl: string | null;
   email: string;
   role: Role;
   participates: boolean;
@@ -222,7 +227,7 @@ export interface Preferences {
   dislikes: string;
 }
 
-export type UploadPurpose = 'wishlist' | 'gallery' | 'cover';
+export type UploadPurpose = 'wishlist' | 'gallery' | 'cover' | 'avatar';
 
 export interface UploadSignature {
   cloudName: string;
@@ -248,6 +253,7 @@ export interface GalleryPhoto {
   image: ImageRef;
   caption: string;
   by: string;
+  byAvatarUrl: string | null;
   mine: boolean;
   createdAt: string;
 }

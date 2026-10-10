@@ -58,3 +58,8 @@ figcaption {
   font: var(--mat-sys-body-small);
   min-height: 40px;
 }
+
+figcaption .cap {
+  flex: 1;
+  min-width: 0;
+}

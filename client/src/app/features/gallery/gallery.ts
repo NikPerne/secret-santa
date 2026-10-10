@@ -14,6 +14,7 @@ import { cldUrl } from '../../core/api/upload.service';
 import { GalleryPhoto, ImageRef } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
+import { Avatar } from '../../shared/avatar';
 import { ImagePicker } from '../../shared/image-picker';
 import { openLightbox } from '../../shared/lightbox';
 
@@ -30,6 +31,7 @@ import { openLightbox } from '../../shared/lightbox';
     MatProgressSpinnerModule,
     TranslocoPipe,
     ImagePicker,
+    Avatar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './gallery.html',

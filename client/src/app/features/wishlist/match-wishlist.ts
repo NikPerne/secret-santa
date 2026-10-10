@@ -13,6 +13,7 @@ import { Budget, GroupTheme, Match, Preferences, WishlistItem } from '../../core
 import { NotifyService } from '../../core/notify.service';
 import { openLightbox } from '../../shared/lightbox';
 import { MoneyPipe } from '../../shared/pipes';
+import { Avatar } from '../../shared/avatar';
 import { ThemeBadge } from '../../shared/theme-badge';
 import { GiftIdeas } from './gift-ideas';
 
@@ -28,6 +29,7 @@ import { GiftIdeas } from './gift-ideas';
     MoneyPipe,
     ThemeBadge,
     GiftIdeas,
+    Avatar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './match-wishlist.html',

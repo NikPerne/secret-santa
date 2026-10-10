@@ -27,3 +27,26 @@ mat-button-toggle-group {
   color: var(--mat-sys-error);
   align-self: flex-start;
 }
+
+.photo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 22px;
+  cursor: pointer;
+  color: var(--mat-sys-primary);
+  font: var(--mat-sys-label-large);
+  &:focus-within {
+    outline: 3px solid var(--mat-sys-tertiary);
+    outline-offset: 2px;
+  }
+}

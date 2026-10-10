@@ -15,6 +15,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from './core/api/auth.service';
 import { LANGUAGES, Lang, LanguageService } from './core/i18n';
 import { ThemeService } from './core/theme.service';
+import { Avatar } from './shared/avatar';
 import { WakeOverlay } from './shared/wake-overlay';
 
 @Component({
@@ -28,6 +29,7 @@ import { WakeOverlay } from './shared/wake-overlay';
     MatMenuModule,
     TranslocoPipe,
     WakeOverlay,
+    Avatar,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -42,7 +44,7 @@ export class App {
       ({ system: 'brightness_auto', light: 'light_mode', dark: 'dark_mode' })[this.theme.mode()],
   );
 
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
   private readonly injector = inject(Injector);
   private askingName = false;
 

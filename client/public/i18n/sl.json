@@ -367,7 +367,11 @@
   },
   "profile": {
     "nameTitle": "Kako ti je ime?",
-    "nameText": "To ime bo videla tvoja skupina. Kasneje ga lahko spremeniš v nastavitvah."
+    "nameText": "To ime bo videla tvoja skupina. Kasneje ga lahko spremeniš v nastavitvah.",
+    "addPhoto": "Dodaj profilno sliko",
+    "changePhoto": "Zamenjaj sliko",
+    "removePhoto": "Odstrani sliko",
+    "photoAlt": "Profilna slika: {{name}}"
   },
   "inviteEmails": {
     "title": "Povabi po e-pošti",

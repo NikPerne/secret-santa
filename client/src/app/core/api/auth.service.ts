@@ -86,7 +86,7 @@ export class AuthService {
     return res;
   }
 
-  async updateMe(body: Partial<Pick<User, 'name' | 'language' | 'emailNotifications'>>) {
+  async updateMe(body: Partial<Pick<User, 'name' | 'language' | 'emailNotifications' | 'avatar'>>) {
     const res = await firstValueFrom(this.http.patch<{ user: User }>(api('/auth/me'), body));
     this.user.set(res.user);
     return res.user;

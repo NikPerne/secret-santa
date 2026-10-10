@@ -10,6 +10,7 @@ export function serializeUser(user: UserDoc) {
     emailNotifications: user.emailNotifications,
     needsName: user.needsName ?? false,
     isAdmin: adminEmails.has(user.email),
+    avatar: serializeImage(user.avatar),
     pushEnabled: user.pushSubscriptions.length > 0,
   };
 }

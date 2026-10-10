@@ -16,13 +16,21 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { DrawService } from '../../core/api/draw.service';
 import { Match } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
+import { Avatar } from '../../shared/avatar';
 
 type Phase = 'loading' | 'wrapped' | 'opening' | 'revealed' | 'error';
 
 /** Tap-to-unwrap reveal of your match. Motion is reduced automatically for prefers-reduced-motion. */
 @Component({
   selector: 'app-reveal',
-  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink, TranslocoPipe],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    RouterLink,
+    TranslocoPipe,
+    Avatar,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reveal.html',
   styleUrl: './reveal.scss',

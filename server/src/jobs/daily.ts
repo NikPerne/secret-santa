@@ -9,6 +9,7 @@ import {
   setStat,
   type GroupDoc,
 } from '../models/index.js';
+import { deleteUserFolder } from '../services/cloudinary.js';
 import { deleteGroupData } from '../services/group-data.js';
 import { notifyUser } from '../services/notify.js';
 import { logger } from '../utils/logger.js';
@@ -109,7 +110,10 @@ async function retentionCleanup(now: Date): Promise<{ groups: number; users: num
 
   // Users who no longer belong to any group and haven't for a while.
   const memberIds = await MembershipModel.distinct('userId');
-  const orphans = await UserModel.deleteMany({ _id: { $nin: memberIds }, createdAt: { $lte: cutoff } });
+  const orphanFilter = { _id: { $nin: memberIds }, createdAt: { $lte: cutoff } };
+  const withAvatar = await UserModel.find({ ...orphanFilter, avatar: { $ne: null } }, { _id: 1 });
+  for (const u of withAvatar) await deleteUserFolder(String(u._id));
+  const orphans = await UserModel.deleteMany(orphanFilter);
   return { groups: expired.length, users: orphans.deletedCount };
 }
 

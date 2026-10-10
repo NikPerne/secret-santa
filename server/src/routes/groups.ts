@@ -59,11 +59,15 @@ const groupInput = z.object({
 /** Members list visible to everyone in the group: names only, no pairing information. */
 async function listMembers(groupId: Types.ObjectId) {
   const memberships = await MembershipModel.find({ groupId }).sort({ joinedAt: 1 });
-  const users = await UserModel.find({ _id: { $in: memberships.map((m) => m.userId) } }, { name: 1 });
-  const names = new Map(users.map((u) => [u.id as string, u.name]));
+  const users = await UserModel.find(
+    { _id: { $in: memberships.map((m) => m.userId) } },
+    { name: 1, avatar: 1 },
+  );
+  const byId = new Map(users.map((u) => [u.id as string, u]));
   return memberships.map((m) => ({
     id: String(m.userId),
-    name: names.get(String(m.userId)) ?? '?',
+    name: byId.get(String(m.userId))?.name ?? '?',
+    avatarUrl: byId.get(String(m.userId))?.avatar?.url ?? null,
     role: m.role,
     participates: m.participates,
   }));

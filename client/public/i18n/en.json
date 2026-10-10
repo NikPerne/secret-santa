@@ -367,7 +367,11 @@
   },
   "profile": {
     "nameTitle": "What's your name?",
-    "nameText": "Your group will see this name. You can change it later in Settings."
+    "nameText": "Your group will see this name. You can change it later in Settings.",
+    "addPhoto": "Add a profile photo",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove photo",
+    "photoAlt": "Profile photo of {{name}}"
   },
   "inviteEmails": {
     "title": "Invite by email",

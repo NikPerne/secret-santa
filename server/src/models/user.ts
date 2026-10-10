@@ -1,4 +1,5 @@
 import { Schema, model, type InferSchemaType, type HydratedDocument } from 'mongoose';
+import { imageSchema } from './image.js';
 
 const pushSubscriptionSchema = new Schema(
   {
@@ -20,6 +21,8 @@ const userSchema = new Schema(
     emailNotifications: { type: Boolean, default: true },
     /** Signed up with only an email: the app asks for a name once. */
     needsName: { type: Boolean, default: false },
+    /** Profile picture on Cloudinary (folder users/<id>/avatar). */
+    avatar: { type: imageSchema, default: null },
     pushSubscriptions: { type: [pushSubscriptionSchema], default: [] },
   },
   { timestamps: { createdAt: true, updatedAt: false } },

@@ -58,6 +58,7 @@
       <ul class="people">
         @for (m of members(); track m.id) {
           <li>
+            <app-avatar [name]="m.name" [url]="m.avatarUrl" [size]="36" />
             <div class="who">
               <strong>{{ m.name }}</strong>
               <span class="muted small">

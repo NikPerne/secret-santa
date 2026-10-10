@@ -40,6 +40,9 @@
             }
           </div>
           <div class="card" role="status">
+            @if (match(); as m) {
+              <app-avatar class="match-avatar" [name]="m.name" [url]="m.avatarUrl" [size]="96" />
+            }
             <p class="muted">{{ 'reveal.yourMatch' | transloco }}</p>
             <p class="name" tabindex="-1" #nameEl>{{ match()?.name }}</p>
             <p class="muted secret">🤫 {{ 'reveal.keepSecret' | transloco }}</p>

@@ -34,6 +34,7 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string): Promise<Blob | n
  */
 export async function compressImage(
   file: File,
+  maxDimension = MAX_DIMENSION,
 ): Promise<{ blob: Blob; width: number; height: number }> {
   if (!file.type.startsWith('image/')) throw new ImageError('not_image');
   if (file.size > MAX_INPUT_BYTES) throw new ImageError('too_large');
@@ -44,7 +45,7 @@ export async function compressImage(
   } catch {
     throw new ImageError('unreadable');
   }
-  const { width, height } = fitWithin(bitmap.width, bitmap.height);
+  const { width, height } = fitWithin(bitmap.width, bitmap.height, maxDimension);
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -62,9 +63,13 @@ export async function compressImage(
 }
 
 /** Thumbnail / resized delivery URL using a Cloudinary transformation. */
-export function cldUrl(url: string, opts: { w: number; h?: number; crop?: 'fill' | 'limit' }) {
+export function cldUrl(
+  url: string,
+  opts: { w: number; h?: number; crop?: 'fill' | 'limit' | 'thumb'; face?: boolean },
+) {
   const parts = [
     `c_${opts.crop ?? 'fill'}`,
+    opts.face ? 'g_face' : '',
     `w_${opts.w}`,
     opts.h ? `h_${opts.h}` : '',
     'q_auto',
@@ -78,12 +83,16 @@ export class UploadService {
   private readonly http = inject(HttpClient);
 
   /** Compresses then uploads straight to Cloudinary with a server-issued signature. */
-  upload(file: File, groupId: string, purpose: UploadPurpose): Observable<UploadEvent> {
+  /** groupId is null for profile pictures (stored in the user's own folder). */
+  upload(file: File, groupId: string | null, purpose: UploadPurpose): Observable<UploadEvent> {
     return from(
       Promise.all([
-        compressImage(file),
+        compressImage(file, purpose === 'avatar' ? 512 : MAX_DIMENSION),
         firstValueFrom(
-          this.http.post<UploadSignature>(api('/uploads/signature'), { groupId, purpose }),
+          this.http.post<UploadSignature>(
+            api('/uploads/signature'),
+            groupId ? { groupId, purpose } : { purpose },
+          ),
         ),
       ]),
     ).pipe(

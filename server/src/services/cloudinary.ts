@@ -2,7 +2,10 @@ import { v2 as cloudinary } from 'cloudinary';
 import { cloudinaryEnabled, env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 
-export type UploadPurpose = 'wishlist' | 'gallery' | 'cover';
+export type UploadPurpose = 'wishlist' | 'gallery' | 'cover' | 'avatar';
+
+/** Folder scope for a user's own images (profile picture), next to the per-group folders. */
+export const userScope = (userId: string) => `users/${userId}`;
 
 if (cloudinaryEnabled) {
   cloudinary.config({
@@ -63,6 +66,16 @@ export async function deleteImages(publicIds: Array<string | null | undefined>):
     } catch (err) {
       logger.error({ err }, 'Failed to delete Cloudinary images');
     }
+  }
+}
+
+/** Deletes all of a user's own images (profile picture). */
+export async function deleteUserFolder(userId: string): Promise<void> {
+  if (!cloudinaryEnabled) return;
+  try {
+    await cloudinary.api.delete_resources_by_prefix(`${env.CLOUDINARY_FOLDER}/${userScope(userId)}/`);
+  } catch (err) {
+    logger.error({ err, userId }, 'Failed to delete Cloudinary user folder');
   }
 }
 

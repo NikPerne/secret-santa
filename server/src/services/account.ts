@@ -2,6 +2,7 @@ import { GroupModel, MembershipModel, UserModel, type UserDoc } from '../models/
 import { HttpError } from '../utils/http-error.js';
 import { logger } from '../utils/logger.js';
 import { removeMember } from './draw-runner.js';
+import { deleteUserFolder } from './cloudinary.js';
 import { deleteGroupData } from './group-data.js';
 
 /**
@@ -26,5 +27,6 @@ export async function deleteAccount(user: UserDoc): Promise<void> {
       await removeMember(group, user.id, { force: true });
     }
   }
+  await deleteUserFolder(user.id);
   await UserModel.deleteOne({ _id: user._id });
 }

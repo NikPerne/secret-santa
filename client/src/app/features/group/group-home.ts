@@ -23,6 +23,7 @@ import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
 import { InviteShare } from '../../shared/invite-share';
+import { Avatar } from '../../shared/avatar';
 import { ThemeBadge } from '../../shared/theme-badge';
 import { EngageCard } from './engage-card';
 import { ThankYouCard } from './thank-you-card';
@@ -41,6 +42,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
     Countdown,
     InviteShare,
     ThemeBadge,
+    Avatar,
     ThankYouCard,
     EngageCard,
     LocalDatePipe,

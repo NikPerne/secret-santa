@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -17,6 +18,9 @@ import { PushService } from '../../core/api/push.service';
 import { LANGUAGES, Lang, LanguageService } from '../../core/i18n';
 import { NotifyService } from '../../core/notify.service';
 import { ThemeMode, ThemeService } from '../../core/theme.service';
+import { GroupsService } from '../../core/api/groups.service';
+import { ImageError, UploadService } from '../../core/api/upload.service';
+import { Avatar } from '../../shared/avatar';
 import { confirmAction } from '../../shared/confirm-dialog';
 
 @Component({
@@ -29,6 +33,8 @@ import { confirmAction } from '../../shared/confirm-dialog';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressBarModule,
+    Avatar,
     MatSlideToggleModule,
     TranslocoPipe,
   ],
@@ -54,6 +60,10 @@ export class Settings implements OnInit {
   ];
   protected readonly name = signal('');
   protected readonly busy = signal(false);
+  protected readonly uploads = signal(false);
+  protected readonly avatarProgress = signal<number | null>(null);
+  private readonly uploadService = inject(UploadService);
+  private readonly groupsApi = inject(GroupsService);
 
   constructor() {
     effect(() => this.name.set(this.auth.user()?.name ?? ''));
@@ -61,6 +71,44 @@ export class Settings implements OnInit {
 
   ngOnInit(): void {
     void this.push.refresh();
+    this.groupsApi
+      .config()
+      .then((c) => this.uploads.set(c.uploads))
+      .catch(() => undefined);
+  }
+
+  /** Pick → resize to 512px in the browser → signed upload → save on the profile. */
+  protected onAvatar(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.busy.set(true);
+    this.avatarProgress.set(0);
+    this.uploadService.upload(file, null, 'avatar').subscribe({
+      next: (e) => {
+        if (e.type === 'progress') this.avatarProgress.set(e.percent);
+        else
+          void this.auth
+            .updateMe({ avatar: e.image })
+            .then(() => this.notify.success('common.saved'))
+            .catch((err: unknown) => this.notify.error(err));
+      },
+      error: (err: unknown) => {
+        this.busy.set(false);
+        this.avatarProgress.set(null);
+        if (err instanceof ImageError) this.notify.success(`image.errors.${err.code}`);
+        else this.notify.error(err);
+      },
+      complete: () => {
+        this.busy.set(false);
+        this.avatarProgress.set(null);
+      },
+    });
+  }
+
+  protected async removeAvatar(): Promise<void> {
+    await this.run(() => this.auth.updateMe({ avatar: null }).then(() => undefined));
   }
 
   protected setLang(lang: Lang): void {

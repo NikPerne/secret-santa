@@ -60,13 +60,14 @@ drawRouter.get('/match', async (req, res) => {
   const { group, membership } = groupCtx(req);
   const assignment = await myAssignment(group, membership);
   const [receiver, receiverMembership] = await Promise.all([
-    UserModel.findById(assignment.receiverId, { name: 1 }),
+    UserModel.findById(assignment.receiverId, { name: 1, avatar: 1 }),
     MembershipModel.findOne({ groupId: group._id, userId: assignment.receiverId }, { shippingAddress: 1 }),
   ]);
   res.json({
     match: {
       id: String(assignment.receiverId),
       name: receiver?.name ?? '?',
+      avatarUrl: receiver?.avatar?.url ?? null,
       shippingAddress: group.settings?.allowShippingAddress
         ? receiverMembership?.shippingAddress || null
         : null,
@@ -103,7 +104,7 @@ drawRouter.get('/dashboard', requireOrganizer, async (req, res) => {
   const memberships = await MembershipModel.find({ groupId: group._id }).sort({ joinedAt: 1 });
   const userIds = memberships.map((m) => m.userId);
   const [users, wishlistCounts, prefs, assignments] = await Promise.all([
-    UserModel.find({ _id: { $in: userIds } }, { name: 1, email: 1 }),
+    UserModel.find({ _id: { $in: userIds } }, { name: 1, email: 1, avatar: 1 }),
     WishlistItemModel.aggregate<{ _id: unknown; n: number }>([
       { $match: { groupId: group._id } },
       { $group: { _id: '$userId', n: { $sum: 1 } } },
@@ -126,6 +127,7 @@ drawRouter.get('/dashboard', requireOrganizer, async (req, res) => {
       return {
         id,
         name: user?.name ?? '?',
+        avatarUrl: user?.avatar?.url ?? null,
         email: user?.email ?? '',
         role: m.role,
         participates: m.participates,

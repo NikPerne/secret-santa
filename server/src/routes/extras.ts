@@ -47,7 +47,8 @@ extrasRouter.get('/gallery', async (req, res) => {
     return;
   }
   const photos = await GalleryPhotoModel.find({ groupId: group._id }).sort({ createdAt: -1 }).limit(300);
-  const users = await UserModel.find({ _id: { $in: photos.map((p) => p.userId) } }, { name: 1 });
+  const users = await UserModel.find({ _id: { $in: photos.map((p) => p.userId) } }, { name: 1, avatar: 1 });
+  const avatars = new Map(users.map((u) => [u.id as string, u.avatar?.url ?? null]));
   const names = new Map(users.map((u) => [u.id as string, u.name]));
   res.json({
     open: true,
@@ -56,6 +57,7 @@ extrasRouter.get('/gallery', async (req, res) => {
       image: serializeImage(p.image),
       caption: p.caption,
       by: names.get(String(p.userId)) ?? '?',
+      byAvatarUrl: avatars.get(String(p.userId)) ?? null,
       mine: String(p.userId) === user.id,
       createdAt: p.createdAt.toISOString(),
     })),
@@ -75,6 +77,7 @@ extrasRouter.post('/gallery', async (req, res) => {
       image: serializeImage(photo.image),
       caption: photo.caption,
       by: user.name,
+      byAvatarUrl: user.avatar?.url ?? null,
       mine: true,
       createdAt: photo.createdAt.toISOString(),
     },

@@ -173,7 +173,7 @@
         <ul class="members">
           @for (m of detail()?.members; track m.id) {
             <li>
-              <span class="avatar" aria-hidden="true">{{ initials(m.name) }}</span>
+              <app-avatar [name]="m.name" [url]="m.avatarUrl" [size]="36" />
               <span>{{ m.name }}</span>
               @if (m.role === 'organizer') {
                 <span class="tag">{{ 'group.organizer' | transloco }}</span>

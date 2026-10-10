@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { emailEnabled, env, instantJoinEnabled, isProd } from '../config/env.js';
 import { currentUser, requireAuth } from '../middleware/auth.js';
 import { authLimiter } from '../middleware/rate-limit.js';
-import { parse, trimmed } from '../middleware/validate.js';
+import { imageInput, parse, trimmed } from '../middleware/validate.js';
+import { deleteImages, isOwnedImage, userScope } from '../services/cloudinary.js';
 import { LoginTokenModel, UserModel, type UserDoc } from '../models/index.js';
 import { sendEmail } from '../services/email.js';
 import { templates } from '../services/email-templates.js';
@@ -176,10 +177,20 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
       name: name.optional(),
       language: language.optional(),
       emailNotifications: z.boolean().optional(),
+      avatar: imageInput.nullable().optional(),
     }),
     req.body,
   );
-  Object.assign(user, body);
+  const { avatar, ...rest } = body;
+  if (avatar !== undefined) {
+    if (avatar && !isOwnedImage(avatar, userScope(user.id))) {
+      throw badRequest('invalid_image', 'Images must be uploaded through the app');
+    }
+    const old = user.avatar?.publicId;
+    if (old && old !== avatar?.publicId) await deleteImages([old]);
+    user.set('avatar', avatar);
+  }
+  Object.assign(user, rest);
   if (body.name) user.needsName = false;
   await user.save();
   res.json({ user: serializeUser(user) });

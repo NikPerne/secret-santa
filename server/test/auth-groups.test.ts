@@ -180,3 +180,32 @@ describe('groups', () => {
     expect((await members[1].agent.get('/api/groups')).body.groups).toHaveLength(0);
   });
 });
+
+describe('profile picture', () => {
+  it('starts empty, rejects foreign images and can be removed', async () => {
+    const { agent } = await signIn('pic@example.com', 'Pic');
+    expect((await agent.get('/api/auth/me')).body.user.avatar).toBeNull();
+
+    const foreign = await agent
+      .patch('/api/auth/me')
+      .send({ avatar: { url: 'https://evil.example/me.jpg', publicId: 'secret-santa/users/x/avatar/me' } });
+    expect(foreign.status).toBe(400);
+    expect(foreign.body.error.code).toBe('invalid_image');
+
+    const cleared = await agent.patch('/api/auth/me').send({ avatar: null });
+    expect(cleared.body.user.avatar).toBeNull();
+  });
+
+  it('asks for a signature without a group (disabled without Cloudinary)', async () => {
+    const { agent } = await signIn('pic2@example.com');
+    const res = await agent.post('/api/uploads/signature').send({ purpose: 'avatar' });
+    expect(res.status).toBe(503);
+    expect((await agent.post('/api/uploads/signature').send({ purpose: 'wishlist' })).status).toBe(400);
+  });
+
+  it('shows member pictures (null when none) in the group', async () => {
+    const { group, organizer } = await createGroupWith(['Org', 'Ana']);
+    const detail = await organizer.agent.get(`/api/groups/${group.id}`);
+    expect(detail.body.members.every((m: { avatarUrl: unknown }) => m.avatarUrl === null)).toBe(true);
+  });
+});

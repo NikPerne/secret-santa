@@ -59,7 +59,8 @@
                 <img [src]="thumb(p.image.url)" alt="" loading="lazy" />
               </button>
               <figcaption>
-                <span>
+                <app-avatar [name]="p.by" [url]="p.byAvatarUrl" [size]="24" />
+                <span class="cap">
                   @if (p.caption) {
                     {{ p.caption }} ·
                   }

@@ -13,7 +13,10 @@
       @if (inv.coverImage) {
         <img class="cover" [src]="inv.coverImage.url" alt="" />
       }
-      <p class="muted">{{ 'join.invitedBy' | transloco: { name: inv.organizerName } }}</p>
+      <p class="muted invited">
+        <app-avatar [name]="inv.organizerName" [url]="inv.organizerAvatarUrl" [size]="28" />
+        {{ 'join.invitedBy' | transloco: { name: inv.organizerName } }}
+      </p>
       <h1 class="group-name">{{ inv.name }}</h1>
       @if (inv.description) {
         <p>{{ inv.description }}</p>
