@@ -23,6 +23,10 @@
 
     <app-theme-badge [theme]="g.theme" />
 
+    @if (me()?.participates && !g.exchangePassed) {
+      <app-engage-card [status]="g.status" />
+    }
+
     @if (upcoming() && g.exchangeDate) {
       <app-countdown [to]="g.exchangeDate" />
     }

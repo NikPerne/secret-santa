@@ -24,6 +24,7 @@ import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
 import { InviteShare } from '../../shared/invite-share';
 import { ThemeBadge } from '../../shared/theme-badge';
+import { EngageCard } from './engage-card';
 import { ThankYouCard } from './thank-you-card';
 import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
 
@@ -41,6 +42,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
     InviteShare,
     ThemeBadge,
     ThankYouCard,
+    EngageCard,
     LocalDatePipe,
     MoneyPipe,
   ],

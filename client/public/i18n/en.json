@@ -434,5 +434,18 @@
     "placeholder": "The gift was perfect because…",
     "send": "Send thank-you",
     "sent": "Thank-you sent 💌"
+  },
+  "engage": {
+    "pushTitleOpen": "Get notified when names are drawn?",
+    "pushTitle": "Get notified about your Secret Santa?",
+    "pushText": "One tap and we let you know about the draw, new anonymous messages and the exchange day.",
+    "pushButton": "Notify me",
+    "pushOn": "Done! We'll let you know. 🔔",
+    "installButton": "Install the app",
+    "iosTitle": "Add Secret Santa to your Home Screen",
+    "iosStep1": "Tap the Share button",
+    "iosStep2": "Choose \"Add to Home Screen\"",
+    "iosStep3": "Open the app from your Home Screen and turn on notifications in Settings",
+    "notNow": "Not now"
   }
 }

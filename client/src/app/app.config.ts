@@ -19,6 +19,7 @@ import { provideTransloco } from '@jsverse/transloco';
 import { routes } from './app.routes';
 import { AuthService } from './core/api/auth.service';
 import { LANGUAGES, LanguageService, TranslocoHttpLoader } from './core/i18n';
+import { InstallService } from './core/install.service';
 import { credentialsInterceptor, wakeUpInterceptor } from './core/interceptors';
 import { ThemeService } from './core/theme.service';
 
@@ -47,6 +48,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
       inject(ThemeService);
+      inject(InstallService);
       const language = inject(LanguageService);
       const auth = inject(AuthService);
       language.init();

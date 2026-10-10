@@ -434,5 +434,18 @@
     "placeholder": "Darilo je bilo popolno, ker …",
     "send": "Pošlji zahvalo",
     "sent": "Zahvala poslana 💌"
+  },
+  "engage": {
+    "pushTitleOpen": "Želiš obvestilo, ko bodo imena izžrebana?",
+    "pushTitle": "Želiš obvestila o svojem Skrivnem Božičku?",
+    "pushText": "En dotik in obvestimo te o žrebu, novih anonimnih sporočilih in dnevu izmenjave.",
+    "pushButton": "Obveščaj me",
+    "pushOn": "Urejeno! Obvestili te bomo. 🔔",
+    "installButton": "Namesti aplikacijo",
+    "iosTitle": "Dodaj Skrivnega Božička na začetni zaslon",
+    "iosStep1": "Tapni gumb Deli",
+    "iosStep2": "Izberi »Dodaj na začetni zaslon«",
+    "iosStep3": "Odpri aplikacijo z začetnega zaslona in v nastavitvah vklopi obvestila",
+    "notNow": "Ne zdaj"
   }
 }
