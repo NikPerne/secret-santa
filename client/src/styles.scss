@@ -1,0 +1,153 @@
+@use '@angular/material' as mat;
+
+// Material 3 theme. `color-scheme` decides light/dark: the system setting by default,
+// overridden by the theme toggle (.theme-light / .theme-dark on <html>).
+html {
+  height: 100%;
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$red-palette,
+        tertiary: mat.$green-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  &.theme-light {
+    color-scheme: light;
+  }
+  &.theme-dark {
+    color-scheme: dark;
+  }
+
+  // Large, friendly touch targets everywhere.
+  @include mat.button-overrides(
+    (
+      filled-container-height: 48px,
+      outlined-container-height: 48px,
+      text-container-height: 48px,
+      protected-container-height: 48px,
+      tonal-container-height: 48px,
+    )
+  );
+}
+
+body {
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-large);
+  margin: 0;
+  min-height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: var(--mat-sys-primary);
+}
+
+:focus-visible {
+  outline: 3px solid var(--mat-sys-tertiary);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -48px;
+  z-index: 3000;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  &:focus {
+    top: 8px;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// ---------- Layout helpers ----------
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+  box-sizing: border-box;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-small);
+  margin: 8px 0 16px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.big-button {
+  width: 100%;
+  min-height: 56px !important;
+  font-size: 1.05rem !important;
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.surface-card {
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.error-text {
+  color: var(--mat-sys-error);
+}
+
+.center {
+  text-align: center;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

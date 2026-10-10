@@ -1,0 +1,44 @@
+{
+  "app": { "name": "Secret Santa" },
+  "common": {
+    "home": "Home",
+    "skipToContent": "Skip to content",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again."
+  },
+  "wake": {
+    "title": "Waking up the elves… 🎄",
+    "hint": "The server was napping. This can take up to a minute."
+  },
+  "landing": {
+    "title": "Secret Santa, made easy",
+    "subtitle": "Create a group in a minute, share a link, and let the app draw names fairly.",
+    "create": "Create a group",
+    "join": "Join with code",
+    "codeLabel": "Invite code or link",
+    "codeHint": "You'll find it in the invite you received",
+    "continue": "Continue",
+    "feature1": "Invite with a link or QR code",
+    "feature2": "Fair draw with rules like \"don't pair couples\"",
+    "feature3": "Wishlists with photos",
+    "feature4": "Anonymous chat with your giftee"
+  },
+  "notFound": {
+    "title": "Oh deer, nothing here",
+    "text": "This page doesn't exist or the link has expired."
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "themeTitle": "Appearance",
+    "theme": { "system": "System", "light": "Light", "dark": "Dark" }
+  }
+}

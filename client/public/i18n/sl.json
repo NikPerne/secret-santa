@@ -1,0 +1,44 @@
+{
+  "app": { "name": "Skrivni Božiček" },
+  "common": {
+    "home": "Domov",
+    "skipToContent": "Preskoči na vsebino",
+    "back": "Nazaj",
+    "next": "Naprej",
+    "save": "Shrani",
+    "cancel": "Prekliči",
+    "delete": "Izbriši",
+    "edit": "Uredi",
+    "close": "Zapri",
+    "retry": "Poskusi znova",
+    "loading": "Nalagam …",
+    "error": "Nekaj je šlo narobe. Poskusi znova."
+  },
+  "wake": {
+    "title": "Budimo škrate … 🎄",
+    "hint": "Strežnik je dremal. To lahko traja do ene minute."
+  },
+  "landing": {
+    "title": "Skrivni Božiček, preprosto",
+    "subtitle": "Ustvari skupino v minuti, deli povezavo in aplikacija bo pošteno izžrebala imena.",
+    "create": "Ustvari skupino",
+    "join": "Pridruži se s kodo",
+    "codeLabel": "Koda ali povezava povabila",
+    "codeHint": "Najdeš jo v prejetem povabilu",
+    "continue": "Nadaljuj",
+    "feature1": "Povabi s povezavo ali QR kodo",
+    "feature2": "Pošten žreb s pravili, kot je »ne pari parov«",
+    "feature3": "Seznami želja s fotografijami",
+    "feature4": "Anonimen klepet z obdarovancem"
+  },
+  "notFound": {
+    "title": "Ojoj, tu ni ničesar",
+    "text": "Ta stran ne obstaja ali pa je povezava potekla."
+  },
+  "settings": {
+    "title": "Nastavitve",
+    "language": "Jezik",
+    "themeTitle": "Videz",
+    "theme": { "system": "Sistemsko", "light": "Svetlo", "dark": "Temno" }
+  }
+}

@@ -1,0 +1,32 @@
+<section class="page stack">
+  <h1 class="page-title">{{ 'settings.title' | transloco }}</h1>
+
+  <section class="surface-card stack" aria-labelledby="lang-h">
+    <h2 id="lang-h">{{ 'settings.language' | transloco }}</h2>
+    <mat-button-toggle-group
+      [value]="language.current()"
+      (change)="setLang($event.value)"
+      [attr.aria-label]="'settings.language' | transloco"
+    >
+      @for (l of languages; track l.code) {
+        <mat-button-toggle [value]="l.code" [attr.lang]="l.code">{{ l.label }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </section>
+
+  <section class="surface-card stack" aria-labelledby="theme-h">
+    <h2 id="theme-h">{{ 'settings.themeTitle' | transloco }}</h2>
+    <mat-button-toggle-group
+      [value]="theme.mode()"
+      (change)="theme.set($event.value)"
+      [attr.aria-label]="'settings.themeTitle' | transloco"
+    >
+      @for (t of themes; track t.mode) {
+        <mat-button-toggle [value]="t.mode">
+          <mat-icon>{{ t.icon }}</mat-icon>
+          {{ 'settings.theme.' + t.mode | transloco }}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </section>
+</section>

@@ -1,0 +1,45 @@
+<section class="page hero">
+  <div class="emoji" aria-hidden="true">🎁</div>
+  <h1>{{ 'landing.title' | transloco }}</h1>
+  <p class="muted lead">{{ 'landing.subtitle' | transloco }}</p>
+
+  <div class="stack actions">
+    <a mat-flat-button class="big-button" routerLink="/create">
+      <mat-icon>add</mat-icon>
+      {{ 'landing.create' | transloco }}
+    </a>
+
+    @if (!showJoin()) {
+      <button mat-stroked-button class="big-button" (click)="showJoin.set(true)">
+        <mat-icon>group_add</mat-icon>
+        {{ 'landing.join' | transloco }}
+      </button>
+    } @else {
+      <form class="join-form surface-card" (ngSubmit)="join()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'landing.codeLabel' | transloco }}</mat-label>
+          <input
+            matInput
+            name="code"
+            autocomplete="off"
+            autocapitalize="characters"
+            [ngModel]="code()"
+            (ngModelChange)="code.set($event)"
+            required
+          />
+          <mat-hint>{{ 'landing.codeHint' | transloco }}</mat-hint>
+        </mat-form-field>
+        <button mat-flat-button class="big-button" type="submit" [disabled]="!code().trim()">
+          {{ 'landing.continue' | transloco }}
+        </button>
+      </form>
+    }
+  </div>
+
+  <ul class="features">
+    <li><span aria-hidden="true">🔗</span> {{ 'landing.feature1' | transloco }}</li>
+    <li><span aria-hidden="true">🎲</span> {{ 'landing.feature2' | transloco }}</li>
+    <li><span aria-hidden="true">📝</span> {{ 'landing.feature3' | transloco }}</li>
+    <li><span aria-hidden="true">🤫</span> {{ 'landing.feature4' | transloco }}</li>
+  </ul>
+</section>

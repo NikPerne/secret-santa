@@ -1,0 +1,45 @@
+.hero {
+  text-align: center;
+}
+
+.emoji {
+  font-size: 72px;
+  margin-top: 16px;
+}
+
+h1 {
+  font: var(--mat-sys-headline-medium);
+  margin: 8px 0;
+}
+
+.lead {
+  margin: 0 auto 24px;
+  max-width: 420px;
+}
+
+.actions {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.join-form {
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 32px auto 0;
+  max-width: 420px;
+  display: grid;
+  gap: 12px;
+  text-align: left;
+
+  li {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+}

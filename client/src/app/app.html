@@ -1,0 +1,47 @@
+<a class="skip-link" href="#main">{{ 'common.skipToContent' | transloco }}</a>
+
+<mat-toolbar class="app-toolbar no-print">
+  <a class="brand" routerLink="/" [attr.aria-label]="'common.home' | transloco">
+    <span aria-hidden="true">🎅</span>
+    <span class="brand-name">{{ 'app.name' | transloco }}</span>
+  </a>
+  <span class="spacer"></span>
+  <button
+    mat-icon-button
+    (click)="theme.cycle()"
+    [attr.aria-label]="'settings.theme.' + theme.mode() | transloco"
+    [title]="'settings.theme.' + theme.mode() | transloco"
+  >
+    <mat-icon>{{ themeIcon() }}</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="langMenu"
+    [attr.aria-label]="'settings.language' | transloco"
+  >
+    <mat-icon>translate</mat-icon>
+  </button>
+  <mat-menu #langMenu="matMenu">
+    @for (l of languages; track l.code) {
+      <button
+        mat-menu-item
+        (click)="setLang(l.code)"
+        [attr.aria-current]="language.current() === l.code"
+      >
+        @if (language.current() === l.code) {
+          <mat-icon>check</mat-icon>
+        }
+        <span [attr.lang]="l.code">{{ l.label }}</span>
+      </button>
+    }
+  </mat-menu>
+  <a mat-icon-button routerLink="/settings" [attr.aria-label]="'settings.title' | transloco">
+    <mat-icon>settings</mat-icon>
+  </a>
+</mat-toolbar>
+
+<main id="main" tabindex="-1">
+  <router-outlet />
+</main>
+
+<app-wake-overlay />
