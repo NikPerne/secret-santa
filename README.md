@@ -18,6 +18,8 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 - **Manage before and after the draw** — remove or add someone, re-draw safely, or reassign a single person who drops out without reshuffling everyone.
 - **Reuse a group next year** — duplicate last year's group with one click.
 - **Print mode** — printable reveal cards for in-person events.
+- **Gift themes** — e.g. "Made in Slovenia", handmade, experiences, books, eco, sweets or your own rule.
+- **Invite by email** and a one-tap **nudge** for people who haven't unwrapped their match or filled their wishlist.
 
 ### For participants
 - **No password needed** — join with your name and email; sign back in with a magic link.
@@ -29,9 +31,13 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 - **Optional shipping address** — for remote groups, shown only to your Santa.
 - **Add to calendar** — download an `.ics` for the exchange day.
 - **Gift photo wall** — after the exchange, everyone can upload photos of the unwrapping (and see who their Santa was, if the group enables the big reveal).
+- **Paste a shop link** — the wish fills itself in (title, price and photo from the shop page).
+- **Gift ideas** — budget- and theme-aware suggestions when your giftee's wishlist is empty.
+- **Unread badges** — see at a glance when your Santa or giftee wrote to you.
+- **Anonymous thank-you** — after the exchange, thank your Santa without the big reveal.
 
 ### Everywhere
-- 📱 **Installable PWA** — works like a native app on Android, iOS and desktop; wishlist and match viewable offline.
+- 📱 **Installable PWA** — works like a native app on Android, iOS and desktop; wishlist and match viewable offline. Right after joining, the app offers notifications and installation (with Add to Home Screen steps on iPhone).
 - 🔔 **Reminders** — email and web push for "join", "draw done", "wishlist missing", "exchange in 3 days".
 - 🌍 **English & Slovenian**, easy to add more languages.
 - 🌙 **Dark mode**, large touch targets, keyboard and screen-reader friendly.
@@ -83,7 +89,8 @@ secret-santa/
 │   │   ├── jobs/               # daily reminders + data retention (idempotent)
 │   │   └── scripts/            # demo seed
 │   └── test/                   # Vitest: draw algorithm + API integration (in-memory MongoDB)
-├── .github/workflows/ci.yml    # lint, test, build both apps
+├── e2e/                        # Playwright end-to-end tests (real API + production build)
+├── .github/workflows/ci.yml    # lint, test, build both apps + e2e
 ├── render.yaml                 # Render Blueprint (one web service: API + app)
 └── CLAUDE.md                   # notes for AI-assisted development
 ```
@@ -134,6 +141,7 @@ To seed the demo group into a real database: `npm run seed` (uses `MONGODB_URI`)
 ### 4. Test, lint, build
 ```bash
 npm test                     # server (draw algorithm + API) and client
+npm run test:e2e             # Playwright: create → join → draw → reveal → chat (first: npx --prefix e2e playwright install chromium)
 npm run lint                 # ESLint + Prettier (+ i18n key parity for the client)
 npm run build
 ```
@@ -155,6 +163,7 @@ Set `CLIENT_URL=http://localhost:3000` in `server/.env` so email links match.
 5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `nik-secret-santa` (https://nik-secret-santa.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
 6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, `BREVO_API_KEY`/`RESEND_API_KEY` + `MAIL_FROM`, VAPID). `CLIENT_URL` is preset to `https://nik-secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
 7. Keep this the **only free web service** in your Render workspace, so the 750 free instance-hours cover running 24/7.
+8. **Health page:** sign in as an address listed in `ADMIN_EMAILS` (preset to the owner in `render.yaml`) and open **Settings → Health & free-tier limits** (`/admin`) to watch MongoDB size, email sends per day, Cloudinary credits, memory and the daily job.
 
 **Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://nik-secret-santa.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
 

@@ -23,6 +23,7 @@ cd server && npm run seed    # demo group into MONGODB_URI (in-memory DB: SEED_D
 cd client && npm test        # ng test (Vitest), non-watch
 cd client && npm run lint    # ng lint + i18n key parity + prettier --check   (fix: npm run format)
 cd client && npm run build   # production build incl. service worker -> dist/client/browser
+npm run test:e2e             # root: builds client, Playwright runs the API (in-memory DB) serving it on :3100
 ```
 
 ## Key decisions
@@ -38,6 +39,12 @@ cd client && npm run build   # production build incl. service worker -> dist/cli
 - **Notifications:** `services/notify.ts` (email respects `emailNotifications`, push via `web-push` in Angular-SW payload format). Jobs (`jobs/daily.ts`) run ~10s after start and on `DAILY_JOB_CRON`. They're idempotent via unique keys in `NotificationLog` (`claimNotification`). Chat push is throttled to one per thread direction per 10 min.
 - **i18n:** `client/public/i18n/{en,sl}.json` must have identical keys (lint enforces this). API error codes map to `errors.<code>` keys (`NotifyService`). Server emails and push texts have their own en/sl strings in `server/src/services/email-templates.ts`.
 - **Wake-up UX:** `core/interceptors.ts` shows the elves overlay after 2s and retries 502/503/504 (and network errors on GET). Pass `context: new HttpContext().set(BACKGROUND, true)` for silent background polls.
+
+- **Engagement features:** unread badges use `Membership.chatReadAt` (`services/unread.ts`); nudges/thank-you/invite emails go through `notify.ts` + `claimNotification` keys (`nudge:<g>:<u>:<day>`, `thanks:<assignmentId>`); thank-you notes live on `Assignment.thankYou` so they never reveal the Santa.
+- **Group theme + gift ideas:** `Group.theme {preset, text}`; curated bilingual ideas with EUR prices in `client/.../wishlist/gift-ideas.data.ts` (`suggestIdeas` filters by budget).
+- **Link previews:** `services/link-preview.ts` is SSRF-hardened (connect-time IP check via custom `lookup`, http(s) default ports, 3 redirects, 1 MB, 8 s, in-memory cache). Cloudinary imports the og:image itself (`importRemoteImage`), so images never pass through Render.
+- **Admin:** `ADMIN_EMAILS` → `user.isAdmin`; `/api/admin/health` (enforced server-side). Daily counters in `SystemStat` (`bumpDaily('mail')`, `job:daily`), auto-expiring.
+- **E2E:** `e2e/` (own lockfile). Tests force English via `localStorage['ss.lang']='en'` and dismiss the engage card; selectors use visible English labels, so update them when changing `en.json`.
 
 ## Conventions
 - Validate every request body/query/params with Zod via `parse(schema, input)` from `middleware/validate.ts`. Throw helpers from `utils/http-error.ts`, and the error handler turns them into `{ error: { code, message } }`.
