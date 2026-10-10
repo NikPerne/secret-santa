@@ -35,7 +35,8 @@
     "organizer_cannot_leave": "As the organizer you can delete the group instead.",
     "too_many_items": "That's a lot of wishes! A wishlist can have up to 50 items.",
     "invalid_image": "Please upload the image again.",
-    "uploads_disabled": "Photo uploads aren't set up on this server yet."
+    "uploads_disabled": "Photo uploads aren't set up on this server yet.",
+    "gallery_closed": "The photo wall opens after the gift exchange."
   },
   "fields": {
     "email": "Email",
@@ -160,7 +161,13 @@
     "leaveMessage": "Your wishlist will be deleted. If names were already drawn, someone else will get a new match.",
     "leaveConfirm": "Leave",
     "myWishlist": "My wishlist",
-    "myWishlistHint": "Help your Santa: add wishes, sizes and a \"please no\" list"
+    "myWishlistHint": "Help your Santa: add wishes, sizes and a \"please no\" list",
+    "giftStatus": "How's your gift going?",
+    "chatMatch": "Chat with your giftee",
+    "chatMatchHint": "Ask questions, they won't know it's you",
+    "chatSanta": "Chat with your Santa",
+    "chatSantaHint": "Your Secret Santa may have questions",
+    "addToCalendar": "Add to calendar"
   },
   "countdown": {
     "days": "days",
@@ -193,7 +200,12 @@
   "gift": {
     "none": "Gift not bought yet",
     "bought": "Gift bought",
-    "delivered": "Gift delivered"
+    "delivered": "Gift delivered",
+    "short": {
+      "none": "Not yet",
+      "bought": "Bought",
+      "delivered": "Delivered"
+    }
   },
   "reveal": {
     "title": "Who did you draw?",
@@ -299,5 +311,30 @@
     "addressHint": "Only your Secret Santa can see this",
     "shipTo": "Ship to",
     "askQuestion": "Ask them a question anonymously"
+  },
+  "chat": {
+    "withMatch": "Chat with {{name}}",
+    "withSanta": "Your Secret Santa 🎅",
+    "matchHint": "You're anonymous. They see you as \"Secret Santa\".",
+    "santaHint": "You don't know who this is, and that's the fun!",
+    "emptyMatch": "Ask something sneaky, like their favourite colour or if they already own a certain book.",
+    "emptySanta": "No messages yet. Your Santa might drop by with a question.",
+    "placeholder": "Write a message…",
+    "send": "Send",
+    "you": "You",
+    "theyGiftee": "Your giftee",
+    "theySanta": "Secret Santa"
+  },
+  "gallery": {
+    "title": "Gift photo wall",
+    "hint": "Share photos from the exchange",
+    "closed": "The photo wall opens after the gift exchange. See you there!",
+    "add": "Add a photo",
+    "caption": "Caption (optional)",
+    "post": "Post photo",
+    "empty": "No photos yet. Be the first!",
+    "open": "Open photo by {{by}}",
+    "deleteTitle": "Delete this photo?",
+    "deleteMessage": "It will be removed for everyone."
   }
 }

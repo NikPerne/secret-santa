@@ -1,0 +1,84 @@
+<section class="page stack">
+  <div class="title-row">
+    <a
+      mat-icon-button
+      [routerLink]="['/g', groupId()]"
+      [attr.aria-label]="'common.back' | transloco"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1 class="page-title">{{ 'gallery.title' | transloco }}</h1>
+  </div>
+
+  @if (loading()) {
+    <mat-spinner diameter="40" style="margin: 32px auto" />
+  } @else if (!open()) {
+    <div class="surface-card center">
+      <div class="emoji" aria-hidden="true">📸</div>
+      <p>{{ 'gallery.closed' | transloco }}</p>
+    </div>
+  } @else {
+    @if (uploads()) {
+      <section class="surface-card stack" aria-labelledby="add-h">
+        <h2 id="add-h">{{ 'gallery.add' | transloco }}</h2>
+        <app-image-picker
+          [groupId]="groupId()"
+          purpose="gallery"
+          [(image)]="newImage"
+          (uploadingChange)="uploading.set($event)"
+        />
+        @if (newImage()) {
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'gallery.caption' | transloco }}</mat-label>
+            <input
+              matInput
+              maxlength="280"
+              [ngModel]="caption()"
+              (ngModelChange)="caption.set($event)"
+            />
+          </mat-form-field>
+          <button mat-flat-button [disabled]="uploading() || posting()" (click)="post()">
+            <mat-icon>send</mat-icon>{{ 'gallery.post' | transloco }}
+          </button>
+        }
+      </section>
+    }
+
+    @if (!photos().length) {
+      <p class="muted center">{{ 'gallery.empty' | transloco }}</p>
+    } @else {
+      <ul class="grid">
+        @for (p of photos(); track p.id) {
+          <li>
+            <figure>
+              <button
+                class="img-btn"
+                (click)="zoom(p)"
+                [attr.aria-label]="'gallery.open' | transloco: { by: p.by }"
+              >
+                <img [src]="thumb(p.image.url)" alt="" loading="lazy" />
+              </button>
+              <figcaption>
+                <span>
+                  @if (p.caption) {
+                    {{ p.caption }} ·
+                  }
+                  <span class="muted">{{ p.by }}</span>
+                </span>
+                @if (p.mine || isOrganizer()) {
+                  <button
+                    mat-icon-button
+                    (click)="remove(p)"
+                    [attr.aria-label]="'common.delete' | transloco"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </figcaption>
+            </figure>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

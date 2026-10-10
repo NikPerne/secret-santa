@@ -192,3 +192,21 @@ export interface UploadSignature {
   allowed_formats: string;
   signature: string;
 }
+
+export type ChatWho = 'match' | 'santa';
+
+export interface ChatMessage {
+  id: string;
+  mine: boolean;
+  text: string;
+  createdAt: string;
+}
+
+export interface GalleryPhoto {
+  id: string;
+  image: ImageRef;
+  caption: string;
+  by: string;
+  mine: boolean;
+  createdAt: string;
+}

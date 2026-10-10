@@ -34,6 +34,13 @@ export const CURRENCIES = [
 
 type Step = 1 | 2 | 3;
 
+/** Local calendar date as YYYY-MM-DD (the API stores it as a whole day). */
+export function toYmd(date: Date | null): string | null {
+  if (!date) return null;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 /** Create-group wizard: basics → budget & rules → invite. Also used to edit an existing group. */
 @Component({
   selector: 'app-group-wizard',
@@ -126,7 +133,7 @@ export class GroupWizard implements OnInit {
   protected async saveBasics(): Promise<void> {
     const body = {
       name: this.name().trim(),
-      exchangeDate: this.exchangeDate()?.toISOString() ?? null,
+      exchangeDate: toYmd(this.exchangeDate()),
       location: this.location().trim(),
       description: this.description().trim(),
     };

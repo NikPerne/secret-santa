@@ -164,3 +164,17 @@ mat-panel-title {
   flex: 1;
   display: grid;
 }
+
+h2 {
+  font: var(--mat-sys-title-medium);
+}
+
+.gift-toggle {
+  flex-wrap: wrap;
+}
+
+.chat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}

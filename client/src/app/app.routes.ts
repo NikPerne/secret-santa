@@ -41,6 +41,14 @@ export const routes: Routes = [
           import('./features/wishlist/match-wishlist').then((m) => m.MatchWishlist),
       },
       {
+        path: 'chat/:who',
+        loadComponent: () => import('./features/chat/chat').then((m) => m.Chat),
+      },
+      {
+        path: 'gallery',
+        loadComponent: () => import('./features/gallery/gallery').then((m) => m.Gallery),
+      },
+      {
         path: 'manage',
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.DashboardPage),
       },

@@ -35,7 +35,8 @@
     "organizer_cannot_leave": "Kot organizator lahko skupino izbrišeš.",
     "too_many_items": "To je veliko želja! Seznam ima lahko največ 50 želja.",
     "invalid_image": "Prosimo, ponovno naloži sliko.",
-    "uploads_disabled": "Nalaganje fotografij na tem strežniku še ni nastavljeno."
+    "uploads_disabled": "Nalaganje fotografij na tem strežniku še ni nastavljeno.",
+    "gallery_closed": "Stena fotografij se odpre po izmenjavi daril."
   },
   "fields": {
     "email": "E-pošta",
@@ -160,7 +161,13 @@
     "leaveMessage": "Tvoj seznam želja bo izbrisan. Če so imena že izžrebana, bo nekdo dobil novega obdarovanca.",
     "leaveConfirm": "Zapusti",
     "myWishlist": "Moj seznam želja",
-    "myWishlistHint": "Pomagaj Božičku: dodaj želje, velikosti in seznam »prosim, ne«"
+    "myWishlistHint": "Pomagaj Božičku: dodaj želje, velikosti in seznam »prosim, ne«",
+    "giftStatus": "Kako napreduje tvoje darilo?",
+    "chatMatch": "Klepet z obdarovancem",
+    "chatMatchHint": "Postavljaj vprašanja, ne bo vedel/-a, da si ti",
+    "chatSanta": "Klepet s tvojim Božičkom",
+    "chatSantaHint": "Tvoj Skrivni Božiček ima morda vprašanja",
+    "addToCalendar": "Dodaj v koledar"
   },
   "countdown": {
     "days": "dni",
@@ -193,7 +200,12 @@
   "gift": {
     "none": "Darilo še ni kupljeno",
     "bought": "Darilo kupljeno",
-    "delivered": "Darilo predano"
+    "delivered": "Darilo predano",
+    "short": {
+      "none": "Še ne",
+      "bought": "Kupljeno",
+      "delivered": "Predano"
+    }
   },
   "reveal": {
     "title": "Koga si izžrebal/-a?",
@@ -299,5 +311,30 @@
     "addressHint": "Vidi ga lahko samo tvoj Skrivni Božiček",
     "shipTo": "Pošlji na",
     "askQuestion": "Anonimno mu/ji postavi vprašanje"
+  },
+  "chat": {
+    "withMatch": "Klepet: {{name}}",
+    "withSanta": "Tvoj Skrivni Božiček 🎅",
+    "matchHint": "Si anonimen/-na. Vidi te kot »Skrivni Božiček«.",
+    "santaHint": "Ne veš, kdo je to, in prav v tem je čar!",
+    "emptyMatch": "Vprašaj kaj zvitega, na primer najljubšo barvo ali ali določeno knjigo že ima.",
+    "emptySanta": "Še ni sporočil. Tvoj Božiček se bo morda oglasil z vprašanjem.",
+    "placeholder": "Napiši sporočilo …",
+    "send": "Pošlji",
+    "you": "Ti",
+    "theyGiftee": "Tvoj obdarovanec",
+    "theySanta": "Skrivni Božiček"
+  },
+  "gallery": {
+    "title": "Stena fotografij daril",
+    "hint": "Deli fotografije z izmenjave",
+    "closed": "Stena fotografij se odpre po izmenjavi daril. Se vidimo!",
+    "add": "Dodaj fotografijo",
+    "caption": "Opis (neobvezno)",
+    "post": "Objavi fotografijo",
+    "empty": "Še ni fotografij. Bodi prvi/-a!",
+    "open": "Odpri fotografijo, avtor: {{by}}",
+    "deleteTitle": "Izbrišem to fotografijo?",
+    "deleteMessage": "Odstranjena bo za vse."
   }
 }

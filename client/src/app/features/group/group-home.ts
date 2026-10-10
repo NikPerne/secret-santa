@@ -8,15 +8,17 @@ import {
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { calendarUrl } from '../../core/api/chat.service';
 import { DrawService } from '../../core/api/draw.service';
 import { GroupsService } from '../../core/api/groups.service';
-import { GroupDetail, Match } from '../../core/models';
+import { GiftStatus, GroupDetail, Match } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
@@ -28,6 +30,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
   imports: [
     RouterLink,
     MatButtonModule,
+    MatButtonToggleModule,
     MatExpansionModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -54,6 +57,7 @@ export class GroupHome {
   protected readonly mySanta = signal<string | null>(null);
   protected readonly error = signal(false);
   protected readonly initials = initials;
+  protected readonly calendarUrl = calendarUrl;
 
   protected readonly group = computed(() => this.detail()?.group);
   protected readonly me = computed(() => this.detail()?.me);
@@ -92,6 +96,17 @@ export class GroupHome {
       }
     } catch (err) {
       this.error.set(true);
+      this.notify.error(err);
+    }
+  }
+
+  protected async setGiftStatus(giftStatus: GiftStatus): Promise<void> {
+    const detail = this.detail();
+    if (!detail) return;
+    try {
+      const me = await this.groups.updateMe(detail.group.id, { giftStatus });
+      this.detail.set({ ...detail, me });
+    } catch (err) {
       this.notify.error(err);
     }
   }

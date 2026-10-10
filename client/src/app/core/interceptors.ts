@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpContextToken, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { finalize, retry, throwError, timer } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -6,6 +6,9 @@ import { WakeUpService } from './wake-up.service';
 
 const SLOW_MS = 2000;
 const MAX_RETRIES = 8;
+
+/** Marks background requests (e.g. chat polling) that must not show the wake-up overlay. */
+export const BACKGROUND = new HttpContextToken<boolean>(() => false);
 
 const isApi = (url: string) => url.startsWith(`${environment.apiUrl}/api/`);
 
@@ -27,7 +30,7 @@ function isColdStartError(err: unknown, method: string): boolean {
  * retries requests that fail while the free-tier API is cold-starting.
  */
 export const wakeUpInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!isApi(req.url)) return next(req);
+  if (!isApi(req.url) || req.context.get(BACKGROUND)) return next(req);
   const wake = inject(WakeUpService);
   let shown = false;
   const show = () => {

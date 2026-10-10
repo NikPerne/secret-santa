@@ -46,6 +46,43 @@
           </div>
         }
       </section>
+
+      @if (me()?.viewedMatchAt) {
+        <section class="surface-card stack" aria-labelledby="gift-h">
+          <h2 id="gift-h">{{ 'group.giftStatus' | transloco }}</h2>
+          <mat-button-toggle-group
+            class="gift-toggle"
+            [value]="me()?.giftStatus"
+            (change)="setGiftStatus($event.value)"
+            [attr.aria-labelledby]="'gift-h'"
+          >
+            <mat-button-toggle value="none">{{ 'gift.short.none' | transloco }}</mat-button-toggle>
+            <mat-button-toggle value="bought"
+              >🛍️ {{ 'gift.short.bought' | transloco }}</mat-button-toggle
+            >
+            <mat-button-toggle value="delivered"
+              >🎁 {{ 'gift.short.delivered' | transloco }}</mat-button-toggle
+            >
+          </mat-button-toggle-group>
+        </section>
+      }
+
+      <div class="chat-tiles">
+        <a class="tile surface-card" [routerLink]="['/g', g.id, 'chat', 'match']">
+          <mat-icon aria-hidden="true">forum</mat-icon>
+          <span class="tile-text">
+            <strong>{{ 'group.chatMatch' | transloco }}</strong>
+            <span class="muted">{{ 'group.chatMatchHint' | transloco }}</span>
+          </span>
+        </a>
+        <a class="tile surface-card" [routerLink]="['/g', g.id, 'chat', 'santa']">
+          <mat-icon aria-hidden="true">support_agent</mat-icon>
+          <span class="tile-text">
+            <strong>{{ 'group.chatSanta' | transloco }}</strong>
+            <span class="muted">{{ 'group.chatSantaHint' | transloco }}</span>
+          </span>
+        </a>
+      </div>
     }
 
     @if (me()?.participates) {
@@ -64,6 +101,23 @@
         <span aria-hidden="true">🎅</span>
         {{ 'group.yourSantaWas' | transloco: { name: santa } }}
       </div>
+    }
+
+    @if (g.exchangePassed) {
+      <a class="tile surface-card" [routerLink]="['/g', g.id, 'gallery']">
+        <mat-icon aria-hidden="true">photo_library</mat-icon>
+        <span class="tile-text">
+          <strong>{{ 'gallery.title' | transloco }}</strong>
+          <span class="muted">{{ 'gallery.hint' | transloco }}</span>
+        </span>
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </a>
+    }
+
+    @if (g.exchangeDate && upcoming()) {
+      <a mat-stroked-button [href]="calendarUrl(g.id)" download>
+        <mat-icon>event</mat-icon>{{ 'group.addToCalendar' | transloco }}
+      </a>
     }
 
     @if (isOrganizer()) {

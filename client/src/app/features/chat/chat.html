@@ -1,0 +1,73 @@
+<section class="chat-page">
+  <header class="chat-header">
+    <a
+      mat-icon-button
+      [routerLink]="['/g', groupId()]"
+      [attr.aria-label]="'common.back' | transloco"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <div>
+      <h1>
+        @if (who() === 'match') {
+          {{ 'chat.withMatch' | transloco: { name: matchName() ?? '…' } }}
+        } @else {
+          {{ 'chat.withSanta' | transloco }}
+        }
+      </h1>
+      <p class="muted">
+        {{ (who() === 'match' ? 'chat.matchHint' : 'chat.santaHint') | transloco }}
+      </p>
+    </div>
+  </header>
+
+  <div class="messages" #scroller role="log" aria-live="polite" [attr.aria-busy]="loading()">
+    @if (loading()) {
+      <mat-spinner diameter="36" style="margin: 32px auto" />
+    } @else if (error(); as message) {
+      <p class="center" role="alert">{{ message }}</p>
+    } @else if (!messages().length) {
+      <div class="empty center">
+        <div class="emoji" aria-hidden="true">{{ who() === 'match' ? '🤫' : '🎅' }}</div>
+        <p class="muted">
+          {{ (who() === 'match' ? 'chat.emptyMatch' : 'chat.emptySanta') | transloco }}
+        </p>
+      </div>
+    }
+    @for (m of messages(); track m.id) {
+      <div class="bubble" [class.mine]="m.mine">
+        <span class="visually-hidden">
+          {{
+            (m.mine ? 'chat.you' : who() === 'match' ? 'chat.theyGiftee' : 'chat.theySanta')
+              | transloco
+          }}:
+        </span>
+        <p>{{ m.text }}</p>
+        <time [attr.datetime]="m.createdAt">{{ m.createdAt | localDate: 'time' }}</time>
+      </div>
+    }
+  </div>
+
+  <form class="composer" (ngSubmit)="send()">
+    <label for="chat-input" class="visually-hidden">{{ 'chat.placeholder' | transloco }}</label>
+    <textarea
+      id="chat-input"
+      name="text"
+      rows="1"
+      maxlength="1000"
+      [placeholder]="'chat.placeholder' | transloco"
+      [ngModel]="text()"
+      (ngModelChange)="text.set($event)"
+      (keydown)="onKeydown($event)"
+      [disabled]="!!error()"
+    ></textarea>
+    <button
+      mat-fab
+      type="submit"
+      [disabled]="!canSend()"
+      [attr.aria-label]="'chat.send' | transloco"
+    >
+      <mat-icon>send</mat-icon>
+    </button>
+  </form>
+</section>

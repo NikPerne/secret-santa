@@ -11,10 +11,15 @@ import { createInviteCode } from '../services/membership.js';
 import { serializeGroup, serializeMyMembership } from '../services/serializers.js';
 import { badRequest, conflict } from '../utils/http-error.js';
 
+/**
+ * Exchange dates are calendar days ("2026-12-24"). They're stored at 12:00 UTC so the same day
+ * shows everywhere from UTC-11 to UTC+11 and the .ics all-day event lands on the right date.
+ */
 const dateInput = z
   .string()
-  .refine((v) => !Number.isNaN(Date.parse(v)), 'Invalid date')
-  .transform((v) => new Date(v));
+  .regex(/^\d{4}-\d{2}-\d{2}/, 'Expected a date like 2026-12-24')
+  .refine((v) => !Number.isNaN(Date.parse(v.slice(0, 10))), 'Invalid date')
+  .transform((v) => new Date(`${v.slice(0, 10)}T12:00:00Z`));
 
 const settingsInput = z
   .object({
