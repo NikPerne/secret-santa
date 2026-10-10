@@ -424,15 +424,17 @@
     }
   },
   "ideas": {
-    "title": "Ideje za darila",
-    "avoid": "Prosim, izogni se: {{list}}",
     "hint": "Cene so okvirne cene v slovenskih trgovinah in se lahko razlikujejo. Povezave odprejo iskanje v slovenskih trgovinah. Za vsak slučaj vprašaj obdarovanca v anonimnem klepetu!",
     "show": "Potrebuješ idejo?",
     "singleTitle": "Eno darilo do {{budget}}",
     "bundlesTitle": "Ali združi nekaj manjših daril",
     "bundlesHint": "Skupaj znesejo približno toliko, kot je proračun skupine.",
     "together": "Skupaj",
-    "hintNoBudget": "Cene so okvirne cene v slovenskih trgovinah v EUR. Povezave odprejo iskanje v slovenskih trgovinah."
+    "hintNoBudget": "Cene so okvirne cene v slovenskih trgovinah v EUR. Povezave odprejo iskanje v slovenskih trgovinah.",
+    "titleFor": "Ideje za darilo: {{name}}",
+    "personalized": "Izbrano za osebo {{name}} glede na najljubše stvari in seznam želja.",
+    "notPersonal": "{{name}} še ni napisal/-a, kaj ima rad/-a, zato so to splošne ideje. Vprašaj v anonimnem klepetu!",
+    "avoided": "Izpuščeno zaradi »prosim, ne«: {{list}}"
   },
   "thanks": {
     "receivedTitle": "Zahvala tvojega obdarovanca",

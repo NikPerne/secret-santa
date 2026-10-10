@@ -97,7 +97,13 @@
     }
 
     @if (!items().length || showIdeas()) {
-      <app-gift-ideas [theme]="theme()" [budget]="budget()" [prefs]="prefs()" />
+      <app-gift-ideas
+        [theme]="theme()"
+        [budget]="budget()"
+        [name]="match()?.name ?? ''"
+        [prefs]="prefs()"
+        [wishes]="wishTitles()"
+      />
     } @else {
       <button mat-button (click)="showIdeas.set(true)">
         <mat-icon>lightbulb</mat-icon>{{ 'ideas.show' | transloco }}

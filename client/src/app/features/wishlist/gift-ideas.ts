@@ -4,11 +4,12 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { LanguageService } from '../../core/i18n';
 import { Budget, GroupTheme, Preferences } from '../../core/models';
 import { MoneyPipe } from '../../shared/pipes';
-import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
+import { IdeaWithReason, ideaLinks, suggestIdeas } from './gift-ideas.data';
 
 /**
- * Budget- and theme-aware gift ideas with links to Slovenian shops: single gifts up to the
- * budget (+1 €) and combinations of cheaper gifts that add up to it.
+ * Gift ideas for one person: the group theme decides what's allowed, the giftee's likes and
+ * wishlist bring matching ideas to the top, their "please no" list removes ideas, and the budget
+ * caps prices (single gifts up to budget + 1 €, or a combination of cheaper gifts).
  */
 @Component({
   selector: 'app-gift-ideas',
@@ -16,18 +17,23 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="surface-card ideas" aria-labelledby="ideas-h">
-      <h2 id="ideas-h">💡 {{ 'ideas.title' | transloco }}</h2>
-      @if (prefs()?.dislikes) {
-        <p class="avoid">🚫 {{ 'ideas.avoid' | transloco: { list: prefs()?.dislikes } }}</p>
+      <h2 id="ideas-h">💡 {{ 'ideas.titleFor' | transloco: { name: name() } }}</h2>
+      @if (s().personalized) {
+        <p class="note">💚 {{ 'ideas.personalized' | transloco: { name: name() } }}</p>
+      } @else {
+        <p class="note muted">{{ 'ideas.notPersonal' | transloco: { name: name() } }}</p>
+      }
+      @if (s().avoided.length) {
+        <p class="avoid">🚫 {{ 'ideas.avoided' | transloco: { list: s().avoided.join(', ') } }}</p>
       }
 
       @if (s().budgetApplied) {
         <h3>{{ 'ideas.singleTitle' | transloco: { budget: (budget() | money) } }}</h3>
       }
       <ul class="list">
-        @for (idea of s().singles; track idea.id) {
+        @for (item of s().singles; track item.idea.id) {
           <li>
-            <ng-container *ngTemplateOutlet="ideaRow; context: { $implicit: idea }" />
+            <ng-container *ngTemplateOutlet="ideaRow; context: { $implicit: item }" />
           </li>
         }
       </ul>
@@ -38,9 +44,9 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
         @for (b of s().bundles; track $index) {
           <div class="bundle">
             <ul class="list">
-              @for (idea of b.items; track idea.id) {
+              @for (item of b.items; track item.idea.id) {
                 <li>
-                  <ng-container *ngTemplateOutlet="ideaRow; context: { $implicit: idea }" />
+                  <ng-container *ngTemplateOutlet="ideaRow; context: { $implicit: item }" />
                 </li>
               }
             </ul>
@@ -54,29 +60,36 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
       </p>
     </section>
 
-    <ng-template #ideaRow let-idea>
-      <span class="emoji" aria-hidden="true">{{ idea.emoji }}</span>
+    <ng-template #ideaRow let-item>
+      <span class="emoji" aria-hidden="true">{{ item.idea.emoji }}</span>
       <span class="text">
-        <span>{{ title(idea) }}</span>
+        <span>{{ title(item) }}</span>
+        @if (item.because.length) {
+          <span class="because">💚 {{ item.because.join(', ') }}</span>
+        }
         <span class="links">
-          @for (link of links(idea); track link.url) {
+          @for (link of links(item); track link.url) {
             <a [href]="link.url" target="_blank" rel="noopener noreferrer nofollow"
               >{{ link.name }} ↗</a
             >
           }
         </span>
       </span>
-      <span class="price muted">~{{ idea.price | money: 'EUR' }}</span>
+      <span class="price muted">~{{ item.idea.price | money: 'EUR' }}</span>
     </ng-template>
   `,
   styles: `
     h2 {
       font: var(--mat-sys-title-medium);
-      margin: 0 0 8px;
+      margin: 0 0 4px;
     }
     h3 {
       font: var(--mat-sys-title-small);
       margin: 14px 0 8px;
+    }
+    .note {
+      margin: 0 0 6px;
+      font: var(--mat-sys-body-medium);
     }
     .list {
       list-style: none;
@@ -98,6 +111,10 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
       flex: 1;
       display: grid;
       gap: 2px;
+    }
+    .because {
+      font: var(--mat-sys-label-medium);
+      color: var(--mat-sys-tertiary);
     }
     .links {
       display: flex;
@@ -131,7 +148,7 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
     }
     .avoid {
       color: var(--mat-sys-error);
-      margin: 0 0 8px;
+      margin: 0 0 6px;
     }
     .small {
       font: var(--mat-sys-body-small);
@@ -142,15 +159,24 @@ import { GiftIdea, ideaLinks, suggestIdeas } from './gift-ideas.data';
 export class GiftIdeas {
   readonly theme = input.required<GroupTheme>();
   readonly budget = input.required<Budget>();
+  /** The giftee: their name, preferences and wishlist item titles. */
+  readonly name = input('');
   readonly prefs = input<Preferences | null>(null);
+  readonly wishes = input<string[]>([]);
   protected readonly lang = inject(LanguageService);
-  protected readonly s = computed(() => suggestIdeas(this.theme().preset, this.budget()));
+  protected readonly s = computed(() =>
+    suggestIdeas(this.theme().preset, this.budget(), {
+      likes: this.prefs()?.likes,
+      dislikes: this.prefs()?.dislikes,
+      wishes: this.wishes(),
+    }),
+  );
 
-  protected title(idea: GiftIdea): string {
-    return this.lang.current() === 'sl' ? idea.sl : idea.en;
+  protected title(item: IdeaWithReason): string {
+    return this.lang.current() === 'sl' ? item.idea.sl : item.idea.en;
   }
 
-  protected links(idea: GiftIdea) {
-    return ideaLinks(idea);
+  protected links(item: IdeaWithReason) {
+    return ideaLinks(item.idea);
   }
 }

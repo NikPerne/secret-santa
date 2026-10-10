@@ -1,4 +1,5 @@
 import { ThemePreset } from '../../core/models';
+import { GifteeProfile, analyze, isExcluded, matchReasons } from './personalize';
 
 /** Slovenian online stores / price comparison with search URLs that were verified to work. */
 export const STORES = {
@@ -701,13 +702,23 @@ export const GIFT_IDEAS: Record<Exclude<ThemePreset, 'custom'>, GiftIdea[]> = {
   ],
 };
 
+export interface IdeaWithReason {
+  idea: GiftIdea;
+  /** Words from the giftee's likes/wishlist that this idea matches (empty = general idea). */
+  because: string[];
+}
+
 export interface Suggestions {
-  /** Single gifts, at most 1 € over the budget, closest to the budget first. */
-  singles: GiftIdea[];
+  /** Single gifts, at most 1 € over the budget; personal matches first, then closest to budget. */
+  singles: IdeaWithReason[];
   /** Combos of 2–3 cheaper gifts that together come close to the budget (≤ budget + 1 €). */
-  bundles: { items: GiftIdea[]; total: number }[];
+  bundles: { items: IdeaWithReason[]; total: number }[];
   /** False when the budget is unknown or not in EUR (prices are EUR estimates). */
   budgetApplied: boolean;
+  /** True when the giftee wrote likes/dislikes/wishes we could use. */
+  personalized: boolean;
+  /** Topics left out because of their "please no" list (the words they used). */
+  avoided: string[];
 }
 
 /** Allowed overshoot for any suggestion. */
@@ -722,45 +733,85 @@ function combos<T>(items: T[], k: number): T[][] {
   return out;
 }
 
+/** Ideas a theme allows. Without a theme every category is fair game (more to personalize from). */
+function poolFor(preset: ThemePreset): GiftIdea[] {
+  if (preset !== 'none' && preset !== 'custom') return GIFT_IDEAS[preset];
+  const seen = new Set<string>();
+  // Generic first so ties prefer everyday gifts; skip DIY ideas, which only fit a handmade theme.
+  return [
+    GIFT_IDEAS.none,
+    GIFT_IDEAS.sweets,
+    GIFT_IDEAS.books,
+    GIFT_IDEAS.slovenian,
+    GIFT_IDEAS.experience,
+    GIFT_IDEAS.eco,
+  ]
+    .flat()
+    .filter((i) => !seen.has(i.id) && (seen.add(i.id), true));
+}
+
 /**
- * Theme- and budget-aware ideas. With a EUR budget: single gifts cost at most budget + 1 €, and
- * bundles of cheaper gifts add up to between ~80 % of the budget and budget + 1 €.
+ * Ideas for one person: the group theme decides which ideas are allowed, the giftee's
+ * "please no" list removes ideas, their likes and wishlist bring matching ideas to the top, and
+ * the budget caps the price (single gifts ≤ budget + 1 €, bundles of cheaper gifts adding up to
+ * 80 % … 100 % of the budget + 1 €).
  */
 export function suggestIdeas(
   preset: ThemePreset,
   budget: { amount: number | null; currency: string },
+  profile?: GifteeProfile | null,
   limits = { singles: 6, bundles: 3 },
 ): Suggestions {
-  const list = GIFT_IDEAS[preset === 'custom' ? 'none' : preset];
-  if (budget.amount === null || budget.amount <= 0 || budget.currency !== 'EUR') {
-    return { singles: list.slice(0, limits.singles), bundles: [], budgetApplied: false };
-  }
-  const max = budget.amount + BUDGET_TOLERANCE;
-  const min = budget.amount * 0.8;
+  const p = analyze(profile);
+  const pool = poolFor(preset)
+    .filter((idea) => !isExcluded(idea.id, p))
+    .map((idea) => ({ idea, because: matchReasons(idea.id, p) }));
+  const avoided = [...p.disliked.values()];
+  const base = { personalized: p.hasProfile, avoided };
+  // Original order is the curated order; stable sort keeps it for ties.
+  const byMatch = (a: IdeaWithReason, b: IdeaWithReason) => b.because.length - a.because.length;
 
-  const singles = list
-    .filter((i) => i.price <= max)
-    .sort((a, b) => Math.abs(budget.amount! - a.price) - Math.abs(budget.amount! - b.price))
+  if (budget.amount === null || budget.amount <= 0 || budget.currency !== 'EUR') {
+    return {
+      ...base,
+      singles: [...pool].sort(byMatch).slice(0, limits.singles),
+      bundles: [],
+      budgetApplied: false,
+    };
+  }
+  const amount = budget.amount;
+  const max = amount + BUDGET_TOLERANCE;
+  const min = amount * 0.8;
+  const distance = (price: number) => Math.abs(amount - price);
+
+  const singles = pool
+    .filter((i) => i.idea.price <= max)
+    .sort((a, b) => byMatch(a, b) || distance(a.idea.price) - distance(b.idea.price))
     .slice(0, limits.singles);
 
-  // Bundles: only from items clearly below the budget, preferring totals closest to the budget
-  // and not repeating an item across bundles.
-  const cheap = list.filter((i) => i.price < budget.amount!);
+  // Bundles from items clearly below the budget: more personal matches first, then the total
+  // closest to the budget, then fewer items; no item repeats across bundles.
+  const cheap = pool.filter((i) => i.idea.price < amount);
   const candidates = [...combos(cheap, 2), ...combos(cheap, 3)]
-    .map((items) => ({ items, total: items.reduce((s, i) => s + i.price, 0) }))
+    .map((items) => ({
+      items,
+      total: items.reduce((s, i) => s + i.idea.price, 0),
+      matches: items.filter((i) => i.because.length).length,
+    }))
     .filter((b) => b.total >= min && b.total <= max)
     .sort(
       (a, b) =>
-        Math.abs(budget.amount! - a.total) - Math.abs(budget.amount! - b.total) ||
+        b.matches - a.matches ||
+        distance(a.total) - distance(b.total) ||
         a.items.length - b.items.length,
     );
   const bundles: Suggestions['bundles'] = [];
   const used = new Set<string>();
   for (const b of candidates) {
     if (bundles.length >= limits.bundles) break;
-    if (b.items.some((i) => used.has(i.id))) continue;
-    bundles.push(b);
-    b.items.forEach((i) => used.add(i.id));
+    if (b.items.some((i) => used.has(i.idea.id))) continue;
+    bundles.push({ items: b.items, total: b.total });
+    b.items.forEach((i) => used.add(i.idea.id));
   }
-  return { singles, bundles, budgetApplied: true };
+  return { ...base, singles, bundles, budgetApplied: true };
 }

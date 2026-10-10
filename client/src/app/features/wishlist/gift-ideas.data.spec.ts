@@ -7,7 +7,8 @@ describe('suggestIdeas', () => {
     for (const theme of themes) {
       for (const amount of [5, 10, 15, 20, 25, 30, 50]) {
         const { singles } = suggestIdeas(theme, { amount, currency: 'EUR' });
-        for (const i of singles) expect(i.price).toBeLessThanOrEqual(amount + BUDGET_TOLERANCE);
+        for (const { idea: i } of singles)
+          expect(i.price).toBeLessThanOrEqual(amount + BUDGET_TOLERANCE);
       }
     }
   });
@@ -21,11 +22,11 @@ describe('suggestIdeas', () => {
           expect(b.items.length).toBeLessThanOrEqual(3);
           expect(b.total).toBeLessThanOrEqual(amount + BUDGET_TOLERANCE);
           expect(b.total).toBeGreaterThanOrEqual(amount * 0.8);
-          expect(b.total).toBe(b.items.reduce((s, i) => s + i.price, 0));
-          for (const i of b.items) expect(i.price).toBeLessThan(amount);
+          expect(b.total).toBe(b.items.reduce((s, i) => s + i.idea.price, 0));
+          for (const i of b.items) expect(i.idea.price).toBeLessThan(amount);
         }
         // Bundles don't reuse the same item.
-        const ids = bundles.flatMap((b) => b.items.map((i) => i.id));
+        const ids = bundles.flatMap((b) => b.items.map((i) => i.idea.id));
         expect(new Set(ids).size).toBe(ids.length);
       }
     }
@@ -36,7 +37,7 @@ describe('suggestIdeas', () => {
     expect(s.budgetApplied).toBe(true);
     expect(s.singles.length).toBeGreaterThan(0);
     expect(s.bundles.length).toBeGreaterThan(0);
-    expect(s.singles[0].price).toBeLessThanOrEqual(21);
+    expect(s.singles[0].idea.price).toBeLessThanOrEqual(21);
   });
 
   it('shows everything without a budget or with a non-EUR budget', () => {
@@ -45,7 +46,7 @@ describe('suggestIdeas', () => {
       budgetApplied: false,
     });
     expect(suggestIdeas('books', { amount: 5, currency: 'USD' }).budgetApplied).toBe(false);
-    expect(suggestIdeas('custom', { amount: null, currency: 'EUR' }).singles[0]).toBe(
+    expect(suggestIdeas('custom', { amount: null, currency: 'EUR' }).singles[0].idea).toBe(
       GIFT_IDEAS.none[0],
     );
   });

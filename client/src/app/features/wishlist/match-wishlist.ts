@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  OnInit,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,6 +55,8 @@ export class MatchWishlist implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly match = signal<Match | null>(null);
   protected readonly items = signal<WishlistItem[]>([]);
+  /** Their wish titles also hint at what they like (used to personalize ideas). */
+  protected readonly wishTitles = computed(() => this.items().map((i) => i.title));
   protected readonly prefs = signal<Preferences | null>(null);
   protected readonly currency = signal('EUR');
   protected readonly theme = signal<GroupTheme>({ preset: 'none', text: '' });
