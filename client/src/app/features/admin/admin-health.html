@@ -1,0 +1,179 @@
+<section class="page stack">
+  <div class="title-row">
+    <h1 class="page-title">🩺 {{ 'admin.title' | transloco }}</h1>
+    <button
+      mat-icon-button
+      (click)="load()"
+      [disabled]="loading()"
+      [attr.aria-label]="'admin.refresh' | transloco"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <p class="error-text" role="alert">{{ message }}</p>
+  }
+
+  @if (data(); as d) {
+    <p class="muted small">
+      {{ 'admin.generated' | transloco }}: {{ d.generatedAt | localDate: 'time' }}
+    </p>
+
+    <!-- Database (Atlas M0: 512 MB) -->
+    <section class="surface-card stack">
+      <h2>🍃 {{ 'admin.database' | transloco }}</h2>
+      @let dbPct = pct(d.database.usedBytes, d.database.limitBytes);
+      <div class="meter" [class]="level(dbPct)">
+        <div class="meter-row">
+          <span>{{ bytes(d.database.usedBytes) }} / {{ bytes(d.database.limitBytes) }}</span>
+          <strong>{{ dbPct }} %</strong>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="dbPct" />
+      </div>
+      <p class="muted small">
+        {{ 'admin.data' | transloco }} {{ bytes(d.database.dataBytes) }} ·
+        {{ 'admin.indexes' | transloco }} {{ bytes(d.database.indexBytes) }} ·
+        {{ 'admin.retention' | transloco: { days: d.retentionDays } }}
+      </p>
+      <dl class="counts">
+        @for (e of entries(d.database.counts); track e[0]) {
+          <div>
+            <dt>{{ e[0] }}</dt>
+            <dd>
+              @if (isObject(e[1])) {
+                @for (s of entries(e[1]); track s[0]) {
+                  <span class="pill">{{ s[0] }}: {{ s[1] }}</span>
+                }
+              } @else {
+                {{ e[1] }}
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <!-- Email -->
+    <section class="surface-card stack">
+      <h2>✉️ {{ 'admin.email' | transloco }} ({{ d.email.provider }})</h2>
+      @let mailPct = pct(d.email.today, d.email.dailyLimit);
+      <div class="meter" [class]="level(mailPct)">
+        <div class="meter-row">
+          <span
+            >{{ 'admin.sentToday' | transloco }}: {{ d.email.today }} /
+            {{ d.email.dailyLimit }}</span
+          >
+          <strong>{{ mailPct }} %</strong>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="mailPct" />
+      </div>
+      @if (d.email.failedToday) {
+        <p class="error-text">
+          {{ 'admin.failedToday' | transloco: { count: d.email.failedToday } }}
+        </p>
+      }
+      @if (d.email.provider === 'console') {
+        <p class="muted small">{{ 'admin.emailConsole' | transloco }}</p>
+      }
+      <div class="bars" aria-hidden="true">
+        @for (day of d.email.lastDays.slice().reverse(); track day.day) {
+          <div class="bar-col" [title]="day.day + ': ' + day.sent">
+            <div class="bar" [style.height.%]="pct(day.sent, d.email.dailyLimit) || 2"></div>
+            <span>{{ day.day.slice(8) }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Cloudinary -->
+    <section class="surface-card stack">
+      <h2>🖼️ {{ 'admin.images' | transloco }}</h2>
+      @if (!d.images.configured) {
+        <p class="muted">{{ 'admin.notConfigured' | transloco }}</p>
+      } @else if (d.images.error) {
+        <p class="error-text">{{ d.images.error }}</p>
+      } @else {
+        @let credits = d.images.credits;
+        @let cPct = credits?.percent ?? pct(credits?.used, credits?.limit);
+        <div class="meter" [class]="level(cPct)">
+          <div class="meter-row">
+            <span
+              >{{ 'admin.credits' | transloco }}: {{ credits?.used ?? '–' }} /
+              {{ credits?.limit ?? '–' }}</span
+            >
+            <strong>{{ cPct }} %</strong>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="cPct" />
+        </div>
+        <p class="muted small">
+          {{ 'admin.storage' | transloco }} {{ bytes(d.images.storageBytes) }} ·
+          {{ 'admin.bandwidth' | transloco }} {{ bytes(d.images.bandwidthBytes) }} ·
+          {{ 'admin.transformations' | transloco }} {{ d.images.transformations ?? '–' }} ·
+          {{ 'admin.files' | transloco }} {{ d.images.resources ?? '–' }}
+          @if (d.images.plan) {
+            · {{ d.images.plan }}
+          }
+        </p>
+      }
+    </section>
+
+    <!-- Server -->
+    <section class="surface-card stack">
+      <h2>🖥️ {{ 'admin.server' | transloco }}</h2>
+      @let memPct = pct(d.server.memoryRssBytes, d.server.memoryLimitBytes);
+      <div class="meter" [class]="level(memPct)">
+        <div class="meter-row">
+          <span
+            >{{ 'admin.memory' | transloco }}: {{ bytes(d.server.memoryRssBytes) }} /
+            {{ bytes(d.server.memoryLimitBytes) }}</span
+          >
+          <strong>{{ memPct }} %</strong>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="memPct" />
+      </div>
+      <p class="muted small">
+        v{{ d.server.version }} · Node {{ d.server.node }} · {{ d.server.env }} ·
+        {{ 'admin.uptime' | transloco }}
+        {{ duration(d.server.uptimeSeconds) }}
+      </p>
+      <p class="small">
+        {{ 'admin.keepAlive' | transloco }}:
+        @if (d.server.keepAliveUrl) {
+          ✅ {{ d.server.keepAliveUrl }}
+        } @else {
+          ⚠️ {{ 'admin.keepAliveOff' | transloco }}
+        }
+      </p>
+      <p class="small">
+        🔔 {{ 'admin.push' | transloco }}: {{ d.push.configured ? '✅' : '⚠️' }} ·
+        {{ d.push.subscriptions }}
+      </p>
+      <p class="muted small">{{ 'admin.renderNote' | transloco }}</p>
+    </section>
+
+    <!-- Daily job -->
+    <section class="surface-card stack">
+      <h2>⏰ {{ 'admin.dailyJob' | transloco }}</h2>
+      @if (d.dailyJob; as job) {
+        <p>
+          {{ job.ok ? '✅' : '❌' }} {{ job.ranAt | localDate: 'time' }}
+          @if (job.error) {
+            <span class="error-text">{{ job.error }}</span>
+          }
+        </p>
+        @if (job.report) {
+          <div class="row">
+            @for (e of entries(job.report); track e[0]) {
+              <span class="pill">{{ e[0] }}: {{ e[1] }}</span>
+            }
+          </div>
+        }
+      } @else {
+        <p class="muted">{{ 'admin.neverRan' | transloco }}</p>
+      }
+    </section>
+  } @else if (loading()) {
+    <mat-spinner diameter="40" style="margin: 32px auto" />
+  }
+</section>

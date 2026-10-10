@@ -9,6 +9,7 @@ import { cloudinaryEnabled, env, instantJoinEnabled, isProd, pushEnabled } from 
 import { loadUser, requireAuth } from './middleware/auth.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { loadGroupMembership } from './middleware/group.js';
+import { adminRouter } from './routes/admin.js';
 import { authRouter } from './routes/auth.js';
 import { chatRouter } from './routes/chat.js';
 import { drawRouter } from './routes/draw.js';
@@ -103,6 +104,7 @@ export function createApp(options: { staticDir?: string } = {}) {
   app.use('/api/groups', requireAuth, groupsRouter);
   app.use('/api/uploads', requireAuth, uploadsRouter);
   app.use('/api/push', requireAuth, pushRouter);
+  app.use('/api/admin', requireAuth, adminRouter);
   app.use(
     '/api/groups/:groupId',
     requireAuth,

@@ -1,3 +1,4 @@
+import { adminEmails } from '../config/env.js';
 import type { GroupDoc, MembershipDoc, UserDoc } from '../models/index.js';
 
 export function serializeUser(user: UserDoc) {
@@ -8,6 +9,7 @@ export function serializeUser(user: UserDoc) {
     language: user.language,
     emailNotifications: user.emailNotifications,
     needsName: user.needsName ?? false,
+    isAdmin: adminEmails.has(user.email),
     pushEnabled: user.pushSubscriptions.length > 0,
   };
 }

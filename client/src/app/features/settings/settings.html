@@ -86,6 +86,12 @@
       </button>
     </section>
 
+    @if (user.isAdmin) {
+      <a mat-stroked-button routerLink="/admin">
+        <mat-icon>monitor_heart</mat-icon>{{ 'admin.title' | transloco }}
+      </a>
+    }
+
     <section class="surface-card stack danger-zone" aria-labelledby="privacy-h">
       <h2 id="privacy-h">{{ 'settings.privacy' | transloco }}</h2>
       <p class="muted">{{ 'settings.privacyText' | transloco }}</p>

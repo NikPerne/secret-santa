@@ -11,6 +11,8 @@ export interface User {
   emailNotifications: boolean;
   /** Signed up with only an email; ask for a name once. */
   needsName: boolean;
+  /** May open the admin health page (enforced by the API too). */
+  isAdmin: boolean;
   pushEnabled: boolean;
 }
 

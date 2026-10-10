@@ -123,3 +123,22 @@ describe('seed', () => {
     expect(await WishlistItemModel.countDocuments({ groupId })).toBeGreaterThan(5);
   });
 });
+
+describe('admin health page', () => {
+  it('is only available to admins', async () => {
+    const regular = await signIn('someone@example.com');
+    expect((await regular.agent.get('/api/admin/health')).status).toBe(403);
+    expect((await regular.agent.get('/api/auth/me')).body.user.isAdmin).toBe(false);
+
+    const admin = await signIn('boss@example.com');
+    expect((await admin.agent.get('/api/auth/me')).body.user.isAdmin).toBe(true);
+    await runDailyJob();
+    const res = await admin.agent.get('/api/admin/health');
+    expect(res.status).toBe(200);
+    expect(res.body.database.limitBytes).toBe(512 * 1024 * 1024);
+    expect(res.body.database.counts.users).toBe(2);
+    expect(res.body.email).toMatchObject({ provider: 'console', dailyLimit: 300, today: 0 });
+    expect(res.body.images.configured).toBe(false);
+    expect(res.body.dailyJob.ok).toBe(true);
+  });
+});

@@ -7,6 +7,11 @@ export default defineConfig({
     testTimeout: 60_000,
     hookTimeout: 120_000,
     fileParallelism: false,
-    env: { NODE_ENV: 'test', DEV_INSTANT_JOIN: 'true', CLIENT_URL: 'http://localhost:4200' },
+    env: {
+      NODE_ENV: 'test',
+      DEV_INSTANT_JOIN: 'true',
+      CLIENT_URL: 'http://localhost:4200',
+      ADMIN_EMAILS: 'boss@example.com',
+    },
   },
 });

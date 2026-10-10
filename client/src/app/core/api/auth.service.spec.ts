@@ -13,6 +13,7 @@ const ana: User = {
   emailNotifications: true,
   pushEnabled: false,
   needsName: false,
+  isAdmin: false,
 };
 
 describe('AuthService', () => {

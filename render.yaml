@@ -65,6 +65,12 @@ services:
         sync: false
       - key: VAPID_SUBJECT
         sync: false # e.g. mailto:you@example.com
+      # Who may open the admin health page (/admin). Comma-separated.
+      - key: ADMIN_EMAILS
+        value: nik.perne@gmail.com
+      # Your email provider's daily limit (Brevo free: 300), shown on the health page.
+      - key: EMAIL_DAILY_LIMIT
+        value: '300'
       - key: DATA_RETENTION_DAYS
         value: '60'
       - key: DAILY_JOB_CRON

@@ -7,5 +7,6 @@ export * from './membership.js';
 export * from './message.js';
 export * from './notification-log.js';
 export * from './preferences.js';
+export * from './system-stat.js';
 export * from './user.js';
 export * from './wishlist-item.js';

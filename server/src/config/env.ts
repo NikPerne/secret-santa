@@ -37,6 +37,10 @@ const schema = z.object({
   DAILY_JOB_CRON: z.string().default('0 8 * * *'),
   /** Public URL to ping so the free instance never sleeps. Defaults to RENDER_EXTERNAL_URL; 'off' disables. */
   KEEP_ALIVE_URL: z.string().optional().default(''),
+  /** Comma-separated emails that may open the admin health page. */
+  ADMIN_EMAILS: z.string().optional().default(''),
+  /** Your email provider's daily sending limit (Brevo free: 300), for the health page. */
+  EMAIL_DAILY_LIMIT: z.coerce.number().int().positive().default(300),
 });
 
 export type Env = z.infer<typeof schema>;
@@ -75,4 +79,9 @@ export const emailProvider: 'brevo' | 'resend' | 'smtp' | 'console' = env.BREVO_
       ? 'smtp'
       : 'console';
 export const emailEnabled = emailProvider !== 'console';
+export const adminEmails = new Set(
+  env.ADMIN_EMAILS.split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
+);
 export const pushEnabled = Boolean(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY);

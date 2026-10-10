@@ -6,6 +6,7 @@ import {
   UserModel,
   WishlistItemModel,
   claimNotification,
+  setStat,
   type GroupDoc,
 } from '../models/index.js';
 import { deleteGroupData } from '../services/group-data.js';
@@ -128,9 +129,11 @@ export async function runDailyJob(now = new Date()): Promise<DailyJobReport | nu
     const { groups, users } = await retentionCleanup(now);
     const report = { exchangeSoon, wishlistMissing, finished, deletedGroups: groups, deletedUsers: users };
     logger.info(report, 'Daily job finished');
+    await setStat('job:daily', { ranAt: new Date().toISOString(), ok: true, report });
     return report;
   } catch (err) {
     logger.error({ err }, 'Daily job failed');
+    await setStat('job:daily', { ranAt: new Date().toISOString(), ok: false, error: (err as Error).message });
     return null;
   } finally {
     running = false;

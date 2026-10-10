@@ -1,5 +1,6 @@
 import nodemailer, { type Transporter } from 'nodemailer';
 import { emailProvider, env } from '../config/env.js';
+import { bumpDaily } from '../models/system-stat.js';
 import { logger } from '../utils/logger.js';
 import type { EmailContent } from './email-templates.js';
 
@@ -82,9 +83,11 @@ export async function sendEmail(to: string, content: EmailContent): Promise<bool
     if (emailProvider === 'brevo') await sendViaBrevo(to, content);
     else if (emailProvider === 'resend') await sendViaResend(to, content);
     else await getTransporter().sendMail({ from: env.MAIL_FROM, to, ...content });
+    void bumpDaily('mail');
     return true;
   } catch (err) {
     logger.error({ err: (err as Error).message, provider: emailProvider }, 'Failed to send email');
+    void bumpDaily('mailFailed');
     return false;
   }
 }
