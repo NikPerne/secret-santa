@@ -18,20 +18,28 @@ export class AuthService {
 
   readonly user = signal<User | null>(null);
   readonly signedIn = computed(() => this.user() !== null);
-  private readyPromise?: Promise<User | null>;
+  private initialCheck?: Promise<unknown>;
+  /** Bumped on every sign-in/out so a slower, older session check can't overwrite it. */
+  private version = 0;
 
-  /** Resolves once the session has been checked (doesn't block app start-up). */
-  ready(): Promise<User | null> {
-    this.readyPromise ??= this.refresh();
-    return this.readyPromise;
+  /**
+   * Resolves with the *current* user once the initial session check has finished (doesn't block
+   * app start-up). Always reads the live state, so a sign-in after start-up is seen.
+   */
+  async ready(): Promise<User | null> {
+    this.initialCheck ??= this.refresh();
+    await this.initialCheck;
+    return this.user();
   }
 
   async refresh(): Promise<User | null> {
+    const started = this.version;
     try {
       const res = await firstValueFrom(this.http.get<{ user: User | null }>(api('/auth/me')));
-      this.setUser(res.user);
+      // Ignore the answer if someone signed in or out while it was in flight.
+      if (started === this.version) this.setUser(res.user);
     } catch {
-      this.user.set(null);
+      /* offline or API asleep: keep the current state */
     }
     return this.user();
   }
@@ -52,7 +60,10 @@ export class AuthService {
 
   async verify(token: string): Promise<SignInResult> {
     const res = await firstValueFrom(this.http.post<SignInResult>(api('/auth/verify'), { token }));
+    this.version++;
     this.setUser(res.user);
+    // Drop cached "signed out" API answers the service worker might still serve.
+    await clearApiCaches().catch(() => undefined);
     return res;
   }
 
@@ -68,7 +79,10 @@ export class AuthService {
         language: this.language.current(),
       }),
     );
+    this.version++;
     this.setUser(res.user);
+    // Drop cached "signed out" API answers the service worker might still serve.
+    await clearApiCaches().catch(() => undefined);
     return res;
   }
 
@@ -80,8 +94,14 @@ export class AuthService {
 
   async logout(): Promise<void> {
     await firstValueFrom(this.http.post(api('/auth/logout'), {}));
-    this.user.set(null);
+    this.clear();
     await clearApiCaches();
+  }
+
+  /** Forget the signed-in user locally (after sign-out or account deletion). */
+  clear(): void {
+    this.version++;
+    this.user.set(null);
   }
 
   private setUser(user: User | null): void {

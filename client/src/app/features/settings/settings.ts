@@ -106,7 +106,7 @@ export class Settings implements OnInit {
     await this.run(async () => {
       await this.push.disable().catch(() => undefined);
       await firstValueFrom(this.http.delete(api('/auth/me')));
-      this.auth.user.set(null);
+      this.auth.clear();
       await clearApiCaches();
       this.notify.success('settings.deleted');
       await this.router.navigate(['/']);
