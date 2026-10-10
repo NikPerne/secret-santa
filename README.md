@@ -152,11 +152,11 @@ Set `CLIENT_URL=http://localhost:3000` in `server/.env` so email links match.
 2. **Cloudinary** (optional): copy cloud name, API key and API secret from the dashboard.
 3. **SMTP** (optional but needed for real sign-ins): any provider with a free tier (Resend, Brevo, Mailjet…). Verify your sender domain/address.
 4. **VAPID** (optional): `npx web-push generate-vapid-keys`.
-5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `secret-santa` (https://secret-santa-w1w9.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
-6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, SMTP, VAPID). `CLIENT_URL` is preset to `https://secret-santa-w1w9.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
+5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `nik-secret-santa` (https://nik-secret-santa.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
+6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, SMTP, VAPID). `CLIENT_URL` is preset to `https://nik-secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
 7. Keep this the **only free web service** in your Render workspace, so the 750 free instance-hours cover running 24/7.
 
-**Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://secret-santa-w1w9.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
+**Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://nik-secret-santa.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
 
 **One origin:** because the app and API share a URL, the session cookie is first-party (`SameSite=Lax`), which works in every browser including Safari. If you ever host the API elsewhere, set `apiUrl` in `client/src/environments/environment.ts` and `COOKIE_SAMESITE=none` on the API.
 

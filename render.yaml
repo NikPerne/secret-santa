@@ -8,7 +8,7 @@
 # - Same origin for app and API, so the auth cookie is first-party (works in Safari).
 services:
   - type: web
-    name: santa # URL assigned by Render: https://secret-santa-w1w9.onrender.com (fixed at creation)
+    name: nik-secret-santa # → https://nik-secret-santa.onrender.com (URL is fixed when the service is created)
     runtime: node
     plan: free
     # devDependencies (TypeScript, Angular CLI) are needed to build, even with NODE_ENV=production.
@@ -30,7 +30,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        value: https://secret-santa-w1w9.onrender.com # must match the service URL exactly
+        value: https://nik-secret-santa.onrender.com # must match the service URL exactly
       - key: COOKIE_SAMESITE
         value: lax
       - key: CLOUDINARY_CLOUD_NAME
