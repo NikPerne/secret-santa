@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ChatMessage, ChatWho, GalleryPhoto, ImageRef } from '../models';
+import { ChatMessage, ChatWho, GalleryPhoto, ImageRef, UnreadCounts } from '../models';
 import { BACKGROUND } from '../interceptors';
 import { api } from './api';
 
@@ -20,6 +20,16 @@ export class ChatService {
         }),
       )
     ).messages;
+  }
+
+  async unread(groupId: string): Promise<UnreadCounts> {
+    return (
+      await firstValueFrom(
+        this.http.get<{ unread: UnreadCounts }>(api(`/groups/${groupId}/chat-unread`), {
+          context: new HttpContext().set(BACKGROUND, true),
+        }),
+      )
+    ).unread;
   }
 
   async send(groupId: string, who: ChatWho, text: string): Promise<ChatMessage> {

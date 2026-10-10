@@ -37,7 +37,9 @@
     "invalid_image": "Prosimo, ponovno naloži sliko.",
     "uploads_disabled": "Nalaganje fotografij na tem strežniku še ni nastavljeno.",
     "gallery_closed": "Stena fotografij se odpre po izmenjavi daril.",
-    "push_disabled": "Potisna obvestila na tem strežniku še niso nastavljena."
+    "push_disabled": "Potisna obvestila na tem strežniku še niso nastavljena.",
+    "already_nudged": "Danes je že bil/-a opomnjen/-a. Poskusi jutri.",
+    "nothing_to_nudge": "Ta oseba je že vse uredila. Ni je treba opomniti."
   },
   "fields": {
     "email": "E-pošta",
@@ -167,7 +169,8 @@
     "chatMatchHint": "Postavljaj vprašanja, ne bo vedel/-a, da si ti",
     "chatSanta": "Klepet s tvojim Božičkom",
     "chatSantaHint": "Tvoj Skrivni Božiček ima morda vprašanja",
-    "addToCalendar": "Dodaj v koledar"
+    "addToCalendar": "Dodaj v koledar",
+    "unread": "Neprebrana sporočila: {{count}}"
   },
   "countdown": {
     "days": "dni",
@@ -276,7 +279,9 @@
     "delete": "Izbriši skupino",
     "deleteTitle": "Izbrišem skupino {{name}}?",
     "deleteMessage": "Vsi pari, seznami želja, klepeti in fotografije bodo trajno izbrisani za vse.",
-    "deleteConfirm": "Izbriši za vedno"
+    "deleteConfirm": "Izbriši za vedno",
+    "nudge": "Opomni: {{name}}",
+    "nudged": "Opomnik poslan: {{name}} 🔔"
   },
   "print": {
     "title": "Natisni kartice za razkritje",
@@ -358,5 +363,13 @@
   "profile": {
     "nameTitle": "Kako ti je ime?",
     "nameText": "To ime bo videla tvoja skupina. Kasneje ga lahko spremeniš v nastavitvah."
+  },
+  "inviteEmails": {
+    "title": "Povabi po e-pošti",
+    "label": "E-naslovi",
+    "placeholder": "ana@primer.si, marko@primer.si",
+    "hint": "Loči z vejicami ali novimi vrsticami. Najdenih naslovov: {{count}}",
+    "send": "Pošlji povabila",
+    "sent": "Poslanih povabil: {{sent}} (že v skupini: {{skipped}})"
   }
 }

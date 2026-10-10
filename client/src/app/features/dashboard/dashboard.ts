@@ -17,10 +17,18 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { DrawService } from '../../core/api/draw.service';
 import { GroupsService } from '../../core/api/groups.service';
-import { Dashboard, Exclusion, Feasibility, Member, PairView } from '../../core/models';
+import {
+  Dashboard,
+  DashboardMember,
+  Exclusion,
+  Feasibility,
+  Member,
+  PairView,
+} from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { ExclusionsEditor } from '../../shared/exclusions-editor';
+import { InviteEmails } from '../../shared/invite-emails';
 import { InviteShare } from '../../shared/invite-share';
 
 @Component({
@@ -35,6 +43,7 @@ import { InviteShare } from '../../shared/invite-share';
     TranslocoPipe,
     ExclusionsEditor,
     InviteShare,
+    InviteEmails,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.html',
@@ -52,6 +61,8 @@ export class DashboardPage {
   protected readonly data = signal<Dashboard | null>(null);
   protected readonly busy = signal(false);
   protected readonly pairs = signal<PairView[] | null>(null);
+  /** People already nudged in this session (the server allows one nudge per day). */
+  protected readonly nudged = signal(new Set<string>());
 
   protected readonly group = computed(() => this.data()?.group);
   protected readonly members = computed(() => this.data()?.members ?? []);
@@ -136,6 +147,24 @@ export class DashboardPage {
       this.notify.success('dashboard.removed', { name: member.name });
       await this.load(g.id);
     });
+  }
+
+  /** Someone who hasn't unwrapped their match yet, or still has an empty wishlist. */
+  protected canNudge(m: DashboardMember): boolean {
+    const drawn = this.group()?.status === 'drawn';
+    return m.participates && ((drawn && !m.viewedMatch) || m.wishlistCount === 0);
+  }
+
+  protected async nudge(m: DashboardMember): Promise<void> {
+    const g = this.group();
+    if (!g) return;
+    try {
+      await this.drawApi.nudge(g.id, m.id);
+      this.notify.success('dashboard.nudged', { name: m.name });
+    } catch (err) {
+      this.notify.error(err);
+    }
+    this.nudged.update((s) => new Set(s).add(m.id));
   }
 
   protected async showPairs(): Promise<void> {

@@ -6,7 +6,13 @@ import { formatDate, pushText, templates } from './email-templates.js';
 import { sendPush } from './push.js';
 
 export type NotificationKind =
-  'drawDone' | 'matchChanged' | 'wishlistMissing' | 'exchangeSoon' | 'newMessage';
+  | 'drawDone'
+  | 'matchChanged'
+  | 'wishlistMissing'
+  | 'exchangeSoon'
+  | 'newMessage'
+  | 'nudgeReveal'
+  | 'thankYou';
 
 const pathFor: Record<NotificationKind, (groupId: string) => string> = {
   drawDone: (g) => `/g/${g}/reveal`,
@@ -14,6 +20,8 @@ const pathFor: Record<NotificationKind, (groupId: string) => string> = {
   wishlistMissing: (g) => `/g/${g}/wishlist`,
   exchangeSoon: (g) => `/g/${g}`,
   newMessage: (g) => `/g/${g}`,
+  nudgeReveal: (g) => `/g/${g}/reveal`,
+  thankYou: (g) => `/g/${g}`,
 };
 
 function emailFor(kind: NotificationKind, user: UserDoc, group: GroupDoc, url: string) {
@@ -32,6 +40,10 @@ function emailFor(kind: NotificationKind, user: UserDoc, group: GroupDoc, url: s
         formatDate(group.exchangeDate ?? new Date(), user.language),
         url,
       );
+    case 'nudgeReveal':
+      return t.nudgeReveal(user.name, group.name, url);
+    case 'thankYou':
+      return t.thankYou(user.name, group.name, url);
     case 'newMessage':
       return null; // push only: emailing every chat message would be spammy
   }

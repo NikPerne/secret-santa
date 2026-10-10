@@ -37,7 +37,9 @@
     "invalid_image": "Please upload the image again.",
     "uploads_disabled": "Photo uploads aren't set up on this server yet.",
     "gallery_closed": "The photo wall opens after the gift exchange.",
-    "push_disabled": "Push notifications aren't set up on this server yet."
+    "push_disabled": "Push notifications aren't set up on this server yet.",
+    "already_nudged": "Already reminded today. Try again tomorrow.",
+    "nothing_to_nudge": "This person is all set. Nothing to remind them about."
   },
   "fields": {
     "email": "Email",
@@ -167,7 +169,8 @@
     "chatMatchHint": "Ask questions, they won't know it's you",
     "chatSanta": "Chat with your Santa",
     "chatSantaHint": "Your Secret Santa may have questions",
-    "addToCalendar": "Add to calendar"
+    "addToCalendar": "Add to calendar",
+    "unread": "Unread messages: {{count}}"
   },
   "countdown": {
     "days": "days",
@@ -276,7 +279,9 @@
     "delete": "Delete group",
     "deleteTitle": "Delete {{name}}?",
     "deleteMessage": "All matches, wishlists, chats and photos will be permanently deleted for everyone.",
-    "deleteConfirm": "Delete forever"
+    "deleteConfirm": "Delete forever",
+    "nudge": "Remind {{name}}",
+    "nudged": "Reminder sent to {{name}} 🔔"
   },
   "print": {
     "title": "Print reveal cards",
@@ -358,5 +363,13 @@
   "profile": {
     "nameTitle": "What's your name?",
     "nameText": "Your group will see this name. You can change it later in Settings."
+  },
+  "inviteEmails": {
+    "title": "Invite by email",
+    "label": "Email addresses",
+    "placeholder": "ana@example.com, marko@example.com",
+    "hint": "Separate with commas or new lines. Addresses found: {{count}}",
+    "send": "Send invites",
+    "sent": "Invites sent: {{sent}} (already in the group: {{skipped}})"
   }
 }

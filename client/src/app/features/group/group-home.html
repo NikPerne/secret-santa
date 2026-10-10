@@ -74,6 +74,13 @@
             <strong>{{ 'group.chatMatch' | transloco }}</strong>
             <span class="muted">{{ 'group.chatMatchHint' | transloco }}</span>
           </span>
+          @if (unread().match) {
+            <span
+              class="badge"
+              [attr.aria-label]="'group.unread' | transloco: { count: unread().match }"
+              >{{ unread().match }}</span
+            >
+          }
         </a>
         <a class="tile surface-card" [routerLink]="['/g', g.id, 'chat', 'santa']">
           <mat-icon aria-hidden="true">support_agent</mat-icon>
@@ -81,6 +88,13 @@
             <strong>{{ 'group.chatSanta' | transloco }}</strong>
             <span class="muted">{{ 'group.chatSantaHint' | transloco }}</span>
           </span>
+          @if (unread().santa) {
+            <span
+              class="badge"
+              [attr.aria-label]="'group.unread' | transloco: { count: unread().santa }"
+              >{{ unread().santa }}</span
+            >
+          }
         </a>
       </div>
     }

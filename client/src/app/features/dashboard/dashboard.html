@@ -102,6 +102,19 @@
                 >
               </div>
             }
+            @if (canNudge(m)) {
+              <button
+                mat-icon-button
+                [disabled]="busy() || nudged().has(m.id)"
+                (click)="nudge(m)"
+                [matTooltip]="'dashboard.nudge' | transloco: { name: m.name }"
+                [attr.aria-label]="'dashboard.nudge' | transloco: { name: m.name }"
+              >
+                <mat-icon>{{
+                  nudged().has(m.id) ? 'notifications_off' : 'notifications_active'
+                }}</mat-icon>
+              </button>
+            }
             @if (m.role !== 'organizer') {
               <button
                 mat-icon-button
@@ -142,6 +155,8 @@
           >
         </mat-expansion-panel-header>
         <app-invite-share [code]="g.inviteCode" [groupName]="g.name" />
+        <h3 class="sub">{{ 'inviteEmails.title' | transloco }}</h3>
+        <app-invite-emails [groupId]="g.id" />
       </mat-expansion-panel>
 
       @if (g.status !== 'open') {

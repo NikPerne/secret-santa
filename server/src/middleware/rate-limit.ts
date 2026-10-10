@@ -35,3 +35,14 @@ export const chatLimiter = rateLimit({
   skip: (req) => skip() || req.method === 'GET',
   message,
 });
+
+/** Invite emails: generous for a family, useless for spamming. */
+export const inviteLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  keyGenerator: byUserOrIp,
+  skip,
+  message,
+});

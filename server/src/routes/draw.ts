@@ -9,12 +9,14 @@ import {
   PreferencesModel,
   UserModel,
   WishlistItemModel,
+  claimNotification,
   type GroupDoc,
   type MembershipDoc,
 } from '../models/index.js';
 import { DrawImpossibleError } from '../services/draw.js';
 import { feasibilityFor, loadPairs, removeMember, runDraw } from '../services/draw-runner.js';
 import { createInviteCode } from '../services/membership.js';
+import { notifyUser } from '../services/notify.js';
 import { exchangePassed, serializeGroup } from '../services/serializers.js';
 import { badRequest, conflict, forbidden, notFound } from '../utils/http-error.js';
 
@@ -204,4 +206,34 @@ drawRouter.post('/duplicate', requireOrganizer, async (req, res) => {
       memberships.find((m) => m.role === 'organizer'),
     ),
   });
+});
+
+/**
+ * Organizer nudge: reminds someone who hasn't unwrapped their match (or has an empty wishlist)
+ * by email and push. At most once per person per day.
+ */
+drawRouter.post('/members/:userId/nudge', requireOrganizer, async (req, res) => {
+  const { group } = groupCtx(req);
+  const { userId } = parse(z.object({ userId: objectId }), req.params);
+  const [target, user, wishes] = await Promise.all([
+    MembershipModel.findOne({ groupId: group._id, userId }),
+    UserModel.findById(userId),
+    WishlistItemModel.countDocuments({ groupId: group._id, userId }),
+  ]);
+  if (!target || !user || !target.participates) throw notFound('Member not found');
+
+  const kind =
+    group.status === 'drawn' && !target.viewedMatchAt
+      ? 'nudgeReveal'
+      : wishes === 0
+        ? 'wishlistMissing'
+        : null;
+  if (!kind) throw badRequest('nothing_to_nudge', 'This person is all set');
+
+  const day = new Date().toISOString().slice(0, 10);
+  if (!(await claimNotification(`nudge:${group.id}:${userId}:${day}`, group._id))) {
+    throw conflict('already_nudged', 'Already reminded today');
+  }
+  await notifyUser(user, kind, group);
+  res.json({ ok: true, kind });
 });

@@ -15,6 +15,7 @@ import { Exclusion, Group, GroupSettings, ImageRef, Member } from '../../core/mo
 import { NotifyService } from '../../core/notify.service';
 import { ExclusionsEditor } from '../../shared/exclusions-editor';
 import { ImagePicker } from '../../shared/image-picker';
+import { InviteEmails } from '../../shared/invite-emails';
 import { InviteShare } from '../../shared/invite-share';
 
 export const CURRENCIES = [
@@ -56,6 +57,7 @@ export function toYmd(date: Date | null): string | null {
     TranslocoPipe,
     ExclusionsEditor,
     InviteShare,
+    InviteEmails,
     ImagePicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

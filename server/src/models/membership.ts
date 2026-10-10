@@ -13,6 +13,11 @@ const membershipSchema = new Schema({
   viewedMatchAt: { type: Date, default: null },
   giftStatus: { type: String, enum: GIFT_STATUSES, default: 'none' },
   shippingAddress: { type: String, trim: true, maxlength: 500, default: '' },
+  /** When I last read each of my two chats (for unread badges). */
+  chatReadAt: {
+    match: { type: Date, default: null },
+    santa: { type: Date, default: null },
+  },
 });
 
 membershipSchema.index({ groupId: 1, userId: 1 }, { unique: true });

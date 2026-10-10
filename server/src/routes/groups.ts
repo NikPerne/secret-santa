@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import type { Types } from 'mongoose';
 import { z } from 'zod';
+import { env } from '../config/env.js';
 import { currentUser } from '../middleware/auth.js';
+import { inviteLimiter } from '../middleware/rate-limit.js';
 import { groupCtx, requireOrganizer } from '../middleware/group.js';
 import { imageInput, objectId, parse, trimmed } from '../middleware/validate.js';
 import { GroupModel, MembershipModel, UserModel } from '../models/index.js';
 import { isOwnedImage, deleteImages } from '../services/cloudinary.js';
+import { sendEmail } from '../services/email.js';
+import { templates } from '../services/email-templates.js';
 import { deleteGroupData } from '../services/group-data.js';
 import { createInviteCode } from '../services/membership.js';
 import { serializeGroup, serializeMyMembership } from '../services/serializers.js';
+import { unreadCounts } from '../services/unread.js';
 import { badRequest, conflict } from '../utils/http-error.js';
 
 /**
@@ -79,11 +84,20 @@ groupsRouter.get('/', async (req, res) => {
   ]);
   const countMap = new Map(counts.map((c) => [String(c._id), c.n]));
   const byGroup = new Map(memberships.map((m) => [String(m.groupId), m]));
+  const unread = await Promise.all(
+    groups.map(async (g) => {
+      const m = byGroup.get(g.id);
+      if (!m) return 0;
+      const counts = await unreadCounts(g, m);
+      return counts.match + counts.santa;
+    }),
+  );
   res.json({
-    groups: groups.map((g) => ({
+    groups: groups.map((g, i) => ({
       ...serializeGroup(g, byGroup.get(g.id)),
       role: byGroup.get(g.id)?.role,
       memberCount: countMap.get(g.id) ?? 0,
+      unread: unread[i],
     })),
   });
 });
@@ -197,4 +211,29 @@ groupRouter.patch('/me', async (req, res) => {
   membership.set(body);
   await membership.save();
   res.json({ me: serializeMyMembership(membership) });
+});
+
+/** Organizer emails the invite link to a few addresses (skips people already in the group). */
+groupRouter.post('/invite-emails', requireOrganizer, inviteLimiter, async (req, res) => {
+  const { group, user } = groupCtx(req);
+  if (group.status === 'finished') throw conflict('group_finished', 'This group has already finished');
+  const { emails } = parse(
+    z.object({ emails: z.array(z.string().trim().toLowerCase().email().max(200)).min(1).max(30) }),
+    req.body,
+  );
+  const unique = [...new Set(emails)];
+  const existing = await UserModel.find({ email: { $in: unique } }, { email: 1 });
+  const memberIds = new Set(
+    (await MembershipModel.find({ groupId: group._id, userId: { $in: existing.map((u) => u._id) } })).map(
+      (m) => String(m.userId),
+    ),
+  );
+  const alreadyIn = new Set(existing.filter((u) => memberIds.has(u.id)).map((u) => u.email));
+  const link = `${env.CLIENT_URL}/join/${group.inviteCode}`;
+  let sent = 0;
+  for (const email of unique) {
+    if (alreadyIn.has(email)) continue;
+    if (await sendEmail(email, templates(user.language).invite(user.name, group.name, link))) sent++;
+  }
+  res.json({ sent, skipped: alreadyIn.size });
 });

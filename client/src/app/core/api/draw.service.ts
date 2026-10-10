@@ -56,6 +56,12 @@ export class DrawService {
     );
   }
 
+  nudge(groupId: string, userId: string): Promise<{ kind: string }> {
+    return firstValueFrom(
+      this.http.post<{ kind: string }>(api(`/groups/${groupId}/members/${userId}/nudge`), {}),
+    );
+  }
+
   async leave(groupId: string): Promise<void> {
     await firstValueFrom(this.http.post(api(`/groups/${groupId}/leave`), {}));
   }

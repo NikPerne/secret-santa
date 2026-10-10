@@ -15,10 +15,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { calendarUrl } from '../../core/api/chat.service';
+import { ChatService, calendarUrl } from '../../core/api/chat.service';
 import { DrawService } from '../../core/api/draw.service';
 import { GroupsService } from '../../core/api/groups.service';
-import { GiftStatus, GroupDetail, Match } from '../../core/models';
+import { GiftStatus, GroupDetail, Match, UnreadCounts } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
@@ -55,6 +55,8 @@ export class GroupHome {
   protected readonly detail = signal<GroupDetail | null>(null);
   protected readonly match = signal<Match | null>(null);
   protected readonly mySanta = signal<string | null>(null);
+  protected readonly unread = signal<UnreadCounts>({ match: 0, santa: 0 });
+  private readonly chat = inject(ChatService);
   protected readonly error = signal(false);
   protected readonly initials = initials;
   protected readonly calendarUrl = calendarUrl;
@@ -87,6 +89,10 @@ export class GroupHome {
           .match(id)
           .then((m) => this.match.set(m.match))
           .catch(() => this.match.set(null));
+        this.chat
+          .unread(id)
+          .then((u) => this.unread.set(u))
+          .catch(() => undefined);
       }
       if (detail.group.exchangePassed && detail.group.settings.bigRevealAfterExchange) {
         this.drawApi

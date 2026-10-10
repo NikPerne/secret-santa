@@ -59,6 +59,13 @@ export interface Group {
 export interface GroupSummary extends Group {
   role: Role;
   memberCount: number;
+  /** Unread chat messages for me in this group. */
+  unread: number;
+}
+
+export interface UnreadCounts {
+  match: number;
+  santa: number;
 }
 
 export interface Member {

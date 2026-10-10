@@ -1,10 +1,12 @@
 import { Router, type Request } from 'express';
+import { unreadCounts } from '../services/unread.js';
 import { z } from 'zod';
 import { groupCtx } from '../middleware/group.js';
 import { chatLimiter } from '../middleware/rate-limit.js';
 import { parse, trimmed } from '../middleware/validate.js';
 import {
   AssignmentModel,
+  MembershipModel,
   MessageModel,
   UserModel,
   claimNotification,
@@ -37,11 +39,13 @@ async function resolveThread(req: Request) {
     myRole: who === 'match' ? ('santa' as const) : ('giftee' as const),
     otherUserId: who === 'match' ? assignment.receiverId : assignment.giverId,
     otherWho: who === 'match' ? 'santa' : 'match',
+    who,
   };
 }
 
 chatRouter.get('/chat/:who', async (req, res) => {
-  const { group, threadKey, myRole } = await resolveThread(req);
+  const { group, threadKey, myRole, who } = await resolveThread(req);
+  const { membership } = groupCtx(req);
   const { after } = parse(z.object({ after: z.string().datetime().optional() }), req.query);
   const messages = await MessageModel.find({
     groupId: group._id,
@@ -50,6 +54,8 @@ chatRouter.get('/chat/:who', async (req, res) => {
   })
     .sort({ createdAt: 1 })
     .limit(500);
+  // Viewing the chat marks it as read.
+  await MembershipModel.updateOne({ _id: membership._id }, { $set: { [`chatReadAt.${who}`]: new Date() } });
   res.json({
     messages: messages.map((m) => ({
       id: m.id as string,
@@ -80,4 +86,10 @@ chatRouter.post('/chat/:who', chatLimiter, async (req, res) => {
       createdAt: message.createdAt.toISOString(),
     },
   });
+});
+
+/** Unread message counts for my two chats (badges on the group page). */
+chatRouter.get('/chat-unread', async (req, res) => {
+  const { group, membership } = groupCtx(req);
+  res.json({ unread: await unreadCounts(group, membership) });
 });

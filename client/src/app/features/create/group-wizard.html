@@ -170,6 +170,10 @@
         <h1 class="page-title">{{ 'wizard.inviteTitle' | transloco }}</h1>
         <p class="muted">{{ 'wizard.inviteHint' | transloco }}</p>
         <app-invite-share [code]="g.inviteCode" [groupName]="g.name" />
+        <section class="surface-card stack">
+          <h2>{{ 'inviteEmails.title' | transloco }}</h2>
+          <app-invite-emails [groupId]="g.id" />
+        </section>
         <div class="nav">
           <button mat-stroked-button (click)="back()">
             <mat-icon>arrow_back</mat-icon>{{ 'common.back' | transloco }}

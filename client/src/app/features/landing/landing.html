@@ -20,6 +20,13 @@
                 }
               </span>
             </span>
+            @if (g.unread) {
+              <span
+                class="badge"
+                [attr.aria-label]="'group.unread' | transloco: { count: g.unread }"
+                >{{ g.unread }}</span
+              >
+            }
             <mat-icon aria-hidden="true">chevron_right</mat-icon>
           </a>
         </li>

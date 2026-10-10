@@ -66,6 +66,28 @@ const T = {
         [`Hi ${name}!`, `The gift exchange is on ${date}. Have you got your gift ready?`],
         { label: 'Open group', url },
       ),
+    nudgeReveal: (name: string, group: string, url: string) =>
+      build(
+        `${group}: your match is waiting 🎁`,
+        [`Hi ${name}!`, "Names were drawn, but you haven't unwrapped your match yet. Take a peek!"],
+        { label: 'Reveal my match', url },
+      ),
+    invite: (organizer: string, group: string, url: string) =>
+      build(
+        `${organizer} invited you to Secret Santa: ${group} 🎅`,
+        [
+          'Hi!',
+          `${organizer} is organizing a Secret Santa called "${group}" and would love you to join.`,
+          'Tap the button, enter your name and email, and you are in. No password needed.',
+        ],
+        { label: 'Join the group', url },
+      ),
+    thankYou: (name: string, group: string, url: string) =>
+      build(
+        `${group}: your giftee says thank you 💌`,
+        [`Hi ${name}!`, 'The person you gave a gift to sent you an anonymous thank-you note.'],
+        { label: 'Read the note', url },
+      ),
   },
   sl: {
     magicLink: (name: string, url: string) =>
@@ -105,6 +127,28 @@ const T = {
         [`Živjo, ${name}!`, `Izmenjava daril bo ${date}. Je tvoje darilo že pripravljeno?`],
         { label: 'Odpri skupino', url },
       ),
+    nudgeReveal: (name: string, group: string, url: string) =>
+      build(
+        `${group}: tvoj obdarovanec te čaka 🎁`,
+        [`Živjo, ${name}!`, 'Imena so izžrebana, ti pa še nisi odvil/-a svojega obdarovanca. Pokukaj!'],
+        { label: 'Razkrij mojega obdarovanca', url },
+      ),
+    invite: (organizer: string, group: string, url: string) =>
+      build(
+        `${organizer} te vabi v Skrivnega Božička: ${group} 🎅`,
+        [
+          'Živjo!',
+          `${organizer} organizira Skrivnega Božička »${group}« in bi bil/-a vesel/-a, če se pridružiš.`,
+          'Tapni gumb, vpiši ime in e-naslov in že si zraven. Gesla ne potrebuješ.',
+        ],
+        { label: 'Pridruži se skupini', url },
+      ),
+    thankYou: (name: string, group: string, url: string) =>
+      build(
+        `${group}: tvoj obdarovanec se ti zahvaljuje 💌`,
+        [`Živjo, ${name}!`, 'Oseba, ki si jo obdaril/-a, ti je poslala anonimno zahvalo.'],
+        { label: 'Preberi zahvalo', url },
+      ),
   },
 } satisfies Record<Lang, unknown>;
 
@@ -125,6 +169,8 @@ export const pushTexts = {
     }),
     exchangeSoon: (group: string) => ({ title: `⏰ ${group}`, body: 'Gift exchange in 3 days!' }),
     newMessage: (group: string) => ({ title: `💬 ${group}`, body: 'You have a new anonymous message.' }),
+    nudgeReveal: (group: string) => ({ title: `🎁 ${group}`, body: 'Your match is waiting. Tap to unwrap!' }),
+    thankYou: (group: string) => ({ title: `💌 ${group}`, body: 'Your giftee sent you a thank-you note!' }),
   },
   sl: {
     drawDone: (group: string) => ({ title: `🎁 ${group}`, body: 'Imena so izžrebana! Tapni za razkritje.' }),
@@ -138,6 +184,11 @@ export const pushTexts = {
     }),
     exchangeSoon: (group: string) => ({ title: `⏰ ${group}`, body: 'Izmenjava daril čez 3 dni!' }),
     newMessage: (group: string) => ({ title: `💬 ${group}`, body: 'Imaš novo anonimno sporočilo.' }),
+    nudgeReveal: (group: string) => ({
+      title: `🎁 ${group}`,
+      body: 'Tvoj obdarovanec te čaka. Tapni in odvij!',
+    }),
+    thankYou: (group: string) => ({ title: `💌 ${group}`, body: 'Tvoj obdarovanec ti je poslal zahvalo!' }),
   },
 };
 

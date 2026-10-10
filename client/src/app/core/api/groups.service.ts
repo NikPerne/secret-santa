@@ -67,6 +67,14 @@ export class GroupsService {
     ).me;
   }
 
+  inviteEmails(id: string, emails: string[]): Promise<{ sent: number; skipped: number }> {
+    return firstValueFrom(
+      this.http.post<{ sent: number; skipped: number }>(api(`/groups/${id}/invite-emails`), {
+        emails,
+      }),
+    );
+  }
+
   invite(code: string): Promise<{ invite: InvitePreview; instantJoin: boolean }> {
     return firstValueFrom(
       this.http.get<{ invite: InvitePreview; instantJoin: boolean }>(api(`/invites/${code}`)),
