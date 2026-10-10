@@ -21,6 +21,8 @@
       }
     </header>
 
+    <app-theme-badge [theme]="g.theme" />
+
     @if (upcoming() && g.exchangeDate) {
       <app-countdown [to]="g.exchangeDate" />
     }

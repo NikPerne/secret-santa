@@ -11,7 +11,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { GroupsService } from '../../core/api/groups.service';
-import { Exclusion, Group, GroupSettings, ImageRef, Member } from '../../core/models';
+import {
+  Exclusion,
+  Group,
+  GroupSettings,
+  ImageRef,
+  Member,
+  THEME_PRESETS,
+  ThemePreset,
+} from '../../core/models';
+import { THEME_EMOJI } from '../wishlist/gift-ideas.data';
 import { NotifyService } from '../../core/notify.service';
 import { ExclusionsEditor } from '../../shared/exclusions-editor';
 import { ImagePicker } from '../../shared/image-picker';
@@ -89,6 +98,10 @@ export class GroupWizard implements OnInit {
   protected readonly amount = signal<number | null>(null);
   protected readonly currency = signal('EUR');
   protected readonly cover = signal<ImageRef | null>(null);
+  protected readonly themePresets = THEME_PRESETS;
+  protected readonly themeEmoji = THEME_EMOJI;
+  protected readonly themePreset = signal<ThemePreset>('none');
+  protected readonly themeText = signal('');
   protected readonly uploads = signal(false);
   protected readonly settings = signal<GroupSettings>({
     organizerParticipates: true,
@@ -119,6 +132,8 @@ export class GroupWizard implements OnInit {
       this.currency.set(g.budget.currency);
       this.settings.set(g.settings);
       this.cover.set(g.coverImage);
+      this.themePreset.set(g.theme?.preset ?? 'none');
+      this.themeText.set(g.theme?.text ?? '');
     } catch (err) {
       this.notify.error(err);
     }
@@ -162,6 +177,7 @@ export class GroupWizard implements OnInit {
       let updated = await this.groups.update(group.id, {
         budget: { amount: this.amount(), currency: this.currency() },
         settings: this.settings(),
+        theme: this.themeToSave(),
         ...(this.cover()?.publicId !== group.coverImage?.publicId
           ? { coverImage: this.cover() }
           : {}),
@@ -172,6 +188,14 @@ export class GroupWizard implements OnInit {
       this.group.set(updated);
       this.step.set(3);
     });
+  }
+
+  /** A custom theme without a description means no theme. */
+  private themeToSave(): { preset: ThemePreset; text: string } {
+    const text = this.themeText().trim();
+    const preset = this.themePreset();
+    if (preset === 'none' || (preset === 'custom' && !text)) return { preset: 'none', text: '' };
+    return { preset, text };
   }
 
   protected finish(): void {

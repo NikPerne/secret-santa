@@ -4,7 +4,9 @@ import { z } from 'zod';
 import { groupCtx } from '../middleware/group.js';
 import { imageInput, objectId, optionalUrl, parse, trimmed } from '../middleware/validate.js';
 import { AssignmentModel, PreferencesModel, WishlistItemModel, type GroupDoc } from '../models/index.js';
-import { deleteImages, isOwnedImage } from '../services/cloudinary.js';
+import { uploadLimiter } from '../middleware/rate-limit.js';
+import { deleteImages, importRemoteImage, isOwnedImage } from '../services/cloudinary.js';
+import { LinkPreviewError, getLinkMeta } from '../services/link-preview.js';
 import { serializeImage } from '../services/serializers.js';
 import { badRequest, conflict, notFound } from '../utils/http-error.js';
 
@@ -158,4 +160,30 @@ wishlistRouter.get('/match/wishlist', async (req, res) => {
     PreferencesModel.findOne({ groupId: group._id, userId: receiverId }),
   ]);
   res.json({ items: items.map(serializeItem), preferences: serializePreferences(prefs) });
+});
+
+/**
+ * Link preview for the "add a wish" form: paste a shop link, get title, price and photo.
+ * The photo is imported into Cloudinary (the group's folder) so it behaves like an upload.
+ */
+wishlistRouter.post('/link-preview', uploadLimiter, async (req, res) => {
+  const { group } = groupCtx(req);
+  const { url } = parse(z.object({ url: z.string().trim().url().max(1000) }), req.body);
+  let meta;
+  try {
+    meta = await getLinkMeta(url);
+  } catch (err) {
+    if (err instanceof LinkPreviewError) throw badRequest('preview_failed', err.message);
+    throw badRequest('preview_failed', 'Could not read that page');
+  }
+  const image = meta.imageUrl ? await importRemoteImage(meta.imageUrl, group.id) : null;
+  res.json({
+    preview: {
+      title: meta.title,
+      siteName: meta.siteName,
+      price: meta.price,
+      currency: meta.currency,
+      image: serializeImage(image),
+    },
+  });
 });

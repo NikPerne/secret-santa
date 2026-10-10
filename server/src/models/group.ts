@@ -1,6 +1,19 @@
 import { Schema, model, type InferSchemaType, type HydratedDocument } from 'mongoose';
 import { imageSchema } from './image.js';
 
+/** Gift themes a group can pick (e.g. "everything made in Slovenia"). */
+export const THEME_PRESETS = [
+  'none',
+  'slovenian',
+  'handmade',
+  'experience',
+  'books',
+  'eco',
+  'sweets',
+  'custom',
+] as const;
+export type ThemePreset = (typeof THEME_PRESETS)[number];
+
 const exclusionSchema = new Schema(
   {
     a: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -29,6 +42,11 @@ const groupSchema = new Schema(
       allowShippingAddress: { type: Boolean, default: false },
       bigRevealAfterExchange: { type: Boolean, default: true },
       avoidPreviousPairs: { type: Boolean, default: true },
+    },
+    theme: {
+      preset: { type: String, enum: THEME_PRESETS, default: 'none' },
+      /** Extra rules or the custom theme, e.g. "Only second-hand gifts". */
+      text: { type: String, trim: true, maxlength: 200, default: '' },
     },
     exclusions: { type: [exclusionSchema], default: [] },
     previousGroupId: { type: Schema.Types.ObjectId, ref: 'Group', default: null },

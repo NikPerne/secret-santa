@@ -36,6 +36,7 @@ export function serializeGroup(group: GroupDoc, membership?: MembershipDoc) {
     location: group.location,
     inviteCode: group.inviteCode,
     status: group.status,
+    theme: { preset: group.theme?.preset ?? 'none', text: group.theme?.text ?? '' },
     settings: {
       organizerSeesPairs: group.settings?.organizerSeesPairs ?? false,
       organizerParticipates: group.settings?.organizerParticipates ?? true,

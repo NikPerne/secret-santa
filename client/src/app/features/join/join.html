@@ -33,6 +33,7 @@
         </li>
       </ul>
     </div>
+    <app-theme-badge [theme]="inv.theme" />
 
     @if (inv.status === 'finished') {
       <p class="error-text" role="alert">{{ 'errors.group_finished' | transloco }}</p>

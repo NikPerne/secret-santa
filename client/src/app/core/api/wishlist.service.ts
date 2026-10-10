@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Preferences, WishlistItem, WishlistItemInput } from '../models';
+import { LinkPreview, Preferences, WishlistItem, WishlistItemInput } from '../models';
 import { api } from './api';
 
 @Injectable({ providedIn: 'root' })
@@ -64,6 +64,14 @@ export class WishlistService {
         this.http.put<{ preferences: Preferences }>(api(`/groups/${groupId}/preferences`), body),
       )
     ).preferences;
+  }
+
+  async linkPreview(groupId: string, url: string): Promise<LinkPreview> {
+    return (
+      await firstValueFrom(
+        this.http.post<{ preview: LinkPreview }>(api(`/groups/${groupId}/link-preview`), { url }),
+      )
+    ).preview;
   }
 
   matchWishlist(groupId: string): Promise<{ items: WishlistItem[]; preferences: Preferences }> {

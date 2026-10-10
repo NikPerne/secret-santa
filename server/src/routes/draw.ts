@@ -185,6 +185,7 @@ drawRouter.post('/duplicate', requireOrganizer, async (req, res) => {
     exchangeDate: nextDate,
     budget: group.toObject().budget,
     location: group.location,
+    theme: group.toObject().theme,
     organizerId: user._id,
     inviteCode: await createInviteCode(),
     settings: { ...group.toObject().settings, avoidPreviousPairs: true },

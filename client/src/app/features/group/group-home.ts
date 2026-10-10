@@ -23,6 +23,7 @@ import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
 import { InviteShare } from '../../shared/invite-share';
+import { ThemeBadge } from '../../shared/theme-badge';
 import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
 
 @Component({
@@ -37,6 +38,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
     TranslocoPipe,
     Countdown,
     InviteShare,
+    ThemeBadge,
     LocalDatePipe,
     MoneyPipe,
   ],

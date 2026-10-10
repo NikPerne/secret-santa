@@ -101,6 +101,44 @@
           </mat-form-field>
         </fieldset>
 
+        <section class="surface-card stack" aria-labelledby="theme-h">
+          <h2 id="theme-h">{{ 'theme.title' | transloco }}</h2>
+          <p class="muted">{{ 'theme.explain' | transloco }}</p>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'theme.label' | transloco }}</mat-label>
+            <mat-select
+              name="themePreset"
+              [ngModel]="themePreset()"
+              (ngModelChange)="themePreset.set($event)"
+            >
+              @for (p of themePresets; track p) {
+                <mat-option [value]="p"
+                  >{{ themeEmoji[p] }} {{ 'theme.presets.' + p + '.label' | transloco }}</mat-option
+                >
+              }
+            </mat-select>
+            @if (themePreset() !== 'none' && themePreset() !== 'custom') {
+              <mat-hint>{{ 'theme.presets.' + themePreset() + '.hint' | transloco }}</mat-hint>
+            }
+          </mat-form-field>
+          @if (themePreset() !== 'none') {
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                (themePreset() === 'custom' ? 'theme.customLabel' : 'theme.extraLabel') | transloco
+              }}</mat-label>
+              <input
+                matInput
+                name="themeText"
+                maxlength="200"
+                [required]="themePreset() === 'custom'"
+                [placeholder]="'theme.textPlaceholder' | transloco"
+                [ngModel]="themeText()"
+                (ngModelChange)="themeText.set($event)"
+              />
+            </mat-form-field>
+          }
+        </section>
+
         @if (uploads() && group(); as g) {
           <section class="surface-card stack" aria-labelledby="cover-h">
             <h2 id="cover-h">{{ 'wizard.cover' | transloco }}</h2>

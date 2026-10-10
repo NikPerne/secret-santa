@@ -75,3 +75,25 @@ export async function deleteGroupFolder(groupId: string): Promise<void> {
     logger.error({ err, groupId }, 'Failed to delete Cloudinary group folder');
   }
 }
+
+/**
+ * Lets Cloudinary download a remote image (e.g. a shop's product photo) straight into the
+ * group's wishlist folder, resized like browser uploads. The image never passes through our
+ * server, so it costs no Render bandwidth. Returns null on failure.
+ */
+export async function importRemoteImage(imageUrl: string, groupId: string) {
+  if (!cloudinaryEnabled) return null;
+  try {
+    const res = await cloudinary.uploader.upload(imageUrl, {
+      folder: folderFor(groupId, 'wishlist'),
+      resource_type: 'image',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'],
+      transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto:good' }],
+      timeout: 20_000,
+    });
+    return { url: res.secure_url, publicId: res.public_id, width: res.width, height: res.height };
+  } catch (err) {
+    logger.warn({ err: (err as Error).message }, 'Could not import preview image');
+    return null;
+  }
+}

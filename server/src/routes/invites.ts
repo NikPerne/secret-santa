@@ -35,6 +35,7 @@ invitesRouter.get('/:code', async (req, res) => {
       exchangeDate: group.exchangeDate?.toISOString() ?? null,
       budget: { amount: group.budget?.amount ?? null, currency: group.budget?.currency ?? 'EUR' },
       location: group.location,
+      theme: { preset: group.theme?.preset ?? 'none', text: group.theme?.text ?? '' },
       status: group.status,
       organizerName: organizer?.name ?? '',
       memberCount,

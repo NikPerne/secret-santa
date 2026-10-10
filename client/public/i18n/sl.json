@@ -39,7 +39,8 @@
     "gallery_closed": "Stena fotografij se odpre po izmenjavi daril.",
     "push_disabled": "Potisna obvestila na tem strežniku še niso nastavljena.",
     "already_nudged": "Danes je že bil/-a opomnjen/-a. Poskusi jutri.",
-    "nothing_to_nudge": "Ta oseba je že vse uredila. Ni je treba opomniti."
+    "nothing_to_nudge": "Ta oseba je že vse uredila. Ni je treba opomniti.",
+    "preview_failed": "Povezave ni bilo mogoče prebrati. Podatke vpiši sam/-a."
   },
   "fields": {
     "email": "E-pošta",
@@ -333,7 +334,10 @@
     "address": "Naslov za pošiljanje",
     "addressHint": "Vidi ga lahko samo tvoj Skrivni Božiček",
     "shipTo": "Pošlji na",
-    "askQuestion": "Anonimno mu/ji postavi vprašanje"
+    "askQuestion": "Anonimno mu/ji postavi vprašanje",
+    "linkHint": "Prilepi povezavo do izdelka in izpolnimo ime, ceno in fotografijo",
+    "fillFromLink": "Izpolni iz povezave",
+    "reading": "Berem povezavo …"
   },
   "chat": {
     "withMatch": "Klepet: {{name}}",
@@ -371,5 +375,53 @@
     "hint": "Loči z vejicami ali novimi vrsticami. Najdenih naslovov: {{count}}",
     "send": "Pošlji povabila",
     "sent": "Poslanih povabil: {{sent}} (že v skupini: {{skipped}})"
+  },
+  "theme": {
+    "title": "Tema daril (neobvezno)",
+    "explain": "Zabavno pravilo za letos, npr. vsa darila morajo biti narejena v Sloveniji.",
+    "label": "Tema",
+    "customLabel": "Opiši temo",
+    "extraLabel": "Dodatna pravila (neobvezno)",
+    "textPlaceholder": "npr. Kupljeno v lokalni trgovini",
+    "presets": {
+      "none": {
+        "label": "Brez teme",
+        "hint": ""
+      },
+      "slovenian": {
+        "label": "Narejeno v Sloveniji",
+        "hint": "Darila, narejena ali pridelana v Sloveniji"
+      },
+      "handmade": {
+        "label": "Ročno narejeno",
+        "hint": "Darilo naredi ali speci sam/-a"
+      },
+      "experience": {
+        "label": "Doživetja",
+        "hint": "Podari doživetje, ne stvari"
+      },
+      "books": {
+        "label": "Knjige",
+        "hint": "Knjiga (in po želji še malenkost zraven)"
+      },
+      "eco": {
+        "label": "Okolju prijazno",
+        "hint": "Trajnostno, večkratno uporabno ali rabljeno"
+      },
+      "sweets": {
+        "label": "Sladke dobrote",
+        "hint": "Nekaj slastnega"
+      },
+      "custom": {
+        "label": "Lastna tema",
+        "hint": ""
+      }
+    }
+  },
+  "ideas": {
+    "title": "Ideje za darila",
+    "avoid": "Prosim, izogni se: {{list}}",
+    "hint": "Ideje so prilagojene temi in proračunu skupine. Za vsak slučaj vprašaj obdarovanca v anonimnem klepetu!",
+    "show": "Potrebuješ idejo?"
   }
 }

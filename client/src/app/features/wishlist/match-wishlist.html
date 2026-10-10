@@ -49,6 +49,8 @@
       </section>
     }
 
+    <app-theme-badge [theme]="theme()" />
+
     @if (!items().length) {
       <div class="surface-card center">
         <div class="emoji" aria-hidden="true">🤷</div>
@@ -89,6 +91,14 @@
           </li>
         }
       </ul>
+    }
+
+    @if (!items().length || showIdeas()) {
+      <app-gift-ideas [theme]="theme()" [budget]="budget()" [prefs]="prefs()" />
+    } @else {
+      <button mat-button (click)="showIdeas.set(true)">
+        <mat-icon>lightbulb</mat-icon>{{ 'ideas.show' | transloco }}
+      </button>
     }
 
     <a mat-flat-button class="big-button" [routerLink]="['/g', groupId(), 'chat', 'match']">

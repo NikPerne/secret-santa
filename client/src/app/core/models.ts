@@ -34,6 +34,33 @@ export interface GroupSettings {
   avoidPreviousPairs: boolean;
 }
 
+export type ThemePreset =
+  'none' | 'slovenian' | 'handmade' | 'experience' | 'books' | 'eco' | 'sweets' | 'custom';
+
+export const THEME_PRESETS: ThemePreset[] = [
+  'none',
+  'slovenian',
+  'handmade',
+  'experience',
+  'books',
+  'eco',
+  'sweets',
+  'custom',
+];
+
+export interface GroupTheme {
+  preset: ThemePreset;
+  text: string;
+}
+
+export interface LinkPreview {
+  title: string | null;
+  siteName: string | null;
+  price: number | null;
+  currency: string | null;
+  image: ImageRef | null;
+}
+
 export interface Exclusion {
   a: string;
   b: string;
@@ -49,6 +76,7 @@ export interface Group {
   location: string;
   inviteCode: string;
   status: GroupStatus;
+  theme: GroupTheme;
   settings: GroupSettings;
   exclusions?: Exclusion[];
   previousGroupId: string | null;
@@ -98,6 +126,7 @@ export interface InvitePreview {
   exchangeDate: string | null;
   budget: Budget;
   location: string;
+  theme: GroupTheme;
   status: GroupStatus;
   organizerName: string;
   memberCount: number;
@@ -117,6 +146,7 @@ export interface GroupInput {
   budget?: Partial<Budget>;
   location?: string;
   settings?: Partial<GroupSettings>;
+  theme?: { preset: ThemePreset; text?: string };
   coverImage?: ImageRef | null;
 }
 

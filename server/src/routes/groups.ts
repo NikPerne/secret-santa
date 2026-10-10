@@ -6,7 +6,7 @@ import { currentUser } from '../middleware/auth.js';
 import { inviteLimiter } from '../middleware/rate-limit.js';
 import { groupCtx, requireOrganizer } from '../middleware/group.js';
 import { imageInput, objectId, parse, trimmed } from '../middleware/validate.js';
-import { GroupModel, MembershipModel, UserModel } from '../models/index.js';
+import { GroupModel, MembershipModel, THEME_PRESETS, UserModel } from '../models/index.js';
 import { isOwnedImage, deleteImages } from '../services/cloudinary.js';
 import { sendEmail } from '../services/email.js';
 import { templates } from '../services/email-templates.js';
@@ -53,6 +53,7 @@ const groupInput = z.object({
     .optional(),
   location: trimmed(200).optional(),
   settings: settingsInput.optional(),
+  theme: z.object({ preset: z.enum(THEME_PRESETS), text: trimmed(200).optional() }).optional(),
 });
 
 /** Members list visible to everyone in the group: names only, no pairing information. */

@@ -9,10 +9,12 @@ import { DrawService } from '../../core/api/draw.service';
 import { GroupsService } from '../../core/api/groups.service';
 import { cldUrl } from '../../core/api/upload.service';
 import { WishlistService } from '../../core/api/wishlist.service';
-import { Match, Preferences, WishlistItem } from '../../core/models';
+import { Budget, GroupTheme, Match, Preferences, WishlistItem } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { openLightbox } from '../../shared/lightbox';
 import { MoneyPipe } from '../../shared/pipes';
+import { ThemeBadge } from '../../shared/theme-badge';
+import { GiftIdeas } from './gift-ideas';
 
 /** Read-only view of my match's wishlist, preferences and (optional) shipping address. */
 @Component({
@@ -24,6 +26,8 @@ import { MoneyPipe } from '../../shared/pipes';
     MatProgressSpinnerModule,
     TranslocoPipe,
     MoneyPipe,
+    ThemeBadge,
+    GiftIdeas,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './match-wishlist.html',
@@ -43,6 +47,9 @@ export class MatchWishlist implements OnInit {
   protected readonly items = signal<WishlistItem[]>([]);
   protected readonly prefs = signal<Preferences | null>(null);
   protected readonly currency = signal('EUR');
+  protected readonly theme = signal<GroupTheme>({ preset: 'none', text: '' });
+  protected readonly budget = signal<Budget>({ amount: null, currency: 'EUR' });
+  protected readonly showIdeas = signal(false);
 
   async ngOnInit(): Promise<void> {
     const id = this.groupId();
@@ -56,6 +63,8 @@ export class MatchWishlist implements OnInit {
       this.items.set(list.items);
       this.prefs.set(list.preferences);
       this.currency.set(detail.group.budget.currency);
+      this.budget.set(detail.group.budget);
+      this.theme.set(detail.group.theme ?? { preset: 'none', text: '' });
     } catch (err) {
       this.error.set(this.notify.messageFor(err));
     } finally {

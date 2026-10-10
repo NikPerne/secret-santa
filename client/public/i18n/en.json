@@ -39,7 +39,8 @@
     "gallery_closed": "The photo wall opens after the gift exchange.",
     "push_disabled": "Push notifications aren't set up on this server yet.",
     "already_nudged": "Already reminded today. Try again tomorrow.",
-    "nothing_to_nudge": "This person is all set. Nothing to remind them about."
+    "nothing_to_nudge": "This person is all set. Nothing to remind them about.",
+    "preview_failed": "We couldn't read that link. Please fill in the details yourself."
   },
   "fields": {
     "email": "Email",
@@ -333,7 +334,10 @@
     "address": "Shipping address",
     "addressHint": "Only your Secret Santa can see this",
     "shipTo": "Ship to",
-    "askQuestion": "Ask them a question anonymously"
+    "askQuestion": "Ask them a question anonymously",
+    "linkHint": "Paste a shop link and we fill in the name, price and photo",
+    "fillFromLink": "Fill in from the link",
+    "reading": "Reading the link…"
   },
   "chat": {
     "withMatch": "Chat with {{name}}",
@@ -371,5 +375,53 @@
     "hint": "Separate with commas or new lines. Addresses found: {{count}}",
     "send": "Send invites",
     "sent": "Invites sent: {{sent}} (already in the group: {{skipped}})"
+  },
+  "theme": {
+    "title": "Gift theme (optional)",
+    "explain": "A fun rule for this year, e.g. all gifts must be made in Slovenia.",
+    "label": "Theme",
+    "customLabel": "Describe the theme",
+    "extraLabel": "Extra rules (optional)",
+    "textPlaceholder": "e.g. Bought from a local shop",
+    "presets": {
+      "none": {
+        "label": "No theme",
+        "hint": ""
+      },
+      "slovenian": {
+        "label": "Made in Slovenia",
+        "hint": "Gifts made or produced in Slovenia"
+      },
+      "handmade": {
+        "label": "Handmade",
+        "hint": "Make or bake the gift yourself"
+      },
+      "experience": {
+        "label": "Experiences",
+        "hint": "Give an experience, not a thing"
+      },
+      "books": {
+        "label": "Books",
+        "hint": "A book (plus a little extra, if you like)"
+      },
+      "eco": {
+        "label": "Eco-friendly",
+        "hint": "Sustainable, reusable or second-hand"
+      },
+      "sweets": {
+        "label": "Sweet treats",
+        "hint": "Something delicious"
+      },
+      "custom": {
+        "label": "Custom theme",
+        "hint": ""
+      }
+    }
+  },
+  "ideas": {
+    "title": "Gift ideas",
+    "avoid": "Please avoid: {{list}}",
+    "hint": "Ideas match the group theme and budget. Ask your giftee in the anonymous chat to be sure!",
+    "show": "Need an idea?"
   }
 }
