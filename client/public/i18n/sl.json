@@ -42,7 +42,6 @@
   "fields": {
     "email": "E-pošta",
     "name": "Tvoje ime",
-    "nameOptional": "Tvoje ime (neobvezno)",
     "groupName": "Ime skupine",
     "exchangeDate": "Datum izmenjave daril",
     "location": "Lokacija",
@@ -63,7 +62,7 @@
     "codeLabel": "Koda ali povezava povabila",
     "codeHint": "Najdeš jo v prejetem povabilu",
     "continue": "Nadaljuj",
-    "signIn": "Si se že pridružil/-a? Prijava",
+    "signIn": "Že imaš račun? Prijava",
     "yourGroups": "Tvoje skupine",
     "status": {
       "open": "Čaka na žreb",
@@ -77,8 +76,7 @@
   },
   "signin": {
     "title": "Prijava",
-    "subtitle": "Gesla ne potrebuješ. Poslali ti bomo čarobno povezavo.",
-    "nameHint": "Potrebno samo, če si tu prvič",
+    "subtitle": "Vpiši e-naslov in poslali ti bomo povezavo za prijavo. Gesla ne potrebuješ.",
     "send": "Pošlji mi povezavo za prijavo",
     "instant": "Takojšnja prijava (razvoj)",
     "checkInbox": "Preveri e-pošto",
@@ -86,7 +84,8 @@
     "expires": "Povezava deluje enkrat in poteče v 15 minutah.",
     "devLink": "E-pošta ni nastavljena, zato je tu tvoja povezava:",
     "openLink": "Odpri povezavo za prijavo",
-    "differentEmail": "Uporabi drug e-naslov"
+    "differentEmail": "Uporabi drug e-naslov",
+    "howItWorks": "Klik na povezavo v e-pošti te prijavi na tej napravi za 60 dni. Tako preverimo, da je e-naslov tvoj, in nihče drug ne more pokukati v tvoj žreb."
   },
   "verify": {
     "signingIn": "Prijavljam …",
@@ -355,5 +354,9 @@
     "open": "Odpri fotografijo, avtor: {{by}}",
     "deleteTitle": "Izbrišem to fotografijo?",
     "deleteMessage": "Odstranjena bo za vse."
+  },
+  "profile": {
+    "nameTitle": "Kako ti je ime?",
+    "nameText": "To ime bo videla tvoja skupina. Kasneje ga lahko spremeniš v nastavitvah."
   }
 }

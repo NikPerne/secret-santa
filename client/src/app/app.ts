@@ -1,10 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  computed,
+  effect,
+  inject,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { AuthService } from './core/api/auth.service';
 import { LANGUAGES, Lang, LanguageService } from './core/i18n';
 import { ThemeService } from './core/theme.service';
 import { WakeOverlay } from './shared/wake-overlay';
@@ -33,6 +41,22 @@ export class App {
     () =>
       ({ system: 'brightness_auto', light: 'light_mode', dark: 'dark_mode' })[this.theme.mode()],
   );
+
+  private readonly auth = inject(AuthService);
+  private readonly injector = inject(Injector);
+  private askingName = false;
+
+  constructor() {
+    // Signed in with only an email? Ask for a name once (shown to the group and the organizer).
+    effect(() => {
+      const user = this.auth.user();
+      if (!user?.needsName || this.askingName) return;
+      this.askingName = true;
+      import('./shared/name-dialog')
+        .then((m) => m.openNameDialog(this.injector))
+        .finally(() => (this.askingName = false));
+    });
+  }
 
   protected setLang(lang: Lang): void {
     this.language.set(lang);

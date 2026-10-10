@@ -7,6 +7,7 @@ export function serializeUser(user: UserDoc) {
     name: user.name,
     language: user.language,
     emailNotifications: user.emailNotifications,
+    needsName: user.needsName ?? false,
     pushEnabled: user.pushSubscriptions.length > 0,
   };
 }

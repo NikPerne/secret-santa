@@ -42,7 +42,6 @@
   "fields": {
     "email": "Email",
     "name": "Your name",
-    "nameOptional": "Your name (optional)",
     "groupName": "Group name",
     "exchangeDate": "Gift exchange date",
     "location": "Location",
@@ -63,7 +62,7 @@
     "codeLabel": "Invite code or link",
     "codeHint": "You'll find it in the invite you received",
     "continue": "Continue",
-    "signIn": "Already joined? Sign in",
+    "signIn": "Already have an account? Sign in",
     "yourGroups": "Your groups",
     "status": {
       "open": "Waiting for draw",
@@ -77,8 +76,7 @@
   },
   "signin": {
     "title": "Sign in",
-    "subtitle": "No password needed. We'll email you a magic link.",
-    "nameHint": "Only needed if you're new here",
+    "subtitle": "Enter your email and we'll send you a sign-in link. No password needed.",
     "send": "Email me a sign-in link",
     "instant": "Sign in instantly (dev)",
     "checkInbox": "Check your inbox",
@@ -86,7 +84,8 @@
     "expires": "The link works once and expires in 15 minutes.",
     "devLink": "Email isn't configured, so here is your link:",
     "openLink": "Open sign-in link",
-    "differentEmail": "Use a different email"
+    "differentEmail": "Use a different email",
+    "howItWorks": "Tapping the link in the email signs you in on this device for 60 days. This proves the email is yours, so nobody else can peek at your match."
   },
   "verify": {
     "signingIn": "Signing you in…",
@@ -355,5 +354,9 @@
     "open": "Open photo by {{by}}",
     "deleteTitle": "Delete this photo?",
     "deleteMessage": "It will be removed for everyone."
+  },
+  "profile": {
+    "nameTitle": "What's your name?",
+    "nameText": "Your group will see this name. You can change it later in Settings."
   }
 }

@@ -69,6 +69,42 @@ describe('magic link auth', () => {
     expect(detail.body.members.map((m: { name: string }) => m.name)).toEqual(['Org', 'Newbie']);
   });
 
+  it('signs in with just an email and asks for a name once', async () => {
+    const res = await request(app).post('/api/auth/request-link').send({ email: 'solo@example.com' });
+    const agent = request.agent(app);
+    const verify = await agent.post('/api/auth/verify').send({ token: tokenFromLink(res.body.devLink) });
+    expect(verify.body.user).toMatchObject({ name: 'solo', needsName: true });
+
+    const named = await agent.patch('/api/auth/me').send({ name: 'Solo Han' });
+    expect(named.body.user).toMatchObject({ name: 'Solo Han', needsName: false });
+  });
+
+  it('takes the name from the join form for an email-only account', async () => {
+    const { group } = await createGroupWith(['Org']);
+    const first = await request(app).post('/api/auth/request-link').send({ email: 'late@example.com' });
+    await request(app)
+      .post('/api/auth/verify')
+      .send({ token: tokenFromLink(first.body.devLink) });
+
+    const join = await request(app)
+      .post('/api/auth/request-link')
+      .send({ email: 'late@example.com', name: 'Lara', inviteCode: group.inviteCode });
+    const agent = request.agent(app);
+    const verify = await agent.post('/api/auth/verify').send({ token: tokenFromLink(join.body.devLink) });
+    expect(verify.body.user).toMatchObject({ name: 'Lara', needsName: false });
+  });
+
+  it("doesn't let a join form rename an existing account", async () => {
+    await signIn('named@example.com', 'Real Name');
+    const res = await request(app)
+      .post('/api/auth/request-link')
+      .send({ email: 'named@example.com', name: 'Impostor' });
+    const verify = await request(app)
+      .post('/api/auth/verify')
+      .send({ token: tokenFromLink(res.body.devLink) });
+    expect(verify.body.user.name).toBe('Real Name');
+  });
+
   it('logs out', async () => {
     const { agent } = await signIn('d@example.com');
     await agent.post('/api/auth/logout');

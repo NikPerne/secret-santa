@@ -18,6 +18,8 @@ const userSchema = new Schema(
     name: { type: String, required: true, trim: true, maxlength: 60 },
     language: { type: String, enum: ['en', 'sl'], default: 'sl' },
     emailNotifications: { type: Boolean, default: true },
+    /** Signed up with only an email: the app asks for a name once. */
+    needsName: { type: Boolean, default: false },
     pushSubscriptions: { type: [pushSubscriptionSchema], default: [] },
   },
   { timestamps: { createdAt: true, updatedAt: false } },

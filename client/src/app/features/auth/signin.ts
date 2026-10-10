@@ -30,6 +30,7 @@ import { MagicLinkSent } from './magic-link-sent';
       } @else {
         <h1 class="page-title">{{ 'signin.title' | transloco }}</h1>
         <p class="muted">{{ 'signin.subtitle' | transloco }}</p>
+        <p class="muted small">{{ 'signin.howItWorks' | transloco }}</p>
         <form class="stack" (ngSubmit)="submit()" #f="ngForm">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'fields.email' | transloco }}</mat-label>
@@ -44,18 +45,6 @@ import { MagicLinkSent } from './magic-link-sent';
               [ngModel]="email()"
               (ngModelChange)="email.set($event)"
             />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'fields.nameOptional' | transloco }}</mat-label>
-            <input
-              matInput
-              name="name"
-              autocomplete="given-name"
-              maxlength="60"
-              [ngModel]="name()"
-              (ngModelChange)="name.set($event)"
-            />
-            <mat-hint>{{ 'signin.nameHint' | transloco }}</mat-hint>
           </mat-form-field>
           <button mat-flat-button class="big-button" type="submit" [disabled]="f.invalid || busy()">
             <mat-icon>mail</mat-icon>{{ 'signin.send' | transloco }}
@@ -79,6 +68,10 @@ import { MagicLinkSent } from './magic-link-sent';
     .narrow {
       max-width: 460px;
     }
+    .small {
+      font: var(--mat-sys-body-small);
+      margin-top: -8px;
+    }
   `,
 })
 export class SignIn {
@@ -89,7 +82,6 @@ export class SignIn {
   private readonly notify = inject(NotifyService);
 
   protected readonly email = signal('');
-  protected readonly name = signal('');
   protected readonly busy = signal(false);
   protected readonly sentTo = signal<string | null>(null);
   protected readonly devLink = signal<string | undefined>(undefined);
@@ -115,7 +107,6 @@ export class SignIn {
     try {
       const res = await this.auth.requestLink({
         email: this.email().trim(),
-        name: this.name().trim() || undefined,
         redirect: this.redirect() ? this.safeRedirect() : undefined,
       });
       this.devLink.set(res.devLink);
@@ -130,10 +121,7 @@ export class SignIn {
   protected async instant(): Promise<void> {
     this.busy.set(true);
     try {
-      await this.auth.devLogin({
-        email: this.email().trim(),
-        name: this.name().trim() || undefined,
-      });
+      await this.auth.devLogin({ email: this.email().trim() });
       await this.router.navigateByUrl(this.safeRedirect());
     } catch (err) {
       this.notify.error(err);

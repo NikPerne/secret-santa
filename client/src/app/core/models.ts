@@ -9,6 +9,8 @@ export interface User {
   name: string;
   language: Lang;
   emailNotifications: boolean;
+  /** Signed up with only an email; ask for a name once. */
+  needsName: boolean;
   pushEnabled: boolean;
 }
 

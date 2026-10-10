@@ -53,11 +53,21 @@ interface SignInInput {
 
 async function upsertUser(input: SignInInput): Promise<UserDoc> {
   const existing = await UserModel.findOne({ email: input.email });
-  if (existing) return existing;
+  if (existing) {
+    // First real name for someone who signed up with only an email (e.g. while joining a group).
+    if (existing.needsName && input.name) {
+      existing.name = input.name;
+      existing.needsName = false;
+      await existing.save();
+    }
+    return existing;
+  }
   try {
     return await UserModel.create({
       email: input.email,
+      // Without a name (plain sign-in), use the email prefix for now; the app asks once.
       name: input.name || input.email.split('@')[0],
+      needsName: !input.name,
       language: input.language ?? 'sl',
     });
   } catch (err) {
@@ -98,12 +108,15 @@ authRouter.post('/request-link', authLimiter, async (req, res) => {
     expiresAt: new Date(Date.now() + MAGIC_LINK_TTL_MS),
   });
 
-  const existing = await UserModel.findOne({ email: body.email }, { name: 1, language: 1 });
+  const existing = await UserModel.findOne({ email: body.email }, { name: 1, language: 1, needsName: 1 });
   const link = `${env.CLIENT_URL}/auth/verify?token=${encodeURIComponent(token)}`;
   const lang = existing?.language ?? body.language;
   await sendEmail(
     body.email,
-    templates(lang).magicLink(existing?.name ?? body.name ?? body.email.split('@')[0], link),
+    templates(lang).magicLink(
+      (existing && !existing.needsName ? existing.name : body.name) || body.email.split('@')[0],
+      link,
+    ),
   );
 
   // Convenience for local development without SMTP: hand the link back directly.
@@ -167,6 +180,7 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
     req.body,
   );
   Object.assign(user, body);
+  if (body.name) user.needsName = false;
   await user.save();
   res.json({ user: serializeUser(user) });
 });
