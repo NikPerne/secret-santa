@@ -19,6 +19,9 @@ const schema = z.object({
   CLOUDINARY_API_SECRET: z.string().optional().default(''),
   CLOUDINARY_FOLDER: z.string().optional().default('secret-santa'),
 
+  /** HTTPS email APIs (work on Render's free tier, which blocks outbound SMTP ports). */
+  BREVO_API_KEY: z.string().optional().default(''),
+  RESEND_API_KEY: z.string().optional().default(''),
   SMTP_HOST: z.string().optional().default(''),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_SECURE: bool,
@@ -63,5 +66,13 @@ export const instantJoinEnabled = !isProd && env.DEV_INSTANT_JOIN;
 export const cloudinaryEnabled = Boolean(
   env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET,
 );
-export const smtpEnabled = Boolean(env.SMTP_HOST);
+/** Which email transport to use; 'console' logs emails instead of sending them. */
+export const emailProvider: 'brevo' | 'resend' | 'smtp' | 'console' = env.BREVO_API_KEY
+  ? 'brevo'
+  : env.RESEND_API_KEY
+    ? 'resend'
+    : env.SMTP_HOST
+      ? 'smtp'
+      : 'console';
+export const emailEnabled = emailProvider !== 'console';
 export const pushEnabled = Boolean(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY);

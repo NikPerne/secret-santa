@@ -1,6 +1,6 @@
 import { Router, type Response } from 'express';
 import { z } from 'zod';
-import { env, instantJoinEnabled, isProd, smtpEnabled } from '../config/env.js';
+import { emailEnabled, env, instantJoinEnabled, isProd } from '../config/env.js';
 import { currentUser, requireAuth } from '../middleware/auth.js';
 import { authLimiter } from '../middleware/rate-limit.js';
 import { parse, trimmed } from '../middleware/validate.js';
@@ -107,7 +107,7 @@ authRouter.post('/request-link', authLimiter, async (req, res) => {
   );
 
   // Convenience for local development without SMTP: hand the link back directly.
-  const devLink = !isProd && !smtpEnabled ? link : undefined;
+  const devLink = !isProd && !emailEnabled ? link : undefined;
   res.json({ sent: true, devLink });
 });
 

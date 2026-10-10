@@ -15,3 +15,15 @@ describe('GET /api/health', () => {
     expect(res.body.error.code).toBe('not_found');
   });
 });
+
+describe('parseFrom', () => {
+  it('splits a display name and address', async () => {
+    const { parseFrom } = await import('../src/services/email.js');
+    expect(parseFrom('Secret Santa <santa@example.com>')).toEqual({
+      name: 'Secret Santa',
+      email: 'santa@example.com',
+    });
+    expect(parseFrom('"Santa" <a@b.c>')).toEqual({ name: 'Santa', email: 'a@b.c' });
+    expect(parseFrom('a@b.c')).toEqual({ email: 'a@b.c' });
+  });
+});

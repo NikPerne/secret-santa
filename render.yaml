@@ -41,6 +41,12 @@ services:
         sync: false
       - key: CLOUDINARY_FOLDER
         value: secret-santa
+      # Email: Render free instances block outbound SMTP ports, so use an HTTPS API key
+      # (Brevo or Resend). Leave the SMTP_* values empty on Render.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT

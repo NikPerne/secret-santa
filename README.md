@@ -124,7 +124,7 @@ Edit `server/.env` (see `server/.env.example` for every option):
 | `JWT_SECRET` | Long random string for session cookies. |
 | `CLIENT_URL` | URL of the web app (CORS + links in emails). |
 | `CLOUDINARY_*` | Photo uploads (signed, direct from the browser). |
-| `SMTP_*`, `MAIL_FROM` | Magic links and reminders. Empty → logged to the console. |
+| `BREVO_API_KEY` *or* `RESEND_API_KEY` *or* `SMTP_*`, plus `MAIL_FROM` | Magic links and reminders. Use an HTTPS API key (Brevo/Resend) on Render: free instances block outbound SMTP ports. None set → logged to the console. |
 | `VAPID_*` | Web Push. Generate with `npx web-push generate-vapid-keys`. |
 | `DATA_RETENTION_DAYS` | Delete group data this many days after the exchange (default 60). |
 | `DAILY_JOB_CRON` | When the reminder/cleanup job runs (UTC, default `0 8 * * *`). |
@@ -150,10 +150,10 @@ Set `CLIENT_URL=http://localhost:3000` in `server/.env` so email links match.
 
 1. **MongoDB Atlas**: create a free M0 cluster, a database user, and under **Network Access** allow `0.0.0.0/0` (Render free services have no fixed IPs; use a strong password). Copy the `mongodb+srv://…` URI.
 2. **Cloudinary** (optional): copy cloud name, API key and API secret from the dashboard.
-3. **SMTP** (optional but needed for real sign-ins): any provider with a free tier (Resend, Brevo, Mailjet…). Verify your sender domain/address.
+3. **Email** (needed for real sign-ins): Render's free tier **blocks outbound SMTP**, so use an HTTPS email API. Easiest: **Brevo** (free, 300/day). Verify your sender address under *Senders, Domains & Dedicated IPs*, create an API key under *SMTP & API → API Keys*, and set `BREVO_API_KEY` + `MAIL_FROM="Secret Santa <you@example.com>"`. Alternatively **Resend** (`RESEND_API_KEY`, needs your own verified domain).
 4. **VAPID** (optional): `npx web-push generate-vapid-keys`.
 5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `nik-secret-santa` (https://nik-secret-santa.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
-6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, SMTP, VAPID). `CLIENT_URL` is preset to `https://nik-secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
+6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, `BREVO_API_KEY`/`RESEND_API_KEY` + `MAIL_FROM`, VAPID). `CLIENT_URL` is preset to `https://nik-secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
 7. Keep this the **only free web service** in your Render workspace, so the 750 free instance-hours cover running 24/7.
 
 **Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://nik-secret-santa.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
