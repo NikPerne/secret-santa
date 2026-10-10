@@ -426,8 +426,13 @@
   "ideas": {
     "title": "Gift ideas",
     "avoid": "Please avoid: {{list}}",
-    "hint": "Ideas match the group theme and budget. Ask your giftee in the anonymous chat to be sure!",
-    "show": "Need an idea?"
+    "hint": "Prices are typical Slovenian shop prices and may vary. Links open a search in Slovenian shops. Ask your giftee in the anonymous chat to be sure!",
+    "show": "Need an idea?",
+    "singleTitle": "One gift up to {{budget}}",
+    "bundlesTitle": "Or combine a few smaller gifts",
+    "bundlesHint": "Together they add up to about the group budget.",
+    "together": "Together",
+    "hintNoBudget": "Prices are typical Slovenian shop prices in EUR. Links open a search in Slovenian shops."
   },
   "thanks": {
     "receivedTitle": "A thank-you from your giftee",
