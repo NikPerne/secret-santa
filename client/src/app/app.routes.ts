@@ -1,7 +1,33 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/landing/landing').then((m) => m.Landing) },
+  { path: 'signin', loadComponent: () => import('./features/auth/signin').then((m) => m.SignIn) },
+  {
+    path: 'auth/verify',
+    loadComponent: () => import('./features/auth/verify').then((m) => m.Verify),
+  },
+  { path: 'join/:code', loadComponent: () => import('./features/join/join').then((m) => m.Join) },
+  {
+    path: 'create',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/create/group-wizard').then((m) => m.GroupWizard),
+  },
+  {
+    path: 'g/:groupId',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/group/group-home').then((m) => m.GroupHome),
+      },
+      {
+        path: 'setup',
+        loadComponent: () => import('./features/create/group-wizard').then((m) => m.GroupWizard),
+      },
+    ],
+  },
   {
     path: 'settings',
     loadComponent: () => import('./features/settings/settings').then((m) => m.Settings),

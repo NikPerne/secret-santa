@@ -1,0 +1,47 @@
+.narrow {
+  max-width: 480px;
+}
+
+.emoji {
+  font-size: 64px;
+}
+
+.invite-card {
+  overflow: hidden;
+  padding-top: 0;
+
+  .cover {
+    display: block;
+    width: calc(100% + 32px);
+    margin: 0 -16px 12px;
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  > p:first-of-type {
+    margin-top: 16px;
+  }
+}
+
+.group-name {
+  font: var(--mat-sys-headline-medium);
+  margin: 4px 0 8px;
+}
+
+.facts {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  mat-icon {
+    color: var(--mat-sys-primary);
+  }
+}

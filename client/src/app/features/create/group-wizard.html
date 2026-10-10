@@ -1,0 +1,177 @@
+<section class="page stack">
+  <ol class="steps" [attr.aria-label]="'wizard.progress' | transloco">
+    @for (s of [1, 2, 3]; track s) {
+      <li
+        [class.active]="step() === s"
+        [class.done]="step() > s"
+        [attr.aria-current]="step() === s ? 'step' : null"
+      >
+        <span class="dot">{{ s }}</span>
+        <span class="label">{{ 'wizard.step' + s | transloco }}</span>
+      </li>
+    }
+  </ol>
+
+  @switch (step()) {
+    @case (1) {
+      <h1 class="page-title">{{ 'wizard.basicsTitle' | transloco }}</h1>
+      <form class="stack" (ngSubmit)="saveBasics()" #f1="ngForm">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.groupName' | transloco }}</mat-label>
+          <input
+            matInput
+            name="name"
+            required
+            maxlength="80"
+            [placeholder]="'wizard.namePlaceholder' | transloco"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.exchangeDate' | transloco }}</mat-label>
+          <input
+            matInput
+            name="exchangeDate"
+            [matDatepicker]="picker"
+            [min]="minDate"
+            [ngModel]="exchangeDate()"
+            (ngModelChange)="exchangeDate.set($event)"
+            (click)="picker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="picker" />
+          <mat-datepicker #picker touchUi />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.location' | transloco }}</mat-label>
+          <input
+            matInput
+            name="location"
+            maxlength="200"
+            [placeholder]="'wizard.locationPlaceholder' | transloco"
+            [ngModel]="location()"
+            (ngModelChange)="location.set($event)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.description' | transloco }}</mat-label>
+          <textarea
+            matInput
+            name="description"
+            rows="3"
+            maxlength="1000"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+          ></textarea>
+        </mat-form-field>
+        <button mat-flat-button class="big-button" type="submit" [disabled]="f1.invalid || busy()">
+          {{ 'common.next' | transloco }}<mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </button>
+      </form>
+    }
+
+    @case (2) {
+      <h1 class="page-title">{{ 'wizard.rulesTitle' | transloco }}</h1>
+      <div class="stack">
+        <fieldset class="surface-card budget">
+          <legend>{{ 'fields.budget' | transloco }}</legend>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'fields.amount' | transloco }}</mat-label>
+            <input
+              matInput
+              type="number"
+              inputmode="decimal"
+              min="0"
+              name="amount"
+              [ngModel]="amount()"
+              (ngModelChange)="amount.set($event === '' ? null : $event)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'fields.currency' | transloco }}</mat-label>
+            <mat-select
+              name="currency"
+              [ngModel]="currency()"
+              (ngModelChange)="currency.set($event)"
+            >
+              @for (c of currencies; track c) {
+                <mat-option [value]="c">{{ c }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </fieldset>
+
+        <div class="surface-card toggles">
+          <mat-slide-toggle
+            [checked]="settings().organizerParticipates"
+            [disabled]="group()?.status !== 'open'"
+            (change)="setSetting('organizerParticipates', $event.checked)"
+          >
+            {{ 'settingsGroup.organizerParticipates' | transloco }}
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            [checked]="settings().organizerSeesPairs"
+            (change)="setSetting('organizerSeesPairs', $event.checked)"
+          >
+            {{ 'settingsGroup.organizerSeesPairs' | transloco }}
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            [checked]="settings().allowShippingAddress"
+            (change)="setSetting('allowShippingAddress', $event.checked)"
+          >
+            {{ 'settingsGroup.allowShippingAddress' | transloco }}
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            [checked]="settings().bigRevealAfterExchange"
+            (change)="setSetting('bigRevealAfterExchange', $event.checked)"
+          >
+            {{ 'settingsGroup.bigRevealAfterExchange' | transloco }}
+          </mat-slide-toggle>
+          @if (group()?.previousGroupId) {
+            <mat-slide-toggle
+              [checked]="settings().avoidPreviousPairs"
+              (change)="setSetting('avoidPreviousPairs', $event.checked)"
+            >
+              {{ 'settingsGroup.avoidPreviousPairs' | transloco }}
+            </mat-slide-toggle>
+          }
+        </div>
+
+        <section class="surface-card stack" aria-labelledby="excl-h">
+          <h2 id="excl-h">{{ 'exclusions.title' | transloco }}</h2>
+          <p class="muted">{{ 'exclusions.explain' | transloco }}</p>
+          <app-exclusions-editor
+            [members]="members()"
+            [exclusions]="exclusions()"
+            (exclusionsChange)="exclusions.set($event)"
+          />
+        </section>
+
+        <div class="nav">
+          <button mat-stroked-button (click)="back()">
+            <mat-icon>arrow_back</mat-icon>{{ 'common.back' | transloco }}
+          </button>
+          <button mat-flat-button [disabled]="busy()" (click)="saveRules()">
+            {{ 'common.next' | transloco }}<mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+
+    @case (3) {
+      @if (group(); as g) {
+        <h1 class="page-title">{{ 'wizard.inviteTitle' | transloco }}</h1>
+        <p class="muted">{{ 'wizard.inviteHint' | transloco }}</p>
+        <app-invite-share [code]="g.inviteCode" [groupName]="g.name" />
+        <div class="nav">
+          <button mat-stroked-button (click)="back()">
+            <mat-icon>arrow_back</mat-icon>{{ 'common.back' | transloco }}
+          </button>
+          <button mat-flat-button (click)="finish()">
+            {{ 'wizard.goToGroup' | transloco }}<mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+      }
+    }
+  }
+</section>

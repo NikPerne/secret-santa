@@ -12,7 +12,33 @@
     "close": "Zapri",
     "retry": "Poskusi znova",
     "loading": "Nalagam …",
-    "error": "Nekaj je šlo narobe. Poskusi znova."
+    "error": "Nekaj je šlo narobe. Poskusi znova.",
+    "saved": "Shranjeno"
+  },
+  "errors": {
+    "offline": "Videti je, da nisi povezan/-a. Preveri povezavo in poskusi znova.",
+    "unauthorized": "Prosimo, ponovno se prijavi.",
+    "forbidden": "Do tega nimaš dostopa.",
+    "not_found": "Tega nismo našli. Povezava je morda napačna ali potekla.",
+    "validation_error": "Nekatera polja niso pravilna. Preveri jih.",
+    "rate_limited": "Preveč poskusov. Počakaj nekaj minut.",
+    "invalid_token": "Ta povezava za prijavo ni veljavna, je že uporabljena ali je potekla.",
+    "group_finished": "Ta skupina je že zaključena.",
+    "already_drawn": "Imena v tej skupini so že izžrebana.",
+    "invalid_exclusion": "To pravilo ni veljavno.",
+    "shipping_disabled": "Naslovi za pošiljanje v tej skupini niso omogočeni."
+  },
+  "fields": {
+    "email": "E-pošta",
+    "name": "Tvoje ime",
+    "nameOptional": "Tvoje ime (neobvezno)",
+    "groupName": "Ime skupine",
+    "exchangeDate": "Datum izmenjave daril",
+    "location": "Lokacija",
+    "description": "Opis",
+    "budget": "Proračun",
+    "amount": "Znesek",
+    "currency": "Valuta"
   },
   "wake": {
     "title": "Budimo škrate … 🎄",
@@ -26,10 +52,96 @@
     "codeLabel": "Koda ali povezava povabila",
     "codeHint": "Najdeš jo v prejetem povabilu",
     "continue": "Nadaljuj",
+    "signIn": "Si se že pridružil/-a? Prijava",
+    "yourGroups": "Tvoje skupine",
+    "status": { "open": "Čaka na žreb", "drawn": "Imena izžrebana", "finished": "Zaključeno" },
     "feature1": "Povabi s povezavo ali QR kodo",
     "feature2": "Pošten žreb s pravili, kot je »ne pari parov«",
     "feature3": "Seznami želja s fotografijami",
     "feature4": "Anonimen klepet z obdarovancem"
+  },
+  "signin": {
+    "title": "Prijava",
+    "subtitle": "Gesla ne potrebuješ. Poslali ti bomo čarobno povezavo.",
+    "nameHint": "Potrebno samo, če si tu prvič",
+    "send": "Pošlji mi povezavo za prijavo",
+    "instant": "Takojšnja prijava (razvoj)",
+    "checkInbox": "Preveri e-pošto",
+    "sentTo": "Povezavo za prijavo smo poslali na {{email}}.",
+    "expires": "Povezava deluje enkrat in poteče v 15 minutah.",
+    "devLink": "E-pošta ni nastavljena, zato je tu tvoja povezava:",
+    "openLink": "Odpri povezavo za prijavo",
+    "differentEmail": "Uporabi drug e-naslov"
+  },
+  "verify": {
+    "signingIn": "Prijavljam …",
+    "failed": "Povezava ni delovala",
+    "newLink": "Pridobi novo povezavo"
+  },
+  "join": {
+    "invalid": "Povabila ni mogoče najti",
+    "invitedBy": "{{name}} te vabi v",
+    "memberCount": "Pridruženih: {{count}}",
+    "emailHint": "Poslali ti bomo povezavo, da se lahko kadar koli vrneš",
+    "join": "Pridruži se skupini",
+    "joinAs": "Pridruži se kot {{name}}",
+    "instant": "Takojšnja pridružitev (razvoj)",
+    "lateJoin": "Imena so že izžrebana. Vključen/-a boš, ne da bi komu pokvarili presenečenje."
+  },
+  "wizard": {
+    "progress": "Napredek",
+    "step1": "Osnove",
+    "step2": "Proračun in pravila",
+    "step3": "Povabilo",
+    "basicsTitle": "Kakšna je priložnost?",
+    "namePlaceholder": "npr. Družinski božič 2026",
+    "locationPlaceholder": "npr. Pri babici",
+    "rulesTitle": "Proračun in pravila",
+    "inviteTitle": "Povabi ljudi",
+    "inviteHint": "Deli povezavo v skupinskem klepetu ali naj ljudje skenirajo QR kodo.",
+    "goToGroup": "Na skupino"
+  },
+  "settingsGroup": {
+    "organizerParticipates": "Tudi jaz sodelujem v žrebu",
+    "organizerSeesPairs": "Kot organizator želim videti, kdo je izžrebal koga",
+    "allowShippingAddress": "Dovoli naslove za pošiljanje (za oddaljene skupine)",
+    "bigRevealAfterExchange": "Po izmenjavi razkrij vse Božičke",
+    "avoidPreviousPairs": "Izogni se lanskim parom"
+  },
+  "exclusions": {
+    "title": "Teh oseb ne pari",
+    "explain": "Na primer partnerji ali ljudje, ki živijo skupaj. Pravila veljajo v obe smeri.",
+    "needPeople": "Ko se ljudje pridružijo, lahko pravila dodaš tukaj ali na nadzorni plošči.",
+    "personA": "Oseba",
+    "personB": "naj ne bo v paru z",
+    "add": "Dodaj pravilo",
+    "remove": "Odstrani pravilo {{pair}}",
+    "none": "Pravil še ni.",
+    "listLabel": "Pravila"
+  },
+  "invite": {
+    "linkLabel": "Povezava povabila",
+    "copy": "Kopiraj povezavo",
+    "copied": "Povezava kopirana!",
+    "share": "Deli",
+    "code": "Koda",
+    "qrAlt": "QR koda za povezavo povabila",
+    "shareText": "Pridruži se našemu Skrivnemu Božičku »{{name}}« 🎁"
+  },
+  "group": {
+    "manage": "Upravljaj skupino",
+    "waitingTitle": "Čakamo na žreb",
+    "waitingText": "Udeležencev do zdaj: {{count}}. Organizator bo izžrebal imena, ko bodo vsi notri.",
+    "members": "Člani ({{count}})",
+    "organizer": "Organizator",
+    "inviteMore": "Povabi še koga"
+  },
+  "countdown": {
+    "days": "dni",
+    "hours": "ur",
+    "minutes": "min",
+    "done": "Danes so darila! 🎉",
+    "aria": "Še {{days}} dni, {{hours}} ur in {{minutes}} minut"
   },
   "notFound": {
     "title": "Ojoj, tu ni ničesar",

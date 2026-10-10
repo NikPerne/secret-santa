@@ -1,7 +1,35 @@
 <section class="page hero">
-  <div class="emoji" aria-hidden="true">🎁</div>
-  <h1>{{ 'landing.title' | transloco }}</h1>
-  <p class="muted lead">{{ 'landing.subtitle' | transloco }}</p>
+  @if (groups().length) {
+    <h1 class="page-title">{{ 'landing.yourGroups' | transloco }}</h1>
+    <ul class="groups">
+      @for (g of groups(); track g.id) {
+        <li>
+          <a class="group-link surface-card" [routerLink]="['/g', g.id]">
+            <span class="g-emoji" aria-hidden="true">{{
+              g.status === 'open' ? '⏳' : g.status === 'drawn' ? '🎁' : '🎉'
+            }}</span>
+            <span class="g-text">
+              <strong>{{ g.name }}</strong>
+              <span class="muted">
+                @if (g.exchangeDate) {
+                  {{ g.exchangeDate | localDate: 'short' }} ·
+                }
+                {{ 'landing.status.' + g.status | transloco }}
+                @if (g.role === 'organizer') {
+                  · {{ 'group.organizer' | transloco }}
+                }
+              </span>
+            </span>
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="emoji" aria-hidden="true">🎁</div>
+    <h1>{{ 'landing.title' | transloco }}</h1>
+    <p class="muted lead">{{ 'landing.subtitle' | transloco }}</p>
+  }
 
   <div class="stack actions">
     <a mat-flat-button class="big-button" routerLink="/create">
@@ -22,7 +50,6 @@
             matInput
             name="code"
             autocomplete="off"
-            autocapitalize="characters"
             [ngModel]="code()"
             (ngModelChange)="code.set($event)"
             required
@@ -34,12 +61,17 @@
         </button>
       </form>
     }
+    @if (!auth.signedIn()) {
+      <a mat-button routerLink="/signin">{{ 'landing.signIn' | transloco }}</a>
+    }
   </div>
 
-  <ul class="features">
-    <li><span aria-hidden="true">🔗</span> {{ 'landing.feature1' | transloco }}</li>
-    <li><span aria-hidden="true">🎲</span> {{ 'landing.feature2' | transloco }}</li>
-    <li><span aria-hidden="true">📝</span> {{ 'landing.feature3' | transloco }}</li>
-    <li><span aria-hidden="true">🤫</span> {{ 'landing.feature4' | transloco }}</li>
-  </ul>
+  @if (!groups().length) {
+    <ul class="features">
+      <li><span aria-hidden="true">🔗</span> {{ 'landing.feature1' | transloco }}</li>
+      <li><span aria-hidden="true">🎲</span> {{ 'landing.feature2' | transloco }}</li>
+      <li><span aria-hidden="true">📝</span> {{ 'landing.feature3' | transloco }}</li>
+      <li><span aria-hidden="true">🤫</span> {{ 'landing.feature4' | transloco }}</li>
+    </ul>
+  }
 </section>

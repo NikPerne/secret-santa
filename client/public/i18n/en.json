@@ -12,7 +12,33 @@
     "close": "Close",
     "retry": "Try again",
     "loading": "Loading…",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "saved": "Saved"
+  },
+  "errors": {
+    "offline": "You seem to be offline. Check your connection and try again.",
+    "unauthorized": "Please sign in again.",
+    "forbidden": "You don't have access to this.",
+    "not_found": "We couldn't find that. The link may be wrong or expired.",
+    "validation_error": "Some fields look wrong. Please check them.",
+    "rate_limited": "Too many attempts. Please wait a few minutes.",
+    "invalid_token": "This sign-in link is invalid, already used or expired.",
+    "group_finished": "This group has already finished.",
+    "already_drawn": "Names have already been drawn in this group.",
+    "invalid_exclusion": "That rule isn't valid.",
+    "shipping_disabled": "Shipping addresses are not enabled for this group."
+  },
+  "fields": {
+    "email": "Email",
+    "name": "Your name",
+    "nameOptional": "Your name (optional)",
+    "groupName": "Group name",
+    "exchangeDate": "Gift exchange date",
+    "location": "Location",
+    "description": "Description",
+    "budget": "Budget",
+    "amount": "Amount",
+    "currency": "Currency"
   },
   "wake": {
     "title": "Waking up the elves… 🎄",
@@ -26,10 +52,96 @@
     "codeLabel": "Invite code or link",
     "codeHint": "You'll find it in the invite you received",
     "continue": "Continue",
+    "signIn": "Already joined? Sign in",
+    "yourGroups": "Your groups",
+    "status": { "open": "Waiting for draw", "drawn": "Names drawn", "finished": "Finished" },
     "feature1": "Invite with a link or QR code",
     "feature2": "Fair draw with rules like \"don't pair couples\"",
     "feature3": "Wishlists with photos",
     "feature4": "Anonymous chat with your giftee"
+  },
+  "signin": {
+    "title": "Sign in",
+    "subtitle": "No password needed. We'll email you a magic link.",
+    "nameHint": "Only needed if you're new here",
+    "send": "Email me a sign-in link",
+    "instant": "Sign in instantly (dev)",
+    "checkInbox": "Check your inbox",
+    "sentTo": "We sent a sign-in link to {{email}}.",
+    "expires": "The link works once and expires in 15 minutes.",
+    "devLink": "Email isn't configured, so here is your link:",
+    "openLink": "Open sign-in link",
+    "differentEmail": "Use a different email"
+  },
+  "verify": {
+    "signingIn": "Signing you in…",
+    "failed": "That link didn't work",
+    "newLink": "Get a new link"
+  },
+  "join": {
+    "invalid": "Invite not found",
+    "invitedBy": "{{name}} invited you to",
+    "memberCount": "People joined: {{count}}",
+    "emailHint": "We'll send a link so you can come back any time",
+    "join": "Join the group",
+    "joinAs": "Join as {{name}}",
+    "instant": "Join instantly (dev)",
+    "lateJoin": "Names are already drawn. You'll be slotted in without spoiling anyone's match."
+  },
+  "wizard": {
+    "progress": "Progress",
+    "step1": "Basics",
+    "step2": "Budget & rules",
+    "step3": "Invite",
+    "basicsTitle": "What's the occasion?",
+    "namePlaceholder": "e.g. Family Christmas 2026",
+    "locationPlaceholder": "e.g. Grandma's house",
+    "rulesTitle": "Budget & rules",
+    "inviteTitle": "Invite people",
+    "inviteHint": "Share the link in your group chat or let people scan the QR code.",
+    "goToGroup": "Go to group"
+  },
+  "settingsGroup": {
+    "organizerParticipates": "I'm taking part in the draw too",
+    "organizerSeesPairs": "Let me (organizer) see who drew whom",
+    "allowShippingAddress": "Allow shipping addresses (for remote groups)",
+    "bigRevealAfterExchange": "Reveal all Santas after the exchange",
+    "avoidPreviousPairs": "Avoid last year's pairs"
+  },
+  "exclusions": {
+    "title": "Don't pair these people",
+    "explain": "For example couples, or people who live together. Rules work both ways.",
+    "needPeople": "Once people have joined, you can add rules here or from the dashboard.",
+    "personA": "Person",
+    "personB": "shouldn't be paired with",
+    "add": "Add rule",
+    "remove": "Remove rule {{pair}}",
+    "none": "No rules yet.",
+    "listLabel": "Rules"
+  },
+  "invite": {
+    "linkLabel": "Invite link",
+    "copy": "Copy link",
+    "copied": "Link copied!",
+    "share": "Share",
+    "code": "Code",
+    "qrAlt": "QR code for the invite link",
+    "shareText": "Join our Secret Santa \"{{name}}\" 🎁"
+  },
+  "group": {
+    "manage": "Manage group",
+    "waitingTitle": "Waiting for the draw",
+    "waitingText": "Participants so far: {{count}}. The organizer will draw names once everyone's in.",
+    "members": "Members ({{count}})",
+    "organizer": "Organizer",
+    "inviteMore": "Invite more people"
+  },
+  "countdown": {
+    "days": "days",
+    "hours": "hours",
+    "minutes": "min",
+    "done": "It's gift day! 🎉",
+    "aria": "{{days}} days, {{hours}} hours and {{minutes}} minutes left"
   },
   "notFound": {
     "title": "Oh deer, nothing here",

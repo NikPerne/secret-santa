@@ -1,0 +1,85 @@
+<section class="page stack">
+  @if (group(); as g) {
+    <header class="hero" [class.with-cover]="g.coverImage">
+      @if (g.coverImage) {
+        <img class="cover" [src]="g.coverImage.url" alt="" />
+      }
+      <h1 class="page-title">{{ g.name }}</h1>
+      <div class="chips">
+        @if (g.exchangeDate) {
+          <span class="chip"><mat-icon>event</mat-icon>{{ g.exchangeDate | localDate }}</span>
+        }
+        @if (g.budget.amount !== null) {
+          <span class="chip"><mat-icon>savings</mat-icon>{{ g.budget | money }}</span>
+        }
+        @if (g.location) {
+          <span class="chip"><mat-icon>place</mat-icon>{{ g.location }}</span>
+        }
+      </div>
+      @if (g.description) {
+        <p class="desc">{{ g.description }}</p>
+      }
+    </header>
+
+    @if (upcoming() && g.exchangeDate) {
+      <app-countdown [to]="g.exchangeDate" />
+    }
+
+    @if (isOrganizer()) {
+      <a mat-flat-button class="big-button" [routerLink]="['/g', g.id, 'manage']">
+        <mat-icon>dashboard</mat-icon>{{ 'group.manage' | transloco }}
+      </a>
+    }
+
+    @if (g.status === 'open') {
+      <div class="surface-card waiting">
+        <div class="emoji" aria-hidden="true">⏳</div>
+        <div>
+          <h2>{{ 'group.waitingTitle' | transloco }}</h2>
+          <p class="muted">
+            {{ 'group.waitingText' | transloco: { count: participants().length } }}
+          </p>
+        </div>
+      </div>
+    }
+
+    <mat-accordion multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>group</mat-icon>
+            {{ 'group.members' | transloco: { count: detail()?.members?.length ?? 0 } }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="members">
+          @for (m of detail()?.members; track m.id) {
+            <li>
+              <span class="avatar" aria-hidden="true">{{ initials(m.name) }}</span>
+              <span>{{ m.name }}</span>
+              @if (m.role === 'organizer') {
+                <span class="tag">{{ 'group.organizer' | transloco }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </mat-expansion-panel>
+      @if (g.status === 'open') {
+        <mat-expansion-panel [expanded]="isOrganizer() && participants().length < 3">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>person_add</mat-icon>{{ 'group.inviteMore' | transloco }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-invite-share [code]="g.inviteCode" [groupName]="g.name" />
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  } @else if (error()) {
+    <div class="center stack">
+      <p>{{ 'common.error' | transloco }}</p>
+      <button mat-flat-button (click)="load(groupId())">{{ 'common.retry' | transloco }}</button>
+    </div>
+  } @else {
+    <mat-spinner diameter="40" style="margin: 48px auto" />
+  }
+</section>

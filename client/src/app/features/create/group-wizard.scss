@@ -1,0 +1,76 @@
+.steps {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0;
+  margin: 8px 0 0;
+
+  li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+    text-align: center;
+  }
+
+  .dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--mat-sys-outline);
+    font-weight: 600;
+  }
+
+  .active {
+    color: var(--mat-sys-primary);
+    .dot {
+      background: var(--mat-sys-primary);
+      border-color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+    }
+  }
+
+  .done .dot {
+    border-color: var(--mat-sys-tertiary);
+    color: var(--mat-sys-tertiary);
+  }
+}
+
+h2 {
+  font: var(--mat-sys-title-medium);
+  margin: 0;
+}
+
+.budget {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+  margin: 0;
+
+  legend {
+    font: var(--mat-sys-title-medium);
+    padding: 0 4px;
+  }
+}
+
+.toggles {
+  display: grid;
+  gap: 16px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+
+  button {
+    flex: 1;
+  }
+}

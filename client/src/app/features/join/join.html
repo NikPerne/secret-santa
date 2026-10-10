@@ -1,0 +1,94 @@
+<section class="page stack narrow">
+  @if (loadError(); as message) {
+    <div class="center stack">
+      <div class="emoji" aria-hidden="true">🔍</div>
+      <h1 class="page-title">{{ 'join.invalid' | transloco }}</h1>
+      <p role="alert">{{ message }}</p>
+      <a mat-flat-button routerLink="/">{{ 'common.home' | transloco }}</a>
+    </div>
+  } @else if (sentTo(); as sent) {
+    <app-magic-link-sent [email]="sent" [devLink]="devLink()" (retry)="sentTo.set(null)" />
+  } @else if (invite(); as inv) {
+    <div class="invite-card surface-card">
+      @if (inv.coverImage) {
+        <img class="cover" [src]="inv.coverImage.url" alt="" />
+      }
+      <p class="muted">{{ 'join.invitedBy' | transloco: { name: inv.organizerName } }}</p>
+      <h1 class="group-name">{{ inv.name }}</h1>
+      @if (inv.description) {
+        <p>{{ inv.description }}</p>
+      }
+      <ul class="facts">
+        @if (inv.exchangeDate) {
+          <li><mat-icon>event</mat-icon>{{ inv.exchangeDate | localDate }}</li>
+        }
+        @if (inv.budget.amount !== null) {
+          <li><mat-icon>savings</mat-icon>{{ inv.budget | money }}</li>
+        }
+        @if (inv.location) {
+          <li><mat-icon>place</mat-icon>{{ inv.location }}</li>
+        }
+        <li>
+          <mat-icon>group</mat-icon>{{ 'join.memberCount' | transloco: { count: inv.memberCount } }}
+        </li>
+      </ul>
+    </div>
+
+    @if (inv.status === 'finished') {
+      <p class="error-text" role="alert">{{ 'errors.group_finished' | transloco }}</p>
+    } @else if (auth.user(); as me) {
+      @if (inv.status === 'drawn') {
+        <p class="muted">{{ 'join.lateJoin' | transloco }}</p>
+      }
+      <button mat-flat-button class="big-button" [disabled]="busy()" (click)="joinAsMe()">
+        <mat-icon>celebration</mat-icon>{{ 'join.joinAs' | transloco: { name: me.name } }}
+      </button>
+    } @else {
+      <form class="stack" (ngSubmit)="requestLink()" #f="ngForm">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.name' | transloco }}</mat-label>
+          <input
+            matInput
+            name="name"
+            autocomplete="given-name"
+            required
+            maxlength="60"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.email' | transloco }}</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            autocomplete="email"
+            inputmode="email"
+            required
+            email
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+          />
+          <mat-hint>{{ 'join.emailHint' | transloco }}</mat-hint>
+        </mat-form-field>
+        <button mat-flat-button class="big-button" type="submit" [disabled]="f.invalid || busy()">
+          <mat-icon>celebration</mat-icon>{{ 'join.join' | transloco }}
+        </button>
+        @if (instantJoin()) {
+          <button
+            mat-stroked-button
+            type="button"
+            class="big-button"
+            [disabled]="f.invalid || busy()"
+            (click)="instant()"
+          >
+            <mat-icon>bolt</mat-icon>{{ 'join.instant' | transloco }}
+          </button>
+        }
+      </form>
+    }
+  } @else {
+    <div class="center"><mat-spinner diameter="40" style="margin: 48px auto" /></div>
+  }
+</section>
