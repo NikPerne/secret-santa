@@ -119,6 +119,10 @@
       </div>
     }
 
+    @if (g.exchangePassed && playing()) {
+      <app-thank-you-card [groupId]="g.id" />
+    }
+
     @if (g.exchangePassed) {
       <a class="tile surface-card" [routerLink]="['/g', g.id, 'gallery']">
         <mat-icon aria-hidden="true">photo_library</mat-icon>

@@ -92,3 +92,33 @@ describe('invite by email', () => {
     ).toBe(400);
   });
 });
+
+describe('anonymous thank-you note', () => {
+  it('opens after the exchange and reaches the Santa without revealing them', async () => {
+    const { group, members, matchOf } = await drawn();
+    const giftee = members[1];
+    const santa = members.find((m) => matchOf.get(m.user.id) === giftee.user.id)!;
+    const base = `/api/groups/${group.id}/thank-you`;
+
+    expect((await giftee.agent.put(base).send({ text: 'Thanks!' })).body.error.code).toBe('too_early');
+
+    const { GroupModel } = await import('../src/models/index.js');
+    await GroupModel.updateOne({ _id: group.id }, { exchangeDate: new Date(Date.now() - 1000) });
+
+    const state = await giftee.agent.get(base);
+    expect(state.body).toMatchObject({ canSend: true, sent: null });
+    devOutbox.length = 0;
+    const sent = await giftee.agent.put(base).send({ text: 'The socks are perfect, thank you!' });
+    expect(sent.body.sent.text).toBe('The socks are perfect, thank you!');
+    expect(devOutbox.filter((m) => m.to === santa.user.email)).toHaveLength(1);
+
+    const santaView = await santa.agent.get(base);
+    expect(santaView.body.received.text).toBe('The socks are perfect, thank you!');
+    // The giftee's view never names the Santa.
+    expect(JSON.stringify(state.body)).not.toContain(santa.user.name);
+
+    // Editing doesn't notify again.
+    await giftee.agent.put(base).send({ text: 'Edited thanks' });
+    expect(devOutbox.filter((m) => m.to === santa.user.email)).toHaveLength(1);
+  });
+});

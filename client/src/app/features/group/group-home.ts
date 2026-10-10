@@ -24,6 +24,7 @@ import { confirmAction } from '../../shared/confirm-dialog';
 import { Countdown } from '../../shared/countdown';
 import { InviteShare } from '../../shared/invite-share';
 import { ThemeBadge } from '../../shared/theme-badge';
+import { ThankYouCard } from './thank-you-card';
 import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
 
 @Component({
@@ -39,6 +40,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
     Countdown,
     InviteShare,
     ThemeBadge,
+    ThankYouCard,
     LocalDatePipe,
     MoneyPipe,
   ],

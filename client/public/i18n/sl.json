@@ -40,7 +40,8 @@
     "push_disabled": "Potisna obvestila na tem strežniku še niso nastavljena.",
     "already_nudged": "Danes je že bil/-a opomnjen/-a. Poskusi jutri.",
     "nothing_to_nudge": "Ta oseba je že vse uredila. Ni je treba opomniti.",
-    "preview_failed": "Povezave ni bilo mogoče prebrati. Podatke vpiši sam/-a."
+    "preview_failed": "Povezave ni bilo mogoče prebrati. Podatke vpiši sam/-a.",
+    "too_early": "To se odpre po izmenjavi daril."
   },
   "fields": {
     "email": "E-pošta",
@@ -423,5 +424,15 @@
     "avoid": "Prosim, izogni se: {{list}}",
     "hint": "Ideje so prilagojene temi in proračunu skupine. Za vsak slučaj vprašaj obdarovanca v anonimnem klepetu!",
     "show": "Potrebuješ idejo?"
+  },
+  "thanks": {
+    "receivedTitle": "Zahvala tvojega obdarovanca",
+    "sendTitle": "Zahvali se svojemu Skrivnemu Božičku",
+    "sendHint": "Tvoj Božiček je še vedno skrivnost, lahko pa mu pošlješ anonimno zahvalo.",
+    "sentHint": "Poslano! Tvoj Božiček jo lahko prebere v aplikaciji.",
+    "label": "Tvoja zahvala",
+    "placeholder": "Darilo je bilo popolno, ker …",
+    "send": "Pošlji zahvalo",
+    "sent": "Zahvala poslana 💌"
   }
 }

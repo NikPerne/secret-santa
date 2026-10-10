@@ -40,7 +40,8 @@
     "push_disabled": "Push notifications aren't set up on this server yet.",
     "already_nudged": "Already reminded today. Try again tomorrow.",
     "nothing_to_nudge": "This person is all set. Nothing to remind them about.",
-    "preview_failed": "We couldn't read that link. Please fill in the details yourself."
+    "preview_failed": "We couldn't read that link. Please fill in the details yourself.",
+    "too_early": "This opens after the gift exchange."
   },
   "fields": {
     "email": "Email",
@@ -423,5 +424,15 @@
     "avoid": "Please avoid: {{list}}",
     "hint": "Ideas match the group theme and budget. Ask your giftee in the anonymous chat to be sure!",
     "show": "Need an idea?"
+  },
+  "thanks": {
+    "receivedTitle": "A thank-you from your giftee",
+    "sendTitle": "Thank your Secret Santa",
+    "sendHint": "Your Santa is still a secret, but you can send them an anonymous thank-you.",
+    "sentHint": "Sent! Your Santa can read it in the app.",
+    "label": "Your thank-you note",
+    "placeholder": "The gift was perfect because…",
+    "send": "Send thank-you",
+    "sent": "Thank-you sent 💌"
   }
 }

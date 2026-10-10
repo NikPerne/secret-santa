@@ -5,6 +5,17 @@ import { ChatMessage, ChatWho, GalleryPhoto, ImageRef, UnreadCounts } from '../m
 import { BACKGROUND } from '../interceptors';
 import { api } from './api';
 
+export interface ThankYouNote {
+  text: string;
+  sentAt: string | null;
+}
+
+export interface ThankYouState {
+  canSend: boolean;
+  sent: ThankYouNote | null;
+  received: ThankYouNote | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private readonly http = inject(HttpClient);
@@ -30,6 +41,18 @@ export class ChatService {
         }),
       )
     ).unread;
+  }
+
+  thankYou(groupId: string): Promise<ThankYouState> {
+    return firstValueFrom(this.http.get<ThankYouState>(api(`/groups/${groupId}/thank-you`)));
+  }
+
+  async sendThankYou(groupId: string, text: string): Promise<ThankYouNote> {
+    return (
+      await firstValueFrom(
+        this.http.put<{ sent: ThankYouNote }>(api(`/groups/${groupId}/thank-you`), { text }),
+      )
+    ).sent;
   }
 
   async send(groupId: string, who: ChatWho, text: string): Promise<ChatMessage> {

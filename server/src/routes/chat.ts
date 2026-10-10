@@ -1,4 +1,5 @@
 import { Router, type Request } from 'express';
+import { exchangePassed } from '../services/serializers.js';
 import { unreadCounts } from '../services/unread.js';
 import { z } from 'zod';
 import { groupCtx } from '../middleware/group.js';
@@ -92,4 +93,40 @@ chatRouter.post('/chat/:who', chatLimiter, async (req, res) => {
 chatRouter.get('/chat-unread', async (req, res) => {
   const { group, membership } = groupCtx(req);
   res.json({ unread: await unreadCounts(group, membership) });
+});
+
+// ---------- Anonymous thank-you note (after the exchange) ----------
+const serializeNote = (n?: { text?: string | null; sentAt?: Date | null } | null) =>
+  n?.text ? { text: n.text, sentAt: n.sentAt?.toISOString() ?? null } : null;
+
+/** My note to my Santa, and the note my giftee sent me. Never reveals who anyone is. */
+chatRouter.get('/thank-you', async (req, res) => {
+  const { group, membership } = groupCtx(req);
+  const me = membership.userId;
+  const [toMySanta, fromMyGiftee] = await Promise.all([
+    AssignmentModel.findOne({ groupId: group._id, receiverId: me }, { thankYou: 1 }),
+    AssignmentModel.findOne({ groupId: group._id, giverId: me }, { thankYou: 1 }),
+  ]);
+  res.json({
+    canSend: exchangePassed(group) && Boolean(toMySanta),
+    sent: serializeNote(toMySanta?.thankYou),
+    received: serializeNote(fromMyGiftee?.thankYou),
+  });
+});
+
+chatRouter.put('/thank-you', chatLimiter, async (req, res) => {
+  const { group, membership } = groupCtx(req);
+  if (!exchangePassed(group)) throw conflict('too_early', 'Thank-you notes open after the gift exchange');
+  const { text } = parse(z.object({ text: trimmed(1000).min(1) }), req.body);
+  const assignment = await AssignmentModel.findOne({ groupId: group._id, receiverId: membership.userId });
+  if (!assignment) throw notFound('No Santa found');
+  const first = !assignment.thankYou?.text;
+  assignment.set('thankYou', { text, sentAt: new Date() });
+  await assignment.save();
+  // Tell the Santa once; later edits stay quiet.
+  if (first && (await claimNotification(`thanks:${assignment.id}`, group._id))) {
+    const santa = await UserModel.findById(assignment.giverId);
+    if (santa) void notifyUser(santa, 'thankYou', group);
+  }
+  res.json({ sent: serializeNote(assignment.thankYou) });
 });

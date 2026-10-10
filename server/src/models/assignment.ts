@@ -5,6 +5,11 @@ const assignmentSchema = new Schema(
     groupId: { type: Schema.Types.ObjectId, ref: 'Group', required: true },
     giverId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     receiverId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    /** Anonymous thank-you from the receiver to their (still secret) Santa, after the exchange. */
+    thankYou: {
+      text: { type: String, trim: true, maxlength: 1000 },
+      sentAt: { type: Date },
+    },
   },
   { timestamps: true },
 );
