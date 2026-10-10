@@ -58,7 +58,7 @@ async function upsertUser(input: SignInInput): Promise<UserDoc> {
     return await UserModel.create({
       email: input.email,
       name: input.name || input.email.split('@')[0],
-      language: input.language ?? 'en',
+      language: input.language ?? 'sl',
     });
   } catch (err) {
     if ((err as { code?: number }).code === 11000) {

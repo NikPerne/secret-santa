@@ -75,4 +75,27 @@ function png(size) {
 mkdirSync('public/icons', { recursive: true });
 for (const size of SIZES) writeFileSync(`public/icons/icon-${size}x${size}.png`, png(size));
 writeFileSync('public/icons/apple-touch-icon.png', png(180));
-console.log(`Generated ${SIZES.length + 1} icons in public/icons`);
+
+/** favicon.ico with embedded PNGs (supported by every current browser). */
+function ico(sizes) {
+  const images = sizes.map((s) => ({ size: s, data: png(s) }));
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(images.length, 4);
+  let offset = 6 + 16 * images.length;
+  const entries = images.map(({ size, data }) => {
+    const e = Buffer.alloc(16);
+    e[0] = size >= 256 ? 0 : size; // width
+    e[1] = size >= 256 ? 0 : size; // height
+    e.writeUInt16LE(1, 4); // colour planes
+    e.writeUInt16LE(32, 6); // bits per pixel
+    e.writeUInt32LE(data.length, 8);
+    e.writeUInt32LE(offset, 12);
+    offset += data.length;
+    return e;
+  });
+  return Buffer.concat([header, ...entries, ...images.map((i) => i.data)]);
+}
+writeFileSync('public/favicon.ico', ico([16, 32, 48]));
+console.log(`Generated ${SIZES.length + 1} icons in public/icons and public/favicon.ico`);

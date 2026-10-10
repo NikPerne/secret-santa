@@ -1,8 +1,8 @@
 {
-  "name": "Secret Santa",
-  "short_name": "Secret Santa",
-  "description": "Draw names, share wishlists and chat anonymously with your Secret Santa.",
-  "lang": "en",
+  "name": "Skrivni Božiček",
+  "short_name": "Božiček",
+  "description": "Izžrebaj imena, deli sezname želja in anonimno klepetaj s svojim Skrivnim Božičkom.",
+  "lang": "sl",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#c62828",

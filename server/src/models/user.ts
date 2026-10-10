@@ -16,7 +16,7 @@ const userSchema = new Schema(
   {
     email: { type: String, required: true, lowercase: true, trim: true, unique: true },
     name: { type: String, required: true, trim: true, maxlength: 60 },
-    language: { type: String, enum: ['en', 'sl'], default: 'en' },
+    language: { type: String, enum: ['en', 'sl'], default: 'sl' },
     emailNotifications: { type: Boolean, default: true },
     pushSubscriptions: { type: [pushSubscriptionSchema], default: [] },
   },

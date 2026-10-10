@@ -25,11 +25,11 @@ describe('daily job', () => {
     devOutbox.length = 0;
     const first = await runDailyJob();
     expect(first?.exchangeSoon).toBe(3);
-    expect(devOutbox.filter((m) => m.subject.includes('3 days'))).toHaveLength(3);
+    expect(devOutbox.filter((m) => /3 (days|dni)/.test(m.subject))).toHaveLength(3);
 
     const second = await runDailyJob();
     expect(second?.exchangeSoon).toBe(0);
-    expect(devOutbox.filter((m) => m.subject.includes('3 days'))).toHaveLength(3);
+    expect(devOutbox.filter((m) => /3 (days|dni)/.test(m.subject))).toHaveLength(3);
   });
 
   it('reminds only people with an empty wishlist, after a grace period', async () => {
@@ -50,7 +50,7 @@ describe('daily job', () => {
     await GroupModel.updateOne({ _id: group.id }, { exchangeDate: new Date(Date.now() + DAY) });
     devOutbox.length = 0;
     await runDailyJob();
-    expect(devOutbox.filter((m) => m.subject.includes('3 days'))).toHaveLength(0);
+    expect(devOutbox.filter((m) => /3 (days|dni)/.test(m.subject))).toHaveLength(0);
   });
 
   it('finishes past groups and deletes data after the retention period', async () => {

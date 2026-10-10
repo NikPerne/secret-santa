@@ -61,7 +61,7 @@ export class LanguageService {
   private initial(): Lang {
     const saved = storage.get(KEY);
     if (saved && LANGUAGES.some((l) => l.code === saved)) return saved as Lang;
-    const nav = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : 'en';
-    return nav.startsWith('sl') ? 'sl' : 'en';
+    // Slovenian by default; people can switch to English in the toolbar or settings.
+    return 'sl';
   }
 }

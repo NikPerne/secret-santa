@@ -53,7 +53,7 @@ export async function seedDemo(): Promise<{ groupId: string; inviteCode: string 
     users.push(
       await UserModel.findOneAndUpdate(
         { email: p.email },
-        { $setOnInsert: { email: p.email, name: p.name, language: 'en' } },
+        { $setOnInsert: { email: p.email, name: p.name, language: 'sl' } },
         { upsert: true, returnDocument: 'after' },
       ),
     );

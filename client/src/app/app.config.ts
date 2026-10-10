@@ -36,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideTransloco({
       config: {
         availableLangs: LANGUAGES.map((l) => l.code),
-        defaultLang: 'en',
+        defaultLang: 'sl',
         fallbackLang: 'en',
         reRenderOnLangChange: true,
         missingHandler: { useFallbackTranslation: true, logMissingKey: isDevMode() },

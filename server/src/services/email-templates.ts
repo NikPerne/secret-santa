@@ -108,7 +108,8 @@ const T = {
   },
 } satisfies Record<Lang, unknown>;
 
-export const templates = (lang: string | null | undefined) => T[lang === 'sl' ? 'sl' : 'en'];
+/** Slovenian unless the user chose English. */
+export const templates = (lang: string | null | undefined) => T[lang === 'en' ? 'en' : 'sl'];
 
 /** Short push-notification texts, mirroring the emails. */
 export const pushTexts = {
@@ -140,8 +141,8 @@ export const pushTexts = {
   },
 };
 
-export const pushText = (lang: string | null | undefined) => pushTexts[lang === 'sl' ? 'sl' : 'en'];
+export const pushText = (lang: string | null | undefined) => pushTexts[lang === 'en' ? 'en' : 'sl'];
 
 export function formatDate(date: Date, lang: string | null | undefined): string {
-  return new Intl.DateTimeFormat(lang === 'sl' ? 'sl-SI' : 'en-GB', { dateStyle: 'long' }).format(date);
+  return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'sl-SI', { dateStyle: 'long' }).format(date);
 }
