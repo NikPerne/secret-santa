@@ -25,7 +25,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        sync: false # e.g. https://secret-santa-web.onrender.com
+        sync: false # https://secret-santa.onrender.com
       - key: COOKIE_SAMESITE
         value: lax
       - key: CLOUDINARY_CLOUD_NAME
@@ -60,7 +60,7 @@ services:
         value: '0 8 * * *'
 
   - type: web
-    name: secret-santa-web
+    name: secret-santa
     runtime: static
     rootDir: client
     buildCommand: npm ci && npm run build

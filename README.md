@@ -154,7 +154,7 @@ Then open http://localhost:8080 (set `CLIENT_URL=http://localhost:8080` in `serv
 4. **VAPID** (optional): `npx web-push generate-vapid-keys`.
 5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates:
    - `secret-santa-api`: Web Service (`server/`, health check `/api/health`)
-   - `secret-santa-web`: Static Site (`client/`) that **proxies `/api/*` to the API** and falls back to `index.html` for deep links
+   - `secret-santa`: Static Site (`client/`, served at https://secret-santa.onrender.com) that **proxies `/api/*` to the API** and falls back to `index.html` for deep links
 6. Fill in the env vars Render asks for (`MONGODB_URI`, `CLIENT_URL` = the static site URL, Cloudinary/SMTP/VAPID).
 7. If Render gave the API a different hostname than `secret-santa-api.onrender.com`, update the `/api/*` rewrite destination in `render.yaml` (or in the static site's **Redirects/Rewrites** settings).
 
