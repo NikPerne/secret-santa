@@ -6,11 +6,13 @@ import {
   effect,
   inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from './core/api/auth.service';
 import { LANGUAGES, Lang, LanguageService } from './core/i18n';
@@ -45,6 +47,16 @@ export class App {
   );
 
   protected readonly auth = inject(AuthService);
+  protected readonly year = new Date().getFullYear();
+  private readonly url = toSignal(
+    inject(Router).events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+    ),
+    { initialValue: '' },
+  );
+  /** Pages that fill the screen themselves (the chat keeps its composer at the bottom). */
+  protected readonly fullHeightPage = computed(() => /\/chat\//.test(this.url()));
   private readonly injector = inject(Injector);
   private askingName = false;
 
