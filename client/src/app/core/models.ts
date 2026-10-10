@@ -114,3 +114,45 @@ export interface GroupInput {
 export interface ApiErrorBody {
   error?: { code: string; message: string; details?: unknown };
 }
+
+export interface Match {
+  id: string;
+  name: string;
+  shippingAddress: string | null;
+}
+
+export type Feasibility = (
+  | { ok: true }
+  | {
+      ok: false;
+      code: 'too_few' | 'duplicate' | 'cannot_give' | 'cannot_receive' | 'too_constrained';
+      reason: string;
+      people: string[];
+    }
+) & { participantCount: number };
+
+export interface DashboardMember {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  participates: boolean;
+  joinedAt: string;
+  hasMatch: boolean;
+  viewedMatch: boolean;
+  wishlistCount: number;
+  hasPreferences: boolean;
+  giftStatus: GiftStatus;
+}
+
+export interface Dashboard {
+  group: Group;
+  canSeePairs: boolean;
+  feasibility: Feasibility | null;
+  members: DashboardMember[];
+}
+
+export interface PairView {
+  giver: { id: string; name: string };
+  receiver: { id: string; name: string };
+}

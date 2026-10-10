@@ -1,5 +1,7 @@
 {
-  "app": { "name": "Secret Santa" },
+  "app": {
+    "name": "Secret Santa"
+  },
   "common": {
     "home": "Home",
     "skipToContent": "Skip to content",
@@ -26,7 +28,11 @@
     "group_finished": "This group has already finished.",
     "already_drawn": "Names have already been drawn in this group.",
     "invalid_exclusion": "That rule isn't valid.",
-    "shipping_disabled": "Shipping addresses are not enabled for this group."
+    "shipping_disabled": "Shipping addresses are not enabled for this group.",
+    "draw_impossible": "The rules make a fair draw impossible. Remove a rule and try again.",
+    "not_drawn": "Names haven't been drawn yet.",
+    "cannot_remove_self": "You can't remove yourself. Delete the group instead.",
+    "organizer_cannot_leave": "As the organizer you can delete the group instead."
   },
   "fields": {
     "email": "Email",
@@ -54,7 +60,11 @@
     "continue": "Continue",
     "signIn": "Already joined? Sign in",
     "yourGroups": "Your groups",
-    "status": { "open": "Waiting for draw", "drawn": "Names drawn", "finished": "Finished" },
+    "status": {
+      "open": "Waiting for draw",
+      "drawn": "Names drawn",
+      "finished": "Finished"
+    },
     "feature1": "Invite with a link or QR code",
     "feature2": "Fair draw with rules like \"don't pair couples\"",
     "feature3": "Wishlists with photos",
@@ -134,7 +144,17 @@
     "waitingText": "Participants so far: {{count}}. The organizer will draw names once everyone's in.",
     "members": "Members ({{count}})",
     "organizer": "Organizer",
-    "inviteMore": "Invite more people"
+    "inviteMore": "Invite more people",
+    "matchReady": "Your match is ready!",
+    "unwrap": "Unwrap my match",
+    "youAreSantaFor": "You're Secret Santa for",
+    "theirWishlist": "Their wishlist",
+    "revealAgain": "Reveal again",
+    "yourSantaWas": "Big reveal: your Secret Santa was {{name}}!",
+    "leave": "Leave group",
+    "leaveTitle": "Leave {{name}}?",
+    "leaveMessage": "Your wishlist will be deleted. If names were already drawn, someone else will get a new match.",
+    "leaveConfirm": "Leave"
   },
   "countdown": {
     "days": "days",
@@ -151,6 +171,82 @@
     "title": "Settings",
     "language": "Language",
     "themeTitle": "Appearance",
-    "theme": { "system": "System", "light": "Light", "dark": "Dark" }
+    "theme": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "feasibility": {
+    "too_few": "You need at least 2 participants to draw names.",
+    "duplicate": "Someone is listed twice.",
+    "cannot_give": "Too many rules for {{names}}: they can't give to anyone. Remove one of their rules.",
+    "cannot_receive": "Too many rules for {{names}}: nobody can give to them. Remove one of their rules.",
+    "too_constrained": "Too many rules: {{names}} don't have enough people left to give to between them. Remove a rule for one of them."
+  },
+  "gift": {
+    "none": "Gift not bought yet",
+    "bought": "Gift bought",
+    "delivered": "Gift delivered"
+  },
+  "reveal": {
+    "title": "Who did you draw?",
+    "tapToUnwrap": "Tap the gift to unwrap",
+    "youAreSantaFor": "You're Secret Santa for…",
+    "yourMatch": "Your match is",
+    "keepSecret": "Keep it secret!",
+    "seeWishlist": "See their wishlist",
+    "backToGroup": "Back to group",
+    "again": "Wrap it up again"
+  },
+  "dashboard": {
+    "title": "Organizer dashboard",
+    "drawSection": "Draw",
+    "readyToDraw": "Ready to draw for {{count}} people.",
+    "drawNow": "Draw names",
+    "alreadyDrawn": "Names have been drawn.",
+    "viewed": "saw match",
+    "wishlists": "wishlists",
+    "gifts": "gifts bought",
+    "redo": "Redo draw",
+    "drawTitle": "Draw names now?",
+    "drawMessage": "Everyone ({{count}} people) will be notified and can unwrap their match.",
+    "drawConfirm": "Draw names",
+    "redoTitle": "Redo the draw?",
+    "redoMessage": "Everyone gets a new match, and all chats and gift statuses are reset. This can't be undone.",
+    "redoConfirm": "Redo draw",
+    "drawn": "Names drawn! Everyone has been notified. 🎉",
+    "drawnPreviousIgnored": "Names drawn! Last year's pairs couldn't all be avoided with these rules.",
+    "people": "People ({{count}})",
+    "notPlaying": "not in the draw",
+    "joined": "Joined",
+    "hasViewed": "Has seen their match",
+    "notViewed": "Hasn't seen their match yet",
+    "wishCount": "Wishlist items: {{count}}",
+    "removeTitle": "Remove {{name}}?",
+    "removeMessage": "{{name}} will be removed from the group with their wishlist.",
+    "removeMessageDrawn": "{{name}} will be removed. Their Santa gets a new match, changing as few other matches as possible.",
+    "removeConfirm": "Remove",
+    "removed": "{{name}} was removed",
+    "rulesAfterDraw": "Changes to rules apply the next time you draw.",
+    "pairs": "Pairs",
+    "pairsHidden": "Pairs are hidden so you can play too. Turn on \"Let me see who drew whom\" in the group settings to see them or print cards.",
+    "print": "Print reveal cards",
+    "editGroup": "Edit group details",
+    "duplicate": "Duplicate for next year",
+    "duplicateTitle": "Same again next year?",
+    "duplicateMessage": "A new group is created with the same people, rules and settings. Last year's pairs will be avoided.",
+    "duplicateConfirm": "Duplicate",
+    "delete": "Delete group",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteMessage": "All matches, wishlists, chats and photos will be permanently deleted for everyone.",
+    "deleteConfirm": "Delete forever"
+  },
+  "print": {
+    "title": "Print reveal cards",
+    "hint": "Names are blurred on screen. Print, fold each card along the line and hand it to the person named on the outside.",
+    "print": "Print",
+    "foldHere": "Fold here, don't peek!",
+    "youAreSantaFor": "You're Secret Santa for"
   }
 }

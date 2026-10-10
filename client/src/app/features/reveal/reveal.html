@@ -1,0 +1,65 @@
+<section class="page reveal">
+  @switch (phase()) {
+    @case ('loading') {
+      <mat-spinner diameter="48" style="margin: 64px auto" />
+    }
+    @case ('error') {
+      <div class="center stack">
+        <div class="big-emoji" aria-hidden="true">🤔</div>
+        <p role="alert">{{ errorMessage() }}</p>
+        <a mat-flat-button [routerLink]="['/g', groupId()]">{{
+          'reveal.backToGroup' | transloco
+        }}</a>
+      </div>
+    }
+    @default {
+      <h1 class="page-title center">
+        {{ (phase() === 'revealed' ? 'reveal.youAreSantaFor' : 'reveal.title') | transloco }}
+      </h1>
+
+      <div class="stage">
+        @if (phase() !== 'revealed') {
+          <button
+            class="gift"
+            [class.opening]="phase() === 'opening'"
+            (click)="unwrap()"
+            [attr.aria-label]="'reveal.tapToUnwrap' | transloco"
+          >
+            <span class="lid" aria-hidden="true"><span class="bow"></span></span>
+            <span class="box" aria-hidden="true"></span>
+          </button>
+          <p class="hint" aria-hidden="true">{{ 'reveal.tapToUnwrap' | transloco }}</p>
+        } @else {
+          <div class="confetti" aria-hidden="true">
+            @for (c of confetti; track $index) {
+              <span
+                [style.left.%]="c.left"
+                [style.animation-delay.s]="c.delay"
+                [style.background]="'hsl(' + c.hue + ' 80% 55%)'"
+              ></span>
+            }
+          </div>
+          <div class="card" role="status">
+            <p class="muted">{{ 'reveal.yourMatch' | transloco }}</p>
+            <p class="name" tabindex="-1" #nameEl>{{ match()?.name }}</p>
+            <p class="muted secret">🤫 {{ 'reveal.keepSecret' | transloco }}</p>
+          </div>
+        }
+      </div>
+
+      @if (phase() === 'revealed') {
+        <div class="stack actions">
+          <a mat-flat-button class="big-button" [routerLink]="['/g', groupId(), 'match']">
+            <mat-icon>card_giftcard</mat-icon>{{ 'reveal.seeWishlist' | transloco }}
+          </a>
+          <a mat-stroked-button class="big-button" [routerLink]="['/g', groupId()]">
+            {{ 'reveal.backToGroup' | transloco }}
+          </a>
+          <button mat-button (click)="wrapAgain()">
+            <mat-icon>replay</mat-icon>{{ 'reveal.again' | transloco }}
+          </button>
+        </div>
+      }
+    }
+  }
+</section>

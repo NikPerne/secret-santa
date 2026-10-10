@@ -1,5 +1,7 @@
 {
-  "app": { "name": "Skrivni Božiček" },
+  "app": {
+    "name": "Skrivni Božiček"
+  },
   "common": {
     "home": "Domov",
     "skipToContent": "Preskoči na vsebino",
@@ -26,7 +28,11 @@
     "group_finished": "Ta skupina je že zaključena.",
     "already_drawn": "Imena v tej skupini so že izžrebana.",
     "invalid_exclusion": "To pravilo ni veljavno.",
-    "shipping_disabled": "Naslovi za pošiljanje v tej skupini niso omogočeni."
+    "shipping_disabled": "Naslovi za pošiljanje v tej skupini niso omogočeni.",
+    "draw_impossible": "S temi pravili pošten žreb ni mogoč. Odstrani kakšno pravilo in poskusi znova.",
+    "not_drawn": "Imena še niso izžrebana.",
+    "cannot_remove_self": "Sebe ne moreš odstraniti. Raje izbriši skupino.",
+    "organizer_cannot_leave": "Kot organizator lahko skupino izbrišeš."
   },
   "fields": {
     "email": "E-pošta",
@@ -54,7 +60,11 @@
     "continue": "Nadaljuj",
     "signIn": "Si se že pridružil/-a? Prijava",
     "yourGroups": "Tvoje skupine",
-    "status": { "open": "Čaka na žreb", "drawn": "Imena izžrebana", "finished": "Zaključeno" },
+    "status": {
+      "open": "Čaka na žreb",
+      "drawn": "Imena izžrebana",
+      "finished": "Zaključeno"
+    },
     "feature1": "Povabi s povezavo ali QR kodo",
     "feature2": "Pošten žreb s pravili, kot je »ne pari parov«",
     "feature3": "Seznami želja s fotografijami",
@@ -134,7 +144,17 @@
     "waitingText": "Udeležencev do zdaj: {{count}}. Organizator bo izžrebal imena, ko bodo vsi notri.",
     "members": "Člani ({{count}})",
     "organizer": "Organizator",
-    "inviteMore": "Povabi še koga"
+    "inviteMore": "Povabi še koga",
+    "matchReady": "Tvoj obdarovanec te čaka!",
+    "unwrap": "Odvij obdarovanca",
+    "youAreSantaFor": "Ti si Skrivni Božiček za",
+    "theirWishlist": "Seznam želja",
+    "revealAgain": "Razkrij znova",
+    "yourSantaWas": "Veliko razkritje: tvoj Skrivni Božiček je bil {{name}}!",
+    "leave": "Zapusti skupino",
+    "leaveTitle": "Zapustiš skupino {{name}}?",
+    "leaveMessage": "Tvoj seznam želja bo izbrisan. Če so imena že izžrebana, bo nekdo dobil novega obdarovanca.",
+    "leaveConfirm": "Zapusti"
   },
   "countdown": {
     "days": "dni",
@@ -151,6 +171,82 @@
     "title": "Nastavitve",
     "language": "Jezik",
     "themeTitle": "Videz",
-    "theme": { "system": "Sistemsko", "light": "Svetlo", "dark": "Temno" }
+    "theme": {
+      "system": "Sistemsko",
+      "light": "Svetlo",
+      "dark": "Temno"
+    }
+  },
+  "feasibility": {
+    "too_few": "Za žreb potrebuješ vsaj 2 udeleženca.",
+    "duplicate": "Nekdo je naveden dvakrat.",
+    "cannot_give": "Preveč pravil za: {{names}}. Nikogar ne more obdariti. Odstrani eno od pravil.",
+    "cannot_receive": "Preveč pravil za: {{names}}. Nihče ne more obdariti te osebe. Odstrani eno od pravil.",
+    "too_constrained": "Preveč pravil: {{names}} skupaj nimajo dovolj oseb, ki bi jih lahko obdarili. Odstrani pravilo za eno od njih."
+  },
+  "gift": {
+    "none": "Darilo še ni kupljeno",
+    "bought": "Darilo kupljeno",
+    "delivered": "Darilo predano"
+  },
+  "reveal": {
+    "title": "Koga si izžrebal/-a?",
+    "tapToUnwrap": "Tapni darilo, da ga odviješ",
+    "youAreSantaFor": "Ti si Skrivni Božiček za …",
+    "yourMatch": "Tvoj obdarovanec je",
+    "keepSecret": "Naj ostane skrivnost!",
+    "seeWishlist": "Poglej seznam želja",
+    "backToGroup": "Nazaj na skupino",
+    "again": "Ponovno zavij"
+  },
+  "dashboard": {
+    "title": "Nadzorna plošča",
+    "drawSection": "Žreb",
+    "readyToDraw": "Pripravljeno za žreb, udeležencev: {{count}}.",
+    "drawNow": "Izžrebaj imena",
+    "alreadyDrawn": "Imena so izžrebana.",
+    "viewed": "videli obdarovanca",
+    "wishlists": "seznamov želja",
+    "gifts": "kupljenih daril",
+    "redo": "Ponovi žreb",
+    "drawTitle": "Izžrebam imena zdaj?",
+    "drawMessage": "Vsi ({{count}}) bodo obveščeni in bodo lahko odvili svojega obdarovanca.",
+    "drawConfirm": "Izžrebaj",
+    "redoTitle": "Ponovim žreb?",
+    "redoMessage": "Vsi dobijo novega obdarovanca, vsi klepeti in stanja daril se ponastavijo. Tega ni mogoče razveljaviti.",
+    "redoConfirm": "Ponovi žreb",
+    "drawn": "Imena so izžrebana! Vsi so obveščeni. 🎉",
+    "drawnPreviousIgnored": "Imena so izžrebana! S temi pravili se ni bilo mogoče izogniti vsem lanskim parom.",
+    "people": "Udeleženci ({{count}})",
+    "notPlaying": "ne sodeluje v žrebu",
+    "joined": "Pridružen/-a",
+    "hasViewed": "Je videl/-a obdarovanca",
+    "notViewed": "Še ni videl/-a obdarovanca",
+    "wishCount": "Želje: {{count}}",
+    "removeTitle": "Odstranim osebo {{name}}?",
+    "removeMessage": "{{name}} bo odstranjen/-a iz skupine skupaj s seznamom želja.",
+    "removeMessageDrawn": "{{name}} bo odstranjen/-a. Njegov/njen Božiček dobi novega obdarovanca, pri čemer se spremeni čim manj drugih parov.",
+    "removeConfirm": "Odstrani",
+    "removed": "{{name}} je odstranjen/-a",
+    "rulesAfterDraw": "Spremembe pravil veljajo ob naslednjem žrebu.",
+    "pairs": "Pari",
+    "pairsHidden": "Pari so skriti, da lahko tudi ti sodeluješ. V nastavitvah skupine vklopi »Kot organizator želim videti, kdo je izžrebal koga«, da jih vidiš ali natisneš kartice.",
+    "print": "Natisni kartice za razkritje",
+    "editGroup": "Uredi podatke skupine",
+    "duplicate": "Podvoji za naslednje leto",
+    "duplicateTitle": "Enako tudi naslednje leto?",
+    "duplicateMessage": "Ustvarjena bo nova skupina z istimi ljudmi, pravili in nastavitvami. Lanskim parom se bomo izognili.",
+    "duplicateConfirm": "Podvoji",
+    "delete": "Izbriši skupino",
+    "deleteTitle": "Izbrišem skupino {{name}}?",
+    "deleteMessage": "Vsi pari, seznami želja, klepeti in fotografije bodo trajno izbrisani za vse.",
+    "deleteConfirm": "Izbriši za vedno"
+  },
+  "print": {
+    "title": "Natisni kartice za razkritje",
+    "hint": "Imena so na zaslonu zamegljena. Natisni, prepogni vsako kartico po črti in jo izroči osebi, ki je napisana na zunanji strani.",
+    "print": "Natisni",
+    "foldHere": "Prepogni tukaj, ne kukaj!",
+    "youAreSantaFor": "Ti si Skrivni Božiček za"
   }
 }

@@ -2,13 +2,13 @@ import { Router } from 'express';
 import type { Types } from 'mongoose';
 import { z } from 'zod';
 import { currentUser } from '../middleware/auth.js';
-import { groupCtx, loadGroupMembership, requireOrganizer } from '../middleware/group.js';
+import { groupCtx, requireOrganizer } from '../middleware/group.js';
 import { objectId, parse, trimmed } from '../middleware/validate.js';
 import { GroupModel, MembershipModel, UserModel } from '../models/index.js';
 import { isOwnedImage, deleteImages } from '../services/cloudinary.js';
 import { deleteGroupData } from '../services/group-data.js';
+import { createInviteCode } from '../services/membership.js';
 import { serializeGroup, serializeMyMembership } from '../services/serializers.js';
-import { generateInviteCode } from '../services/tokens.js';
 import { badRequest, conflict } from '../utils/http-error.js';
 
 const dateInput = z
@@ -65,14 +65,6 @@ async function listMembers(groupId: Types.ObjectId) {
   }));
 }
 
-export async function createInviteCode(): Promise<string> {
-  for (let i = 0; i < 5; i++) {
-    const code = generateInviteCode();
-    if (!(await GroupModel.exists({ inviteCode: code }))) return code;
-  }
-  return generateInviteCode(12);
-}
-
 // ---------- /api/groups ----------
 export const groupsRouter = Router();
 
@@ -117,8 +109,8 @@ groupsRouter.post('/', async (req, res) => {
 });
 
 // ---------- /api/groups/:groupId ----------
+/** Mounted after requireAuth + loadGroupMembership (see app.ts). */
 export const groupRouter = Router({ mergeParams: true });
-groupRouter.use(loadGroupMembership);
 
 groupRouter.get('/', async (req, res) => {
   const { group, membership } = groupCtx(req);

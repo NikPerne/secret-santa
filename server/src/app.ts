@@ -7,7 +7,9 @@ import { pinoHttp } from 'pino-http';
 import { cloudinaryEnabled, env, instantJoinEnabled, pushEnabled } from './config/env.js';
 import { loadUser, requireAuth } from './middleware/auth.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
+import { loadGroupMembership } from './middleware/group.js';
 import { authRouter } from './routes/auth.js';
+import { drawRouter } from './routes/draw.js';
 import { groupRouter, groupsRouter } from './routes/groups.js';
 import { invitesRouter } from './routes/invites.js';
 import { logger } from './utils/logger.js';
@@ -62,7 +64,7 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/invites', invitesRouter);
   app.use('/api/groups', requireAuth, groupsRouter);
-  app.use('/api/groups/:groupId', requireAuth, groupRouter);
+  app.use('/api/groups/:groupId', requireAuth, loadGroupMembership, groupRouter, drawRouter);
 
   app.use('/api', notFoundHandler);
   app.use(errorHandler);

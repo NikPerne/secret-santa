@@ -26,6 +26,18 @@ export const routes: Routes = [
         path: 'setup',
         loadComponent: () => import('./features/create/group-wizard').then((m) => m.GroupWizard),
       },
+      {
+        path: 'reveal',
+        loadComponent: () => import('./features/reveal/reveal').then((m) => m.Reveal),
+      },
+      {
+        path: 'manage',
+        loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.DashboardPage),
+      },
+      {
+        path: 'print',
+        loadComponent: () => import('./features/dashboard/print-cards').then((m) => m.PrintCards),
+      },
     ],
   },
   {

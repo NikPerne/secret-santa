@@ -1,0 +1,187 @@
+<section class="page stack">
+  @if (group(); as g) {
+    <div class="title-row">
+      <a mat-icon-button [routerLink]="['/g', g.id]" [attr.aria-label]="'common.back' | transloco">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h1 class="page-title">{{ 'dashboard.title' | transloco }}</h1>
+    </div>
+    <p class="muted subtitle">{{ g.name }}</p>
+
+    <!-- Draw -->
+    <section class="surface-card stack" aria-labelledby="draw-h">
+      <h2 id="draw-h">{{ 'dashboard.drawSection' | transloco }}</h2>
+      @if (g.status === 'open') {
+        @if (feasibilityText(data()?.feasibility ?? null); as problem) {
+          <p class="warning" role="alert"><mat-icon>warning</mat-icon>{{ problem }}</p>
+        } @else {
+          <p class="ok">
+            <mat-icon>check_circle</mat-icon
+            >{{ 'dashboard.readyToDraw' | transloco: { count: participants().length } }}
+          </p>
+        }
+        <button
+          mat-flat-button
+          class="big-button"
+          [disabled]="busy() || !data()?.feasibility?.ok"
+          (click)="runDraw()"
+        >
+          <mat-icon>casino</mat-icon>{{ 'dashboard.drawNow' | transloco }}
+        </button>
+      } @else {
+        <p class="ok">
+          <mat-icon>check_circle</mat-icon>{{ 'dashboard.alreadyDrawn' | transloco }}
+        </p>
+        <div class="progress-grid">
+          <div>
+            <strong>{{ progress().viewed }}/{{ progress().total }}</strong
+            ><span>{{ 'dashboard.viewed' | transloco }}</span>
+          </div>
+          <div>
+            <strong>{{ progress().wishlists }}/{{ progress().total }}</strong
+            ><span>{{ 'dashboard.wishlists' | transloco }}</span>
+          </div>
+          <div>
+            <strong>{{ progress().bought }}/{{ progress().total }}</strong
+            ><span>{{ 'dashboard.gifts' | transloco }}</span>
+          </div>
+        </div>
+        <button mat-stroked-button [disabled]="busy()" (click)="runDraw()">
+          <mat-icon>refresh</mat-icon>{{ 'dashboard.redo' | transloco }}
+        </button>
+      }
+    </section>
+
+    <!-- Checklist -->
+    <section class="surface-card" aria-labelledby="people-h">
+      <h2 id="people-h">{{ 'dashboard.people' | transloco: { count: members().length } }}</h2>
+      <ul class="people">
+        @for (m of members(); track m.id) {
+          <li>
+            <div class="who">
+              <strong>{{ m.name }}</strong>
+              <span class="muted small">
+                {{ m.email }}
+                @if (m.role === 'organizer') {
+                  · {{ 'group.organizer' | transloco }}
+                }
+                @if (!m.participates) {
+                  · {{ 'dashboard.notPlaying' | transloco }}
+                }
+              </span>
+            </div>
+            @if (m.participates) {
+              <div class="checks">
+                <mat-icon
+                  [class.on]="true"
+                  [matTooltip]="'dashboard.joined' | transloco"
+                  [attr.aria-label]="'dashboard.joined' | transloco"
+                  >how_to_reg</mat-icon
+                >
+                <mat-icon
+                  [class.on]="m.viewedMatch"
+                  [matTooltip]="
+                    (m.viewedMatch ? 'dashboard.hasViewed' : 'dashboard.notViewed') | transloco
+                  "
+                  [attr.aria-label]="
+                    (m.viewedMatch ? 'dashboard.hasViewed' : 'dashboard.notViewed') | transloco
+                  "
+                  >visibility</mat-icon
+                >
+                <mat-icon
+                  [class.on]="m.wishlistCount > 0"
+                  [matTooltip]="'dashboard.wishCount' | transloco: { count: m.wishlistCount }"
+                  [attr.aria-label]="'dashboard.wishCount' | transloco: { count: m.wishlistCount }"
+                  >list_alt</mat-icon
+                >
+                <mat-icon
+                  [class.on]="m.giftStatus !== 'none'"
+                  [matTooltip]="'gift.' + m.giftStatus | transloco"
+                  [attr.aria-label]="'gift.' + m.giftStatus | transloco"
+                  >{{ m.giftStatus === 'delivered' ? 'redeem' : 'shopping_bag' }}</mat-icon
+                >
+              </div>
+            }
+            @if (m.role !== 'organizer') {
+              <button
+                mat-icon-button
+                [disabled]="busy()"
+                (click)="remove(m)"
+                [attr.aria-label]="'dashboard.removeTitle' | transloco: { name: m.name }"
+              >
+                <mat-icon>person_remove</mat-icon>
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <mat-accordion multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            ><mat-icon>block</mat-icon>{{ 'exclusions.title' | transloco }}</mat-panel-title
+          >
+        </mat-expansion-panel-header>
+        @if (g.status !== 'open') {
+          <p class="muted">{{ 'dashboard.rulesAfterDraw' | transloco }}</p>
+        }
+        <app-exclusions-editor
+          [members]="asMembers()"
+          [exclusions]="g.exclusions ?? []"
+          [disabled]="busy()"
+          (exclusionsChange)="saveExclusions($event)"
+        />
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            ><mat-icon>person_add</mat-icon>{{ 'group.inviteMore' | transloco }}</mat-panel-title
+          >
+        </mat-expansion-panel-header>
+        <app-invite-share [code]="g.inviteCode" [groupName]="g.name" />
+      </mat-expansion-panel>
+
+      @if (g.status !== 'open') {
+        <mat-expansion-panel (opened)="data()?.canSeePairs && !pairs() && showPairs()">
+          <mat-expansion-panel-header>
+            <mat-panel-title
+              ><mat-icon>visibility</mat-icon>{{ 'dashboard.pairs' | transloco }}</mat-panel-title
+            >
+          </mat-expansion-panel-header>
+          @if (!data()?.canSeePairs) {
+            <p class="muted">{{ 'dashboard.pairsHidden' | transloco }}</p>
+          } @else {
+            <ul class="pairs">
+              @for (p of pairs(); track p.giver.id) {
+                <li>
+                  {{ p.giver.name }} <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+                  {{ p.receiver.name }}
+                </li>
+              }
+            </ul>
+            <a mat-stroked-button [routerLink]="['/g', g.id, 'print']">
+              <mat-icon>print</mat-icon>{{ 'dashboard.print' | transloco }}
+            </a>
+          }
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+
+    <section class="stack more">
+      <a mat-stroked-button [routerLink]="['/g', g.id, 'setup']">
+        <mat-icon>edit</mat-icon>{{ 'dashboard.editGroup' | transloco }}
+      </a>
+      <button mat-stroked-button [disabled]="busy()" (click)="duplicate()">
+        <mat-icon>content_copy</mat-icon>{{ 'dashboard.duplicate' | transloco }}
+      </button>
+      <button mat-button class="danger-text" [disabled]="busy()" (click)="deleteGroup()">
+        <mat-icon>delete</mat-icon>{{ 'dashboard.delete' | transloco }}
+      </button>
+    </section>
+  } @else {
+    <mat-spinner diameter="40" style="margin: 48px auto" />
+  }
+</section>

@@ -1,5 +1,6 @@
 import { GroupModel, MembershipModel, type GroupDoc, type UserDoc } from '../models/index.js';
 import { conflict, notFound } from '../utils/http-error.js';
+import { generateInviteCode } from './tokens.js';
 
 export async function findGroupByInvite(code: string): Promise<GroupDoc> {
   const group = await GroupModel.findOne({ inviteCode: code });
@@ -35,4 +36,12 @@ let joinAfterDrawHook: JoinAfterDrawHook | undefined;
 /** Registered by the draw module so membership doesn't depend on it directly. */
 export function onJoinAfterDraw(hook: JoinAfterDrawHook): void {
   joinAfterDrawHook = hook;
+}
+
+export async function createInviteCode(): Promise<string> {
+  for (let i = 0; i < 5; i++) {
+    const code = generateInviteCode();
+    if (!(await GroupModel.exists({ inviteCode: code }))) return code;
+  }
+  return generateInviteCode(12);
 }

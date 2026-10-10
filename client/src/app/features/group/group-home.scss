@@ -96,3 +96,50 @@ mat-panel-title {
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
 }
+
+.match-card {
+  text-align: center;
+  padding: 20px 16px;
+  border-radius: 24px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  display: grid;
+  gap: 8px;
+
+  .emoji {
+    font-size: 48px;
+  }
+  h2 {
+    font: var(--mat-sys-title-large);
+  }
+  .label {
+    margin: 0;
+    font: var(--mat-sys-label-large);
+  }
+  .match-name {
+    margin: 0 0 8px;
+    font: var(--mat-sys-headline-large);
+    font-weight: 700;
+    word-break: break-word;
+  }
+}
+
+.grow {
+  flex: 1 1 140px;
+}
+
+.big-reveal {
+  font: var(--mat-sys-title-medium);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  span {
+    font-size: 32px;
+  }
+}
+
+.leave {
+  align-self: center;
+  color: var(--mat-sys-error);
+}

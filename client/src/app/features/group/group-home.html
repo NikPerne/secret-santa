@@ -25,8 +25,38 @@
       <app-countdown [to]="g.exchangeDate" />
     }
 
+    @if (playing()) {
+      <section class="match-card" aria-labelledby="match-h">
+        @if (!me()?.viewedMatchAt || !match()) {
+          <div class="emoji" aria-hidden="true">🎁</div>
+          <h2 id="match-h">{{ 'group.matchReady' | transloco }}</h2>
+          <a mat-flat-button class="big-button" [routerLink]="['/g', g.id, 'reveal']">
+            <mat-icon>auto_awesome</mat-icon>{{ 'group.unwrap' | transloco }}
+          </a>
+        } @else {
+          <p class="label" id="match-h">{{ 'group.youAreSantaFor' | transloco }}</p>
+          <p class="match-name">{{ match()?.name }}</p>
+          <div class="row">
+            <a mat-flat-button class="grow" [routerLink]="['/g', g.id, 'match']">
+              <mat-icon>card_giftcard</mat-icon>{{ 'group.theirWishlist' | transloco }}
+            </a>
+            <a mat-stroked-button class="grow" [routerLink]="['/g', g.id, 'reveal']">
+              <mat-icon>replay</mat-icon>{{ 'group.revealAgain' | transloco }}
+            </a>
+          </div>
+        }
+      </section>
+    }
+
+    @if (mySanta(); as santa) {
+      <div class="surface-card big-reveal" role="status">
+        <span aria-hidden="true">🎅</span>
+        {{ 'group.yourSantaWas' | transloco: { name: santa } }}
+      </div>
+    }
+
     @if (isOrganizer()) {
-      <a mat-flat-button class="big-button" [routerLink]="['/g', g.id, 'manage']">
+      <a mat-stroked-button class="big-button" [routerLink]="['/g', g.id, 'manage']">
         <mat-icon>dashboard</mat-icon>{{ 'group.manage' | transloco }}
       </a>
     }
@@ -74,6 +104,12 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
+
+    @if (!isOrganizer()) {
+      <button mat-button class="leave" (click)="leave()">
+        <mat-icon>logout</mat-icon>{{ 'group.leave' | transloco }}
+      </button>
+    }
   } @else if (error()) {
     <div class="center stack">
       <p>{{ 'common.error' | transloco }}</p>
