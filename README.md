@@ -49,15 +49,15 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 | Images | Cloudinary **Free plan** (signed uploads) | Free CDN, resizing/thumbnails, no local disk needed |
 | Email | Any SMTP / transactional provider with a free tier (e.g. Resend, Brevo) | Magic links and reminders |
 | Push | Web Push (VAPID) via `web-push` | Free, no third party |
-| Hosting | Render — **Static Site** (Angular) + **Web Service** (API) | Free tier, deploy from GitHub |
+| Hosting | Render — **one free Web Service** (Express serves the API *and* the Angular app) | Free tier, deploy from GitHub |
 
 ### Why these free tiers
 - **MongoDB Atlas Free (M0)** is a permanently free shared cluster with 512 MB storage and no time limit — plenty for text data like groups, wishlists and messages. (Unlike some free Postgres tiers, it doesn't pause or scale to zero.)
 - **Images don't go in MongoDB.** 512 MB would fill up fast, and Render's free web services have no persistent disk. Images go to Cloudinary; MongoDB stores only the URL and `public_id`. Cloudinary's free plan gives 25 credits per month, where 1 credit is roughly 1 GB storage *or* 1 GB bandwidth *or* 1,000 transformations. Images are resized in the browser before upload to stay well inside that.
-- **Render free web services sleep after 15 minutes of inactivity** and take a little while to wake up. To keep this painless:
-  - The Angular app is a **Render Static Site**, so the UI loads instantly even when the API is asleep.
-  - The app shows a friendly *"Waking up the elves… 🎄"* loader while the API cold-starts.
-  - Optionally, an external uptime pinger (UptimeRobot, cron-job.org) hits `/api/health` every ~14 minutes during the season.
+- **Render free web services sleep after 15 minutes of inactivity**, and free services share **750 instance-hours per month** per workspace. So everything runs as **one** web service, which fits 24/7 (a month has at most 744 hours):
+  - The server **pings itself** every 10 minutes so it never falls asleep (≈2 MB of traffic a month).
+  - If it ever does sleep, installed users still get the UI instantly from the service worker cache, and the app shows a friendly *"Waking up the elves… 🎄"* loader while the API wakes up.
+- **Render's free bandwidth (100 GB/month)** goes a long way: images are served by Cloudinary, not Render; responses are gzipped; hashed app bundles are cached by browsers for a year; returning visitors load the app from the service worker; chat polling slows down from 12 s to 60 s when nobody is writing. A first visit costs roughly 0.2 MB.
 
 ---
 
@@ -84,7 +84,7 @@ secret-santa/
 │   │   └── scripts/            # demo seed
 │   └── test/                   # Vitest: draw algorithm + API integration (in-memory MongoDB)
 ├── .github/workflows/ci.yml    # lint, test, build both apps
-├── render.yaml                 # Render Blueprint (static site + web service)
+├── render.yaml                 # Render Blueprint (one web service: API + app)
 └── CLAUDE.md                   # notes for AI-assisted development
 ```
 
@@ -137,12 +137,12 @@ npm test                     # server (draw algorithm + API) and client
 npm run lint                 # ESLint + Prettier (+ i18n key parity for the client)
 npm run build
 ```
-Push notifications and offline mode need the service worker, which only runs in a production build. To try it locally (with the API running on :3000):
+Push notifications and offline mode need the service worker, which only runs in a production build. To try the production setup locally (one server for app + API, like on Render):
 ```bash
 npm run build --prefix client
-npx http-server client/dist/client/browser -p 8080 -P http://localhost:3000   # unknown paths, incl. /api, go to the API
+npm run dev --prefix server      # now also serves the built app on http://localhost:3000
 ```
-Then open http://localhost:8080 (set `CLIENT_URL=http://localhost:8080` in `server/.env` so email links match).
+Set `CLIENT_URL=http://localhost:3000` in `server/.env` so email links match.
 
 ---
 
@@ -152,15 +152,15 @@ Then open http://localhost:8080 (set `CLIENT_URL=http://localhost:8080` in `serv
 2. **Cloudinary** (optional): copy cloud name, API key and API secret from the dashboard.
 3. **SMTP** (optional but needed for real sign-ins): any provider with a free tier (Resend, Brevo, Mailjet…). Verify your sender domain/address.
 4. **VAPID** (optional): `npx web-push generate-vapid-keys`.
-5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates:
-   - `secret-santa-api`: Web Service (`server/`, health check `/api/health`)
-   - `secret-santa`: Static Site (`client/`, served at https://secret-santa.onrender.com) that **proxies `/api/*` to the API** and falls back to `index.html` for deep links
-6. Fill in the env vars Render asks for (`MONGODB_URI`, `CLIENT_URL` = the static site URL, Cloudinary/SMTP/VAPID).
-7. If Render gave the API a different hostname than `secret-santa-api.onrender.com`, update the `/api/*` rewrite destination in `render.yaml` (or in the static site's **Redirects/Rewrites** settings).
+5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `secret-santa` (https://secret-santa.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
+6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, SMTP, VAPID). `CLIENT_URL` is preset to `https://secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
+7. Keep this the **only free web service** in your Render workspace, so the 750 free instance-hours cover running 24/7.
 
-**Why the proxy?** `*.onrender.com` is a public suffix, so a static site and an API on two Render subdomains are *different sites*. Browsers (Safari in particular) block third-party cookies. Proxying `/api` through the static site keeps the session cookie first-party. If you host the API elsewhere, set `apiUrl` in `client/src/environments/environment.ts` and `COOKIE_SAMESITE=none` on the API.
+**Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://secret-santa.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
 
-**Cold starts:** free web services sleep after ~15 minutes. The app shows *"Waking up the elves… 🎄"* and retries automatically. Optionally point an uptime pinger (UptimeRobot, cron-job.org) at `https://<api>/api/health` every ~14 minutes during the season. The daily job also runs ~10 s after every start, and reminders are idempotent, so nothing is missed or sent twice after a nap.
+**One origin:** because the app and API share a URL, the session cookie is first-party (`SameSite=Lax`), which works in every browser including Safari. If you ever host the API elsewhere, set `apiUrl` in `client/src/environments/environment.ts` and `COOKIE_SAMESITE=none` on the API.
+
+**After a nap or restart:** the daily job runs ~10 s after every start, and reminders are idempotent, so nothing is missed or sent twice.
 
 ---
 

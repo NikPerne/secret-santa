@@ -1,18 +1,23 @@
 # Render Blueprint: New → Blueprint → pick this repo.
-# Creates the API (free web service) and the Angular PWA (free static site).
 #
-# The static site proxies /api/* to the API service, so the browser talks to a single origin and
-# the auth cookie stays first-party (SameSite=Lax). If Render gives the API a different hostname
-# than below (e.g. a suffix because the name was taken), update the rewrite destination.
+# ONE free web service runs everything: the Express API also serves the built Angular PWA.
+# - Free web services share 750 instance-hours per workspace per month; one service running
+#   24/7 needs at most 744, so keep this the only free web service in the workspace.
+# - The app pings itself every 10 minutes (RENDER_EXTERNAL_URL/api/health) so it never reaches
+#   the 15-minute idle sleep. Optional backup: an UptimeRobot monitor on /api/health.
+# - Same origin for app and API, so the auth cookie is first-party (works in Safari).
 services:
   - type: web
-    name: secret-santa-api
+    name: secret-santa # → https://secret-santa.onrender.com (Render adds a suffix if taken)
     runtime: node
     plan: free
-    rootDir: server
-    # devDependencies (TypeScript) are needed to build, even though NODE_ENV=production.
-    buildCommand: npm ci --include=dev && npm run build
-    startCommand: npm start
+    # devDependencies (TypeScript, Angular CLI) are needed to build, even with NODE_ENV=production.
+    buildCommand: >-
+      npm ci --prefix server --include=dev &&
+      npm ci --prefix client --include=dev &&
+      npm run build --prefix server &&
+      npm run build --prefix client
+    startCommand: npm start --prefix server
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
@@ -25,7 +30,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        sync: false # https://secret-santa.onrender.com
+        value: https://secret-santa.onrender.com # change if Render assigns a different URL
       - key: COOKIE_SAMESITE
         value: lax
       - key: CLOUDINARY_CLOUD_NAME
@@ -58,43 +63,3 @@ services:
         value: '60'
       - key: DAILY_JOB_CRON
         value: '0 8 * * *'
-
-  - type: web
-    name: secret-santa
-    runtime: static
-    rootDir: client
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist/client/browser
-    autoDeploy: true
-    envVars:
-      - key: NODE_VERSION
-        value: '24'
-    routes:
-      # Same-origin API (order matters: this must come before the SPA fallback).
-      - type: rewrite
-        source: /api/*
-        destination: https://secret-santa-api.onrender.com/api/*
-      # SPA fallback for deep links like /g/123/reveal
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: Referrer-Policy
-        value: strict-origin-when-cross-origin
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      # Let the service worker and app shell update promptly.
-      - path: /index.html
-        name: Cache-Control
-        value: no-cache
-      - path: /ngsw-worker.js
-        name: Cache-Control
-        value: no-cache
-      - path: /ngsw.json
-        name: Cache-Control
-        value: no-cache

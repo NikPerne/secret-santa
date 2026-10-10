@@ -32,6 +32,8 @@ const schema = z.object({
 
   DATA_RETENTION_DAYS: z.coerce.number().int().positive().default(60),
   DAILY_JOB_CRON: z.string().default('0 8 * * *'),
+  /** Public URL to ping so the free instance never sleeps. Defaults to RENDER_EXTERNAL_URL; 'off' disables. */
+  KEEP_ALIVE_URL: z.string().optional().default(''),
 });
 
 export type Env = z.infer<typeof schema>;

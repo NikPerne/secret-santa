@@ -5,8 +5,8 @@ Notes for Claude Code working in this repo. README.md is the product spec and us
 ## Layout
 - `client/`: Angular 22 PWA (standalone components, signals, zoneless, OnPush, Angular Material 3, SCSS, Transloco, `@angular/service-worker`). Tests use Vitest through `ng test`.
 - `server/`: Express 5 + TypeScript (ESM, `NodeNext`, so relative imports end in `.js`), Mongoose 9, Zod 4, Vitest + supertest + mongodb-memory-server.
-- Root `package.json`: convenience scripts only (`npm run dev` runs both with concurrently). Each app has its own lockfile because Render builds them separately.
-- `render.yaml`: Render Blueprint (static site + web service). `.github/workflows/ci.yml`: lint, test, build for both apps.
+- Root `package.json`: convenience scripts only (`npm run dev` runs both with concurrently). Each app has its own lockfile; Render builds both inside one service.
+- `render.yaml`: Render Blueprint with ONE free web service (Express serves `/api` and the built Angular app via `server/src/static.ts`). Don't add a second free service: 750 instance-hours/month only covers one running 24/7. `.github/workflows/ci.yml`: lint, test, build for both apps.
 
 ## Environment gotchas (Windows dev machine)
 - Node lives at `C:\Program Files\nodejs` and is often missing from the Bash tool's PATH. Prefix commands with `export PATH="/c/Program Files/nodejs:$PATH";`.
@@ -26,7 +26,8 @@ cd client && npm run build   # production build incl. service worker -> dist/cli
 ```
 
 ## Key decisions
-- **Same-origin API.** The client calls a relative `/api` (`environment.apiUrl = ''`). Dev uses `client/proxy.conf.json`; prod uses a Render static-site rewrite `/api/*` to the API. This keeps the JWT cookie first-party (`SameSite=Lax`), because `*.onrender.com` is a public suffix and Safari blocks third-party cookies. The fallback is `COOKIE_SAMESITE=none` + `apiUrl`.
+- **Single service, same origin.** The client calls a relative `/api` (`environment.apiUrl = ''`). Dev uses the Angular dev server + `client/proxy.conf.json`. In prod, Express serves `client/dist/client/browser` (`serveClient`: hashed bundles cached 1 year, index/ngsw no-cache, SPA fallback for extension-less paths, gzip via `compression`). The cookie is first-party (`SameSite=Lax`). The CSP lives in `app.ts`: keep Angular's `inlineCritical: false`, because its inline `onload` would be blocked.
+- **Free-tier budget.** `jobs/keep-alive.ts` pings `RENDER_EXTERNAL_URL/api/health` every 10 min in production (`KEEP_ALIVE_URL=off` disables). Bandwidth (100 GB/month) is protected by gzip, long-lived caching, the service worker, Cloudinary-hosted images and adaptive chat polling (12→60 s). Keep new polling/background traffic small.
 - **No MONGODB_URI in dev/test** means mongodb-memory-server (`server/src/db.ts`). With `SEED_DEMO=true` the demo group is seeded on start. Production requires the URI.
 - **Auth:** magic link → `LoginToken` (sha256 hash, 15 min TTL index, single use via atomic `findOneAndUpdate`) → JWT in the httpOnly cookie `ss_session`. `DEV_INSTANT_JOIN=true` (ignored in production) enables `POST /api/auth/dev-login`. Without SMTP, emails go to the console and `devOutbox` (used by tests), and `request-link` returns `devLink`.
 - **Routing/authorization:** `app.ts` mounts `/api/groups/:groupId` → `requireAuth` → `loadGroupMembership` (404 for non-members) → feature routers (`groups`, `draw`, `wishlist`, `chat`, `extras`). Use `groupCtx(req)` in handlers. A participant may only read their own assignment and their receiver's wishlist/preferences. Never return `giverId`/`threadKey` to a receiver. Chat responses expose only `mine` + text.

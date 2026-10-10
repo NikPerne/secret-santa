@@ -22,9 +22,11 @@ import { ChatMessage, ChatWho } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { LocalDatePipe } from '../../shared/pipes';
 
-const POLL_MS = 12_000;
+/** Poll fast while a conversation is active, then back off to save bandwidth. */
+const POLL_MIN_MS = 12_000;
+const POLL_MAX_MS = 60_000;
 
-/** Anonymous chat. Polls every ~12s while the page is visible (good enough for v1). */
+/** Anonymous chat. Polls every 12–60s (adaptive) while the page is visible. */
 @Component({
   selector: 'app-chat',
   imports: [
@@ -56,7 +58,8 @@ export class Chat implements OnInit {
   protected readonly matchName = signal<string | null>(null);
   protected readonly canSend = computed(() => this.text().trim().length > 0 && !this.sending());
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
-  private timer?: ReturnType<typeof setInterval>;
+  private timer?: ReturnType<typeof setTimeout>;
+  private delay = POLL_MIN_MS;
 
   async ngOnInit(): Promise<void> {
     if (this.who() === 'match') {
@@ -73,13 +76,25 @@ export class Chat implements OnInit {
     } finally {
       this.loading.set(false);
     }
-    this.timer = setInterval(() => void this.poll(), POLL_MS);
-    const onVisible = () => document.visibilityState === 'visible' && void this.poll();
+    this.schedule();
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      this.delay = POLL_MIN_MS;
+      void this.poll();
+    };
     document.addEventListener('visibilitychange', onVisible);
     this.destroyRef.onDestroy(() => {
-      clearInterval(this.timer);
+      clearTimeout(this.timer);
       document.removeEventListener('visibilitychange', onVisible);
     });
+  }
+
+  private schedule(): void {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(async () => {
+      await this.poll();
+      this.schedule();
+    }, this.delay);
   }
 
   private async poll(): Promise<void> {
@@ -87,6 +102,8 @@ export class Chat implements OnInit {
     const last = this.messages().at(-1)?.createdAt;
     try {
       const fresh = await this.chat.messages(this.groupId(), this.who(), last);
+      // Nothing new: wait a bit longer next time (12s → 18s → … → 60s).
+      this.delay = fresh.length ? POLL_MIN_MS : Math.min(POLL_MAX_MS, Math.round(this.delay * 1.5));
       this.append(fresh);
     } catch {
       /* transient: try again next tick */
@@ -109,6 +126,9 @@ export class Chat implements OnInit {
       const message = await this.chat.send(this.groupId(), this.who(), text);
       this.text.set('');
       this.append([message]);
+      // A reply is likely soon.
+      this.delay = POLL_MIN_MS;
+      this.schedule();
     } catch (err) {
       this.notify.error(err);
     } finally {
