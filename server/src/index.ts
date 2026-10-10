@@ -1,15 +1,22 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { connectDb, disconnectDb } from './db.js';
+import { scheduleDailyJob } from './jobs/daily.js';
+import { seedDemo } from './scripts/seed-data.js';
 import { logger } from './utils/logger.js';
 
 async function main() {
   await connectDb();
+  // Convenience for the in-memory dev database, which starts empty on every restart.
+  if (!env.MONGODB_URI && process.env.SEED_DEMO === 'true') await seedDemo();
+
   const app = createApp();
   const server = app.listen(env.PORT, () => logger.info(`API listening on http://localhost:${env.PORT}`));
+  const stopJobs = scheduleDailyJob();
 
   const shutdown = async (signal: string) => {
     logger.info(`${signal} received, shutting down`);
+    stopJobs();
     server.close();
     await disconnectDb();
     process.exit(0);

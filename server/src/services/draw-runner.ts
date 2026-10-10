@@ -104,13 +104,18 @@ export async function runDraw(group: GroupDoc): Promise<{ avoidedPreviousPairs: 
  * Removes a member and their data. After the draw, their Santa gets a new receiver with as few
  * changes as possible, and everyone whose match changed is notified.
  */
-export async function removeMember(group: GroupDoc, userId: string): Promise<{ changed: string[] }> {
+export async function removeMember(
+  group: GroupDoc,
+  userId: string,
+  opts: { force?: boolean } = {},
+): Promise<{ changed: string[] }> {
   let changed: string[] = [];
   const groupId = group._id;
   const membership = await MembershipModel.findOne({ groupId, userId });
   if (!membership) return { changed };
 
-  if (group.status === 'drawn' && membership.participates) {
+  // With force, skip reassignment: their Santa is left without a match until the next draw.
+  if (group.status === 'drawn' && membership.participates && !opts.force) {
     const current = await loadPairs(groupId);
     if (current.has(userId)) {
       const { nameOf } = await participantsOf(groupId);

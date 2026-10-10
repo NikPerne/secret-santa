@@ -1,0 +1,100 @@
+# Render Blueprint: New → Blueprint → pick this repo.
+# Creates the API (free web service) and the Angular PWA (free static site).
+#
+# The static site proxies /api/* to the API service, so the browser talks to a single origin and
+# the auth cookie stays first-party (SameSite=Lax). If Render gives the API a different hostname
+# than below (e.g. a suffix because the name was taken), update the rewrite destination.
+services:
+  - type: web
+    name: secret-santa-api
+    runtime: node
+    plan: free
+    rootDir: server
+    # devDependencies (TypeScript) are needed to build, even though NODE_ENV=production.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: '24'
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false # e.g. https://secret-santa-web.onrender.com
+      - key: COOKIE_SAMESITE
+        value: lax
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: secret-santa
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: '587'
+      - key: SMTP_SECURE
+        value: 'false'
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false # e.g. "Secret Santa <santa@yourdomain.com>"
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false # e.g. mailto:you@example.com
+      - key: DATA_RETENTION_DAYS
+        value: '60'
+      - key: DAILY_JOB_CRON
+        value: '0 8 * * *'
+
+  - type: web
+    name: secret-santa-web
+    runtime: static
+    rootDir: client
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist/client/browser
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: '24'
+    routes:
+      # Same-origin API (order matters: this must come before the SPA fallback).
+      - type: rewrite
+        source: /api/*
+        destination: https://secret-santa-api.onrender.com/api/*
+      # SPA fallback for deep links like /g/123/reveal
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      # Let the service worker and app shell update promptly.
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+      - path: /ngsw-worker.js
+        name: Cache-Control
+        value: no-cache
+      - path: /ngsw.json
+        name: Cache-Control
+        value: no-cache

@@ -43,7 +43,7 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 
 | Layer | Choice | Why |
 |---|---|---|
-| Frontend | Angular (standalone components, signals), Angular Material or Tailwind, `@angular/service-worker` | PWA support built in |
+| Frontend | Angular (standalone components, signals, zoneless), Angular Material 3, Transloco, `@angular/service-worker` | PWA support built in |
 | Backend | Node.js (current LTS), Express, Mongoose, Zod validation | Simple, well-known |
 | Database | MongoDB Atlas **Free (M0)** | Free forever, always on, no time limit |
 | Images | Cloudinary **Free plan** (signed uploads) | Free CDN, resizing/thumbnails, no local disk needed |
@@ -65,22 +65,27 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 
 ```
 secret-santa/
-├── client/                 # Angular PWA
+├── client/                     # Angular PWA
 │   ├── src/app/
-│   │   ├── core/           # services, interceptors, guards
-│   │   ├── features/       # group, join, reveal, wishlist, chat, dashboard
-│   │   └── shared/         # UI components, pipes
-│   └── ngsw-config.json
-├── server/                 # Node.js API
+│   │   ├── core/               # API services, auth, interceptors (wake-up), i18n, theme
+│   │   ├── features/           # landing, auth, join, create wizard, group, reveal,
+│   │   │                       # wishlist, chat, dashboard (+ print), gallery, settings
+│   │   └── shared/             # invite share/QR, exclusions editor, image picker, lightbox…
+│   ├── public/i18n/            # en.json, sl.json (runtime translations)
+│   ├── scripts/                # icon generator, i18n key check
+│   └── ngsw-config.json        # offline caching of match + wishlists
+├── server/                     # Node.js API (Express 5 + TypeScript + Mongoose + Zod)
 │   ├── src/
-│   │   ├── routes/
-│   │   ├── models/
-│   │   ├── services/       # draw algorithm, email, push, cloudinary
-│   │   ├── middleware/
-│   │   └── jobs/           # reminders, data retention cleanup
-│   └── test/
-├── render.yaml             # Render Blueprint (static site + web service)
-└── README.md
+│   │   ├── routes/             # auth, groups, invites, draw, wishlist, chat, extras, uploads, push
+│   │   ├── models/             # User, Group, Membership, Assignment, WishlistItem, …
+│   │   ├── services/           # draw algorithm, email, push, cloudinary, ics, notify
+│   │   ├── middleware/         # auth, group membership, rate limits, validation, errors
+│   │   ├── jobs/               # daily reminders + data retention (idempotent)
+│   │   └── scripts/            # demo seed
+│   └── test/                   # Vitest: draw algorithm + API integration (in-memory MongoDB)
+├── .github/workflows/ci.yml    # lint, test, build both apps
+├── render.yaml                 # Render Blueprint (static site + web service)
+└── CLAUDE.md                   # notes for AI-assisted development
 ```
 
 ---
@@ -88,79 +93,86 @@ secret-santa/
 ## 🚀 Getting started (local)
 
 ### Prerequisites
-- Node.js (current LTS) and npm
-- A free MongoDB Atlas cluster (or local MongoDB / Docker)
-- A free Cloudinary account
+- Node.js 24 (current LTS) and npm
+- That's it for a first run: without `MONGODB_URI` the API starts an **in-memory MongoDB**, without SMTP emails are **printed to the console**, and without Cloudinary/VAPID keys photo uploads and push are simply turned off.
 
-### 1. Clone and install
+### 1. Install
 ```bash
 git clone https://github.com/<you>/secret-santa.git
 cd secret-santa
-npm install --prefix server
-npm install --prefix client
+npm run install:all          # root + server + client
+cp server/.env.example server/.env
 ```
 
-### 2. Configure the API
-Create `server/.env`:
-```env
-PORT=3000
-NODE_ENV=development
-MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/secret-santa
-JWT_SECRET=change-me
-CLIENT_URL=http://localhost:4200
-
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-SMTP_HOST=
-SMTP_PORT=587
-SMTP_USER=
-SMTP_PASS=
-MAIL_FROM="Secret Santa <santa@example.com>"
-
-VAPID_PUBLIC_KEY=
-VAPID_PRIVATE_KEY=
-VAPID_SUBJECT=mailto:you@example.com
-
-DATA_RETENTION_DAYS=60
-```
-Generate VAPID keys with `npx web-push generate-vapid-keys`.
-
-> Without SMTP settings, magic links are printed to the server console — handy for development.
-
-### 3. Run
+### 2. Run
 ```bash
-npm run dev --prefix server     # API on http://localhost:3000
-npm start --prefix client       # App on http://localhost:4200
+npm run dev                  # API on http://localhost:3000 + app on http://localhost:4200
 ```
+The Angular dev server proxies `/api` to the API (`client/proxy.conf.json`).
 
-### 4. Test
+With the default `server/.env`:
+- `SEED_DEMO=true` seeds a demo group **"Family Christmas"** with 6 people (Nika is the organizer; Ana, Marko, Eva, Luka, Maja), two "don't pair" rules and wishlists. Invite code `DEMOxmas`.
+- `DEV_INSTANT_JOIN=true` adds **"Sign in instantly (dev)"** buttons, so you can sign in as e.g. `nika@example.com` or `ana@example.com` without email. (Ignored in production.)
+- Magic links are logged to the API console *and* shown on screen.
+
+### 3. Configure real services (optional locally, required in production)
+Edit `server/.env` (see `server/.env.example` for every option):
+
+| Variable | What it's for |
+|---|---|
+| `MONGODB_URI` | MongoDB Atlas connection string. Empty → in-memory DB (dev only). |
+| `JWT_SECRET` | Long random string for session cookies. |
+| `CLIENT_URL` | URL of the web app (CORS + links in emails). |
+| `CLOUDINARY_*` | Photo uploads (signed, direct from the browser). |
+| `SMTP_*`, `MAIL_FROM` | Magic links and reminders. Empty → logged to the console. |
+| `VAPID_*` | Web Push. Generate with `npx web-push generate-vapid-keys`. |
+| `DATA_RETENTION_DAYS` | Delete group data this many days after the exchange (default 60). |
+| `DAILY_JOB_CRON` | When the reminder/cleanup job runs (UTC, default `0 8 * * *`). |
+
+To seed the demo group into a real database: `npm run seed` (uses `MONGODB_URI`).
+
+### 4. Test, lint, build
 ```bash
-npm test --prefix server        # includes draw-algorithm tests
-npm test --prefix client
+npm test                     # server (draw algorithm + API) and client
+npm run lint                 # ESLint + Prettier (+ i18n key parity for the client)
+npm run build
 ```
+Push notifications and offline mode need the service worker, which only runs in a production build. To try it locally (with the API running on :3000):
+```bash
+npm run build --prefix client
+npx http-server client/dist/client/browser -p 8080 -P http://localhost:3000   # unknown paths, incl. /api, go to the API
+```
+Then open http://localhost:8080 (set `CLIENT_URL=http://localhost:8080` in `server/.env` so email links match).
 
 ---
 
 ## ☁️ Deploying to Render
 
-1. Push the repo to GitHub.
-2. In Render, choose **New → Blueprint** and select the repo — `render.yaml` creates:
-   - `secret-santa-api` — Web Service (`server/`)
-   - `secret-santa-web` — Static Site (`client/`, with SPA rewrite to `index.html`)
-3. Fill in the environment variables in the Render dashboard.
-4. In MongoDB Atlas → **Network Access**, allow connections from Render (Render's outbound IPs, or `0.0.0.0/0` with a strong password).
-5. Set `CLIENT_URL` on the API to the static site URL and `apiUrl` in the Angular production environment to the API URL.
+1. **MongoDB Atlas**: create a free M0 cluster, a database user, and under **Network Access** allow `0.0.0.0/0` (Render free services have no fixed IPs; use a strong password). Copy the `mongodb+srv://…` URI.
+2. **Cloudinary** (optional): copy cloud name, API key and API secret from the dashboard.
+3. **SMTP** (optional but needed for real sign-ins): any provider with a free tier (Resend, Brevo, Mailjet…). Verify your sender domain/address.
+4. **VAPID** (optional): `npx web-push generate-vapid-keys`.
+5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates:
+   - `secret-santa-api`: Web Service (`server/`, health check `/api/health`)
+   - `secret-santa-web`: Static Site (`client/`) that **proxies `/api/*` to the API** and falls back to `index.html` for deep links
+6. Fill in the env vars Render asks for (`MONGODB_URI`, `CLIENT_URL` = the static site URL, Cloudinary/SMTP/VAPID).
+7. If Render gave the API a different hostname than `secret-santa-api.onrender.com`, update the `/api/*` rewrite destination in `render.yaml` (or in the static site's **Redirects/Rewrites** settings).
+
+**Why the proxy?** `*.onrender.com` is a public suffix, so a static site and an API on two Render subdomains are *different sites*. Browsers (Safari in particular) block third-party cookies. Proxying `/api` through the static site keeps the session cookie first-party. If you host the API elsewhere, set `apiUrl` in `client/src/environments/environment.ts` and `COOKIE_SAMESITE=none` on the API.
+
+**Cold starts:** free web services sleep after ~15 minutes. The app shows *"Waking up the elves… 🎄"* and retries automatically. Optionally point an uptime pinger (UptimeRobot, cron-job.org) at `https://<api>/api/health` every ~14 minutes during the season. The daily job also runs ~10 s after every start, and reminders are idempotent, so nothing is missed or sent twice after a nap.
 
 ---
 
 ## 🎲 How the draw works
 
-1. Participants and exclusion rules form a graph of allowed "gives to" edges.
-2. A randomized backtracking search finds a single cycle-free-of-conflicts assignment where each person gives exactly once and receives exactly once.
-3. If no valid assignment exists, the organizer gets a clear message ("Too many exclusions for Ana — remove one rule") instead of a failed draw.
-4. Results are stored per participant; the API only ever returns *your own* match.
+1. Participants and exclusion rules form a bipartite graph of allowed "gives to" edges (rules are symmetric; nobody gives to themselves; last year's pairs are excluded when the group was duplicated).
+2. **Feasibility first:** a maximum matching decides exactly whether a valid draw exists. If not, Hall's theorem pinpoints the people who are over-constrained, and the organizer sees e.g. *"Too many rules: Ana, Bo and Cy can only give to 2 people between them. Remove a rule for one of them."*
+3. **Draw:** randomized backtracking (most-constrained person first, with forward checking), with a randomized augmenting-path fallback that always finishes.
+4. **Drop-outs and late joiners** are handled with minimal changes: first only the affected Santa is reconnected, then 1, 2 or 3 others, and only as a last resort a full redraw. Everyone whose match changed is notified.
+5. Results are stored per participant; the API only ever returns *your own* match.
+
+The algorithm lives in `server/src/services/draw.ts` (pure functions with a seedable RNG) and is covered by tests for 2–30 participants, heavy exclusions, impossible cases, 1,000 random runs and a brute-force cross-check.
 
 ---
 
@@ -168,9 +180,10 @@ npm test --prefix client
 
 - Magic-link tokens are single-use, short-lived and stored hashed.
 - Each participant can only read their own match, and only their own match's wishlist.
-- Rate limiting on auth and upload endpoints, `helmet`, strict CORS.
+- Rate limiting on auth, upload and chat endpoints, `helmet`, strict CORS, Zod validation on every input.
 - Uploads: signed Cloudinary uploads, image types only, size limit, EXIF location stripped.
-- Automatic deletion of groups, messages and images `DATA_RETENTION_DAYS` after the exchange date.
+- Automatic deletion of groups, messages and images `DATA_RETENTION_DAYS` after the exchange date, plus a "Delete my data" button in Settings.
+- The anonymous chat never sends user ids or thread keys to the browser; the organizer can't see pairs unless they opt in (or aren't playing).
 
 ---
 

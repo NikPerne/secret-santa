@@ -36,7 +36,8 @@
     "too_many_items": "That's a lot of wishes! A wishlist can have up to 50 items.",
     "invalid_image": "Please upload the image again.",
     "uploads_disabled": "Photo uploads aren't set up on this server yet.",
-    "gallery_closed": "The photo wall opens after the gift exchange."
+    "gallery_closed": "The photo wall opens after the gift exchange.",
+    "push_disabled": "Push notifications aren't set up on this server yet."
   },
   "fields": {
     "email": "Email",
@@ -188,7 +189,25 @@
       "system": "System",
       "light": "Light",
       "dark": "Dark"
-    }
+    },
+    "notifications": "Notifications",
+    "emailReminders": "Email me reminders (draw done, empty wishlist, exchange soon)",
+    "push": {
+      "toggle": "Push notifications on this device",
+      "unsupported": "Push notifications aren't available here. Install the app or use a browser that supports them.",
+      "unconfigured": "Push notifications aren't set up on this server.",
+      "denied": "Notifications are blocked for this site. Allow them in your browser settings to turn them on.",
+      "deniedHelp": "Notifications are blocked. Allow them in your browser settings."
+    },
+    "account": "Account",
+    "signOut": "Sign out",
+    "privacy": "Privacy",
+    "privacyText": "We store only what's needed: your name, email, groups and wishlists. Group data is deleted automatically some time after the gift exchange.",
+    "deleteData": "Delete my data",
+    "deleteTitle": "Delete all your data?",
+    "deleteMessage": "Your account, wishlists and messages are deleted. Groups you organize are deleted for everyone. In other groups your Santa gets a new match. This can't be undone.",
+    "deleteConfirm": "Delete everything",
+    "deleted": "Your data has been deleted. Goodbye! 👋"
   },
   "feasibility": {
     "too_few": "You need at least 2 participants to draw names.",

@@ -29,4 +29,71 @@
       }
     </mat-button-toggle-group>
   </section>
+
+  @if (auth.user(); as user) {
+    <section class="surface-card stack" aria-labelledby="notif-h">
+      <h2 id="notif-h">{{ 'settings.notifications' | transloco }}</h2>
+      <mat-slide-toggle
+        [checked]="user.emailNotifications"
+        [disabled]="busy()"
+        (change)="setEmail($event.checked)"
+      >
+        {{ 'settings.emailReminders' | transloco }}
+      </mat-slide-toggle>
+      @switch (push.state()) {
+        @case ('unsupported') {
+          <p class="muted small">{{ 'settings.push.unsupported' | transloco }}</p>
+        }
+        @case ('unconfigured') {
+          <p class="muted small">{{ 'settings.push.unconfigured' | transloco }}</p>
+        }
+        @case ('denied') {
+          <p class="muted small">{{ 'settings.push.denied' | transloco }}</p>
+        }
+        @default {
+          <mat-slide-toggle
+            [checked]="push.state() === 'on'"
+            [disabled]="busy()"
+            (change)="setPush($event.checked)"
+          >
+            {{ 'settings.push.toggle' | transloco }}
+          </mat-slide-toggle>
+        }
+      }
+    </section>
+
+    <section class="surface-card stack" aria-labelledby="account-h">
+      <h2 id="account-h">{{ 'settings.account' | transloco }}</h2>
+      <p class="muted">{{ user.email }}</p>
+      <form class="name-row" (ngSubmit)="saveName()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.name' | transloco }}</mat-label>
+          <input
+            matInput
+            name="name"
+            maxlength="60"
+            required
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+          />
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="busy()">
+          {{ 'common.save' | transloco }}
+        </button>
+      </form>
+      <button mat-stroked-button [disabled]="busy()" (click)="signOut()">
+        <mat-icon>logout</mat-icon>{{ 'settings.signOut' | transloco }}
+      </button>
+    </section>
+
+    <section class="surface-card stack danger-zone" aria-labelledby="privacy-h">
+      <h2 id="privacy-h">{{ 'settings.privacy' | transloco }}</h2>
+      <p class="muted">{{ 'settings.privacyText' | transloco }}</p>
+      <button mat-button class="danger" [disabled]="busy()" (click)="deleteData()">
+        <mat-icon>delete_forever</mat-icon>{{ 'settings.deleteData' | transloco }}
+      </button>
+    </section>
+  } @else {
+    <a mat-flat-button class="big-button" routerLink="/signin">{{ 'signin.title' | transloco }}</a>
+  }
 </section>

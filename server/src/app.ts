@@ -14,6 +14,7 @@ import { drawRouter } from './routes/draw.js';
 import { extrasRouter } from './routes/extras.js';
 import { groupRouter, groupsRouter } from './routes/groups.js';
 import { invitesRouter } from './routes/invites.js';
+import { pushRouter } from './routes/push.js';
 import { uploadsRouter } from './routes/uploads.js';
 import { wishlistRouter } from './routes/wishlist.js';
 import { logger } from './utils/logger.js';
@@ -69,6 +70,7 @@ export function createApp() {
   app.use('/api/invites', invitesRouter);
   app.use('/api/groups', requireAuth, groupsRouter);
   app.use('/api/uploads', requireAuth, uploadsRouter);
+  app.use('/api/push', requireAuth, pushRouter);
   app.use(
     '/api/groups/:groupId',
     requireAuth,

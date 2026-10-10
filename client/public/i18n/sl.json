@@ -36,7 +36,8 @@
     "too_many_items": "To je veliko želja! Seznam ima lahko največ 50 želja.",
     "invalid_image": "Prosimo, ponovno naloži sliko.",
     "uploads_disabled": "Nalaganje fotografij na tem strežniku še ni nastavljeno.",
-    "gallery_closed": "Stena fotografij se odpre po izmenjavi daril."
+    "gallery_closed": "Stena fotografij se odpre po izmenjavi daril.",
+    "push_disabled": "Potisna obvestila na tem strežniku še niso nastavljena."
   },
   "fields": {
     "email": "E-pošta",
@@ -188,7 +189,25 @@
       "system": "Sistemsko",
       "light": "Svetlo",
       "dark": "Temno"
-    }
+    },
+    "notifications": "Obvestila",
+    "emailReminders": "Pošiljaj mi opomnike po e-pošti (žreb, prazen seznam želja, bližnja izmenjava)",
+    "push": {
+      "toggle": "Potisna obvestila na tej napravi",
+      "unsupported": "Potisna obvestila tu niso na voljo. Namesti aplikacijo ali uporabi brskalnik, ki jih podpira.",
+      "unconfigured": "Potisna obvestila na tem strežniku niso nastavljena.",
+      "denied": "Obvestila za to stran so blokirana. Dovoli jih v nastavitvah brskalnika.",
+      "deniedHelp": "Obvestila so blokirana. Dovoli jih v nastavitvah brskalnika."
+    },
+    "account": "Račun",
+    "signOut": "Odjava",
+    "privacy": "Zasebnost",
+    "privacyText": "Hranimo samo nujno: tvoje ime, e-naslov, skupine in sezname želja. Podatki skupine se samodejno izbrišejo nekaj časa po izmenjavi daril.",
+    "deleteData": "Izbriši moje podatke",
+    "deleteTitle": "Izbrišem vse tvoje podatke?",
+    "deleteMessage": "Tvoj račun, seznami želja in sporočila bodo izbrisani. Skupine, ki jih organiziraš, bodo izbrisane za vse. V drugih skupinah bo tvoj Božiček dobil novega obdarovanca. Tega ni mogoče razveljaviti.",
+    "deleteConfirm": "Izbriši vse",
+    "deleted": "Tvoji podatki so izbrisani. Adijo! 👋"
   },
   "feasibility": {
     "too_few": "Za žreb potrebuješ vsaj 2 udeleženca.",

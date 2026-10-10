@@ -8,6 +8,7 @@ import { LoginTokenModel, UserModel, type UserDoc } from '../models/index.js';
 import { sendEmail } from '../services/email.js';
 import { templates } from '../services/email-templates.js';
 import { findGroupByInvite, joinGroup } from '../services/membership.js';
+import { deleteAccount } from '../services/account.js';
 import { serializeUser } from '../services/serializers.js';
 import {
   MAGIC_LINK_TTL_MS,
@@ -168,4 +169,12 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
   Object.assign(user, body);
   await user.save();
   res.json({ user: serializeUser(user) });
+});
+
+/** "Delete my data" */
+authRouter.delete('/me', requireAuth, async (req, res) => {
+  await deleteAccount(currentUser(req));
+  const { maxAge: _maxAge, ...opts } = sessionCookieOptions();
+  res.clearCookie(SESSION_COOKIE, opts);
+  res.json({ ok: true });
 });
