@@ -101,6 +101,13 @@
           </mat-form-field>
         </fieldset>
 
+        @if (uploads() && group(); as g) {
+          <section class="surface-card stack" aria-labelledby="cover-h">
+            <h2 id="cover-h">{{ 'wizard.cover' | transloco }}</h2>
+            <app-image-picker [groupId]="g.id" purpose="cover" [(image)]="cover" />
+          </section>
+        }
+
         <div class="surface-card toggles">
           <mat-slide-toggle
             [checked]="settings().organizerParticipates"

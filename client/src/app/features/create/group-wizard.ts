@@ -11,9 +11,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { GroupsService } from '../../core/api/groups.service';
-import { Exclusion, Group, GroupSettings, Member } from '../../core/models';
+import { Exclusion, Group, GroupSettings, ImageRef, Member } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { ExclusionsEditor } from '../../shared/exclusions-editor';
+import { ImagePicker } from '../../shared/image-picker';
 import { InviteShare } from '../../shared/invite-share';
 
 export const CURRENCIES = [
@@ -48,6 +49,7 @@ type Step = 1 | 2 | 3;
     TranslocoPipe,
     ExclusionsEditor,
     InviteShare,
+    ImagePicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './group-wizard.html',
@@ -77,6 +79,8 @@ export class GroupWizard implements OnInit {
   // Step 2
   protected readonly amount = signal<number | null>(null);
   protected readonly currency = signal('EUR');
+  protected readonly cover = signal<ImageRef | null>(null);
+  protected readonly uploads = signal(false);
   protected readonly settings = signal<GroupSettings>({
     organizerParticipates: true,
     organizerSeesPairs: false,
@@ -86,6 +90,10 @@ export class GroupWizard implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    this.groups
+      .config()
+      .then((c) => this.uploads.set(c.uploads))
+      .catch(() => undefined);
     const id = this.groupId();
     if (!id) return;
     try {
@@ -101,6 +109,7 @@ export class GroupWizard implements OnInit {
       this.amount.set(g.budget.amount);
       this.currency.set(g.budget.currency);
       this.settings.set(g.settings);
+      this.cover.set(g.coverImage);
     } catch (err) {
       this.notify.error(err);
     }
@@ -144,6 +153,9 @@ export class GroupWizard implements OnInit {
       let updated = await this.groups.update(group.id, {
         budget: { amount: this.amount(), currency: this.currency() },
         settings: this.settings(),
+        ...(this.cover()?.publicId !== group.coverImage?.publicId
+          ? { coverImage: this.cover() }
+          : {}),
       });
       if (JSON.stringify(updated.exclusions ?? []) !== JSON.stringify(this.exclusions())) {
         updated = await this.groups.setExclusions(group.id, this.exclusions());

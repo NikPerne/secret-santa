@@ -156,3 +156,39 @@ export interface PairView {
   giver: { id: string; name: string };
   receiver: { id: string; name: string };
 }
+
+export interface WishlistItem {
+  id: string;
+  title: string;
+  url: string;
+  price: number | null;
+  notes: string;
+  image: ImageRef | null;
+  order: number;
+}
+
+export interface WishlistItemInput {
+  title: string;
+  url?: string;
+  price?: number | null;
+  notes?: string;
+  image?: ImageRef | null;
+}
+
+export interface Preferences {
+  sizes: string;
+  likes: string;
+  dislikes: string;
+}
+
+export type UploadPurpose = 'wishlist' | 'gallery' | 'cover';
+
+export interface UploadSignature {
+  cloudName: string;
+  apiKey: string;
+  uploadUrl: string;
+  timestamp: number;
+  folder: string;
+  allowed_formats: string;
+  signature: string;
+}

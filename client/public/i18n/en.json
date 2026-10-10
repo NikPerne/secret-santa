@@ -32,7 +32,10 @@
     "draw_impossible": "The rules make a fair draw impossible. Remove a rule and try again.",
     "not_drawn": "Names haven't been drawn yet.",
     "cannot_remove_self": "You can't remove yourself. Delete the group instead.",
-    "organizer_cannot_leave": "As the organizer you can delete the group instead."
+    "organizer_cannot_leave": "As the organizer you can delete the group instead.",
+    "too_many_items": "That's a lot of wishes! A wishlist can have up to 50 items.",
+    "invalid_image": "Please upload the image again.",
+    "uploads_disabled": "Photo uploads aren't set up on this server yet."
   },
   "fields": {
     "email": "Email",
@@ -109,7 +112,8 @@
     "rulesTitle": "Budget & rules",
     "inviteTitle": "Invite people",
     "inviteHint": "Share the link in your group chat or let people scan the QR code.",
-    "goToGroup": "Go to group"
+    "goToGroup": "Go to group",
+    "cover": "Cover photo (optional)"
   },
   "settingsGroup": {
     "organizerParticipates": "I'm taking part in the draw too",
@@ -154,7 +158,9 @@
     "leave": "Leave group",
     "leaveTitle": "Leave {{name}}?",
     "leaveMessage": "Your wishlist will be deleted. If names were already drawn, someone else will get a new match.",
-    "leaveConfirm": "Leave"
+    "leaveConfirm": "Leave",
+    "myWishlist": "My wishlist",
+    "myWishlistHint": "Help your Santa: add wishes, sizes and a \"please no\" list"
   },
   "countdown": {
     "days": "days",
@@ -248,5 +254,50 @@
     "print": "Print",
     "foldHere": "Fold here, don't peek!",
     "youAreSantaFor": "You're Secret Santa for"
+  },
+  "image": {
+    "add": "Add a photo",
+    "change": "Change photo",
+    "remove": "Remove photo",
+    "preview": "Photo preview",
+    "uploading": "Uploading… {{percent}}%",
+    "errors": {
+      "not_image": "That file isn't an image.",
+      "too_large": "That image is too large (max 5 MB after resizing).",
+      "unreadable": "We couldn't read that image. Try a JPEG or PNG."
+    }
+  },
+  "wishlist": {
+    "myTitle": "My wishlist",
+    "myHint": "Your Secret Santa sees this list, but you'll never see who they are.",
+    "theirTitle": "{{name}}'s wishlist",
+    "addItem": "Add a wish",
+    "editItem": "Edit wish",
+    "itemTitle": "What would you like?",
+    "titlePlaceholder": "e.g. A cosy blue scarf",
+    "link": "Link (optional)",
+    "price": "Approx. price",
+    "notes": "Notes",
+    "notesPlaceholder": "Colour, size, where to buy…",
+    "empty": "Your wishlist is empty. Add a few ideas so your Santa doesn't have to guess!",
+    "theirEmpty": "No wishes yet. Ask them a question in the anonymous chat!",
+    "openLink": "Open link",
+    "zoom": "Show photo of {{title}}",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteTitle": "Delete \"{{title}}\"?",
+    "deleteMessage": "This wish and its photo will be removed.",
+    "aboutMe": "About me",
+    "aboutThem": "Good to know",
+    "sizes": "Sizes",
+    "sizesPlaceholder": "e.g. T-shirt M, shoes 42",
+    "likes": "Favourite things",
+    "likesPlaceholder": "Colours, hobbies, snacks…",
+    "dislikes": "Please no",
+    "dislikesPlaceholder": "Things you don't want or are allergic to",
+    "address": "Shipping address",
+    "addressHint": "Only your Secret Santa can see this",
+    "shipTo": "Ship to",
+    "askQuestion": "Ask them a question anonymously"
   }
 }

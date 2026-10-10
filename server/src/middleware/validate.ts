@@ -12,3 +12,11 @@ export const optionalUrl = z
   .max(1000)
   .refine((v) => v === '' || /^https?:\/\//i.test(v), 'Must start with http:// or https://')
   .optional();
+
+/** A Cloudinary image reference submitted by the client (ownership is checked separately). */
+export const imageInput = z.object({
+  url: z.string().url().max(500),
+  publicId: z.string().min(1).max(300),
+  width: z.number().int().positive().max(20000).optional(),
+  height: z.number().int().positive().max(20000).optional(),
+});

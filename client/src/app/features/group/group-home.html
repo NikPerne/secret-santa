@@ -48,6 +48,17 @@
       </section>
     }
 
+    @if (me()?.participates) {
+      <a class="tile surface-card" [routerLink]="['/g', g.id, 'wishlist']">
+        <mat-icon aria-hidden="true">list_alt</mat-icon>
+        <span class="tile-text">
+          <strong>{{ 'group.myWishlist' | transloco }}</strong>
+          <span class="muted">{{ 'group.myWishlistHint' | transloco }}</span>
+        </span>
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </a>
+    }
+
     @if (mySanta(); as santa) {
       <div class="surface-card big-reveal" role="status">
         <span aria-hidden="true">🎅</span>

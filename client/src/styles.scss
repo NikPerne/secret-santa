@@ -151,3 +151,9 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+.lightbox-panel .mat-mdc-dialog-surface {
+  background: #000;
+  border-radius: 0;
+  padding: 0;
+}

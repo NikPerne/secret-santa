@@ -1,0 +1,98 @@
+<section class="page stack">
+  <div class="title-row">
+    <a
+      mat-icon-button
+      [routerLink]="['/g', groupId()]"
+      [attr.aria-label]="'common.back' | transloco"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1 class="page-title">
+      @if (match(); as m) {
+        {{ 'wishlist.theirTitle' | transloco: { name: m.name } }}
+      } @else {
+        {{ 'group.theirWishlist' | transloco }}
+      }
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <mat-spinner diameter="40" style="margin: 32px auto" />
+  } @else if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  } @else {
+    @if (match()?.shippingAddress; as address) {
+      <section class="surface-card" aria-labelledby="addr-h">
+        <h2 id="addr-h"><mat-icon>local_shipping</mat-icon>{{ 'wishlist.shipTo' | transloco }}</h2>
+        <p class="address">{{ address }}</p>
+      </section>
+    }
+
+    @if (hasPrefs(prefs())) {
+      <section class="surface-card prefs" aria-labelledby="prefs-h">
+        <h2 id="prefs-h"><mat-icon>person</mat-icon>{{ 'wishlist.aboutThem' | transloco }}</h2>
+        @if (prefs()?.sizes) {
+          <p>
+            <strong>{{ 'wishlist.sizes' | transloco }}:</strong> {{ prefs()?.sizes }}
+          </p>
+        }
+        @if (prefs()?.likes) {
+          <p>
+            <strong>💚 {{ 'wishlist.likes' | transloco }}:</strong> {{ prefs()?.likes }}
+          </p>
+        }
+        @if (prefs()?.dislikes) {
+          <p class="no">
+            <strong>🚫 {{ 'wishlist.dislikes' | transloco }}:</strong> {{ prefs()?.dislikes }}
+          </p>
+        }
+      </section>
+    }
+
+    @if (!items().length) {
+      <div class="surface-card center">
+        <div class="emoji" aria-hidden="true">🤷</div>
+        <p>{{ 'wishlist.theirEmpty' | transloco }}</p>
+      </div>
+    } @else {
+      <ul class="cards">
+        @for (item of items(); track item.id) {
+          <li class="card surface-card">
+            @if (item.image) {
+              <button
+                class="img-btn"
+                (click)="zoom(item)"
+                [attr.aria-label]="'wishlist.zoom' | transloco: { title: item.title }"
+              >
+                <img [src]="image(item.image.url)" alt="" loading="lazy" />
+              </button>
+            }
+            <div class="body">
+              <h2>{{ item.title }}</h2>
+              @if (item.price !== null) {
+                <p class="price">{{ item.price | money: currency() }}</p>
+              }
+              @if (item.notes) {
+                <p class="notes">{{ item.notes }}</p>
+              }
+              @if (item.url) {
+                <a
+                  mat-stroked-button
+                  [href]="item.url"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                >
+                  <mat-icon>open_in_new</mat-icon>{{ 'wishlist.openLink' | transloco }}
+                </a>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <a mat-flat-button class="big-button" [routerLink]="['/g', groupId(), 'chat', 'match']">
+      <mat-icon>chat</mat-icon>{{ 'wishlist.askQuestion' | transloco }}
+    </a>
+  }
+</section>

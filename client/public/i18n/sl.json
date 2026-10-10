@@ -32,7 +32,10 @@
     "draw_impossible": "S temi pravili pošten žreb ni mogoč. Odstrani kakšno pravilo in poskusi znova.",
     "not_drawn": "Imena še niso izžrebana.",
     "cannot_remove_self": "Sebe ne moreš odstraniti. Raje izbriši skupino.",
-    "organizer_cannot_leave": "Kot organizator lahko skupino izbrišeš."
+    "organizer_cannot_leave": "Kot organizator lahko skupino izbrišeš.",
+    "too_many_items": "To je veliko želja! Seznam ima lahko največ 50 želja.",
+    "invalid_image": "Prosimo, ponovno naloži sliko.",
+    "uploads_disabled": "Nalaganje fotografij na tem strežniku še ni nastavljeno."
   },
   "fields": {
     "email": "E-pošta",
@@ -109,7 +112,8 @@
     "rulesTitle": "Proračun in pravila",
     "inviteTitle": "Povabi ljudi",
     "inviteHint": "Deli povezavo v skupinskem klepetu ali naj ljudje skenirajo QR kodo.",
-    "goToGroup": "Na skupino"
+    "goToGroup": "Na skupino",
+    "cover": "Naslovna fotografija (neobvezno)"
   },
   "settingsGroup": {
     "organizerParticipates": "Tudi jaz sodelujem v žrebu",
@@ -154,7 +158,9 @@
     "leave": "Zapusti skupino",
     "leaveTitle": "Zapustiš skupino {{name}}?",
     "leaveMessage": "Tvoj seznam želja bo izbrisan. Če so imena že izžrebana, bo nekdo dobil novega obdarovanca.",
-    "leaveConfirm": "Zapusti"
+    "leaveConfirm": "Zapusti",
+    "myWishlist": "Moj seznam želja",
+    "myWishlistHint": "Pomagaj Božičku: dodaj želje, velikosti in seznam »prosim, ne«"
   },
   "countdown": {
     "days": "dni",
@@ -248,5 +254,50 @@
     "print": "Natisni",
     "foldHere": "Prepogni tukaj, ne kukaj!",
     "youAreSantaFor": "Ti si Skrivni Božiček za"
+  },
+  "image": {
+    "add": "Dodaj fotografijo",
+    "change": "Zamenjaj fotografijo",
+    "remove": "Odstrani fotografijo",
+    "preview": "Predogled fotografije",
+    "uploading": "Nalagam … {{percent}} %",
+    "errors": {
+      "not_image": "Ta datoteka ni slika.",
+      "too_large": "Slika je prevelika (največ 5 MB po pomanjšanju).",
+      "unreadable": "Slike ni bilo mogoče prebrati. Poskusi z JPEG ali PNG."
+    }
+  },
+  "wishlist": {
+    "myTitle": "Moj seznam želja",
+    "myHint": "Tvoj Skrivni Božiček vidi ta seznam, ti pa nikoli ne boš videl/-a, kdo je.",
+    "theirTitle": "Seznam želja: {{name}}",
+    "addItem": "Dodaj željo",
+    "editItem": "Uredi željo",
+    "itemTitle": "Kaj si želiš?",
+    "titlePlaceholder": "npr. Topel moder šal",
+    "link": "Povezava (neobvezno)",
+    "price": "Približna cena",
+    "notes": "Opombe",
+    "notesPlaceholder": "Barva, velikost, kje kupiti …",
+    "empty": "Tvoj seznam želja je prazen. Dodaj nekaj idej, da Božičku ne bo treba ugibati!",
+    "theirEmpty": "Še ni želja. Vprašaj v anonimnem klepetu!",
+    "openLink": "Odpri povezavo",
+    "zoom": "Pokaži fotografijo: {{title}}",
+    "moveUp": "Premakni gor",
+    "moveDown": "Premakni dol",
+    "deleteTitle": "Izbrišem »{{title}}«?",
+    "deleteMessage": "Ta želja in njena fotografija bosta odstranjeni.",
+    "aboutMe": "O meni",
+    "aboutThem": "Dobro je vedeti",
+    "sizes": "Velikosti",
+    "sizesPlaceholder": "npr. majica M, čevlji 42",
+    "likes": "Najljubše stvari",
+    "likesPlaceholder": "Barve, hobiji, prigrizki …",
+    "dislikes": "Prosim, ne",
+    "dislikesPlaceholder": "Stvari, ki jih ne želiš ali si nanje alergičen/-na",
+    "address": "Naslov za pošiljanje",
+    "addressHint": "Vidi ga lahko samo tvoj Skrivni Božiček",
+    "shipTo": "Pošlji na",
+    "askQuestion": "Anonimno mu/ji postavi vprašanje"
   }
 }

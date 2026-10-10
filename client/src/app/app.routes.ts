@@ -31,6 +31,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reveal/reveal').then((m) => m.Reveal),
       },
       {
+        path: 'wishlist',
+        loadComponent: () =>
+          import('./features/wishlist/wishlist-editor').then((m) => m.WishlistEditor),
+      },
+      {
+        path: 'match',
+        loadComponent: () =>
+          import('./features/wishlist/match-wishlist').then((m) => m.MatchWishlist),
+      },
+      {
         path: 'manage',
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.DashboardPage),
       },

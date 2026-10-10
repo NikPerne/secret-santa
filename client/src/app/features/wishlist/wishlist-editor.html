@@ -1,0 +1,163 @@
+<section class="page stack">
+  <div class="title-row">
+    <a
+      mat-icon-button
+      [routerLink]="['/g', groupId()]"
+      [attr.aria-label]="'common.back' | transloco"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1 class="page-title">{{ 'wishlist.myTitle' | transloco }}</h1>
+  </div>
+  <p class="muted">{{ 'wishlist.myHint' | transloco }}</p>
+
+  @if (loading()) {
+    <mat-spinner diameter="40" style="margin: 32px auto" />
+  } @else {
+    <button mat-flat-button class="big-button" (click)="openItem()">
+      <mat-icon>add</mat-icon>{{ 'wishlist.addItem' | transloco }}
+    </button>
+
+    @if (!items().length) {
+      <div class="empty surface-card center">
+        <div class="emoji" aria-hidden="true">📝</div>
+        <p>{{ 'wishlist.empty' | transloco }}</p>
+      </div>
+    } @else {
+      <ul
+        class="items"
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+        [attr.aria-label]="'wishlist.myTitle' | transloco"
+      >
+        @for (
+          item of items();
+          track item.id;
+          let i = $index;
+          let first = $first;
+          let last = $last
+        ) {
+          <li class="item surface-card" cdkDrag cdkDragLockAxis="y">
+            <span class="handle" cdkDragHandle aria-hidden="true"
+              ><mat-icon>drag_indicator</mat-icon></span
+            >
+            @if (item.image) {
+              <button
+                class="thumb"
+                (click)="zoom(item)"
+                [attr.aria-label]="'wishlist.zoom' | transloco: { title: item.title }"
+              >
+                <img [src]="thumb(item.image.url)" alt="" loading="lazy" width="72" height="72" />
+              </button>
+            }
+            <div class="info">
+              <strong>{{ item.title }}</strong>
+              @if (item.price !== null) {
+                <span class="muted">{{
+                  item.price | money: detail()?.group?.budget?.currency
+                }}</span>
+              }
+              @if (item.url) {
+                <a
+                  [href]="item.url"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  class="link"
+                  >{{ 'wishlist.openLink' | transloco }}</a
+                >
+              }
+            </div>
+            <div class="actions">
+              <button
+                mat-icon-button
+                (click)="openItem(item)"
+                [attr.aria-label]="'common.edit' | transloco"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="remove(item)"
+                [attr.aria-label]="'common.delete' | transloco"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+              <span class="order">
+                <button
+                  mat-icon-button
+                  [disabled]="first"
+                  (click)="move(i, i - 1)"
+                  [attr.aria-label]="'wishlist.moveUp' | transloco"
+                >
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  [disabled]="last"
+                  (click)="move(i, i + 1)"
+                  [attr.aria-label]="'wishlist.moveDown' | transloco"
+                >
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <section class="surface-card stack about" aria-labelledby="about-h">
+      <h2 id="about-h">{{ 'wishlist.aboutMe' | transloco }}</h2>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'wishlist.sizes' | transloco }}</mat-label>
+        <textarea
+          matInput
+          rows="2"
+          maxlength="500"
+          [placeholder]="'wishlist.sizesPlaceholder' | transloco"
+          [ngModel]="prefs().sizes"
+          (ngModelChange)="setPref('sizes', $event)"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'wishlist.likes' | transloco }}</mat-label>
+        <textarea
+          matInput
+          rows="2"
+          maxlength="1000"
+          [placeholder]="'wishlist.likesPlaceholder' | transloco"
+          [ngModel]="prefs().likes"
+          (ngModelChange)="setPref('likes', $event)"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'wishlist.dislikes' | transloco }}</mat-label>
+        <textarea
+          matInput
+          rows="2"
+          maxlength="1000"
+          [placeholder]="'wishlist.dislikesPlaceholder' | transloco"
+          [ngModel]="prefs().dislikes"
+          (ngModelChange)="setPref('dislikes', $event)"
+        ></textarea>
+      </mat-form-field>
+      @if (detail()?.group?.settings?.allowShippingAddress) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'wishlist.address' | transloco }}</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            maxlength="500"
+            autocomplete="street-address"
+            [ngModel]="address()"
+            (ngModelChange)="address.set($event)"
+          ></textarea>
+          <mat-hint>{{ 'wishlist.addressHint' | transloco }}</mat-hint>
+        </mat-form-field>
+      }
+      <button mat-stroked-button [disabled]="savingPrefs()" (click)="saveAboutMe()">
+        <mat-icon>save</mat-icon>{{ 'common.save' | transloco }}
+      </button>
+    </section>
+  }
+</section>

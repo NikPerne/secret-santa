@@ -3,7 +3,7 @@ import type { Types } from 'mongoose';
 import { z } from 'zod';
 import { currentUser } from '../middleware/auth.js';
 import { groupCtx, requireOrganizer } from '../middleware/group.js';
-import { objectId, parse, trimmed } from '../middleware/validate.js';
+import { imageInput, objectId, parse, trimmed } from '../middleware/validate.js';
 import { GroupModel, MembershipModel, UserModel } from '../models/index.js';
 import { isOwnedImage, deleteImages } from '../services/cloudinary.js';
 import { deleteGroupData } from '../services/group-data.js';
@@ -15,13 +15,6 @@ const dateInput = z
   .string()
   .refine((v) => !Number.isNaN(Date.parse(v)), 'Invalid date')
   .transform((v) => new Date(v));
-
-export const imageInput = z.object({
-  url: z.string().url().max(500),
-  publicId: z.string().min(1).max(300),
-  width: z.number().int().positive().max(20000).optional(),
-  height: z.number().int().positive().max(20000).optional(),
-});
 
 const settingsInput = z
   .object({

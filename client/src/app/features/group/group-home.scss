@@ -143,3 +143,24 @@ mat-panel-title {
   align-self: center;
   color: var(--mat-sys-error);
 }
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: inherit;
+  text-decoration: none;
+  min-height: 56px;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+  > mat-icon:first-child {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.tile-text {
+  flex: 1;
+  display: grid;
+}
