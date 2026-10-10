@@ -12,7 +12,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ChatService, calendarUrl } from '../../core/api/chat.service';
@@ -37,7 +37,7 @@ import { LocalDatePipe, MoneyPipe, initials } from '../../shared/pipes';
     MatButtonToggleModule,
     MatExpansionModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    Loader,
     TranslocoPipe,
     Countdown,
     InviteShare,

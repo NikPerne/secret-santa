@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DrawService } from '../../core/api/draw.service';
@@ -23,14 +23,7 @@ type Phase = 'loading' | 'wrapped' | 'opening' | 'revealed' | 'error';
 /** Tap-to-unwrap reveal of your match. Motion is reduced automatically for prefers-reduced-motion. */
 @Component({
   selector: 'app-reveal',
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    RouterLink,
-    TranslocoPipe,
-    Avatar,
-  ],
+  imports: [MatButtonModule, MatIconModule, Loader, RouterLink, TranslocoPipe, Avatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reveal.html',
   styleUrl: './reveal.scss',

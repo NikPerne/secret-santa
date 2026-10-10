@@ -11,7 +11,7 @@
   </div>
 
   @if (loading()) {
-    <mat-spinner diameter="40" style="margin: 32px auto" />
+    <app-loader block />
   } @else if (!open()) {
     <div class="surface-card center">
       <div class="emoji" aria-hidden="true">📸</div>

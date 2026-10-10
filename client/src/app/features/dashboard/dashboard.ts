@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -39,7 +39,7 @@ import { InviteShare } from '../../shared/invite-share';
     MatButtonModule,
     MatExpansionModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    Loader,
     MatTooltipModule,
     TranslocoPipe,
     ExclusionsEditor,

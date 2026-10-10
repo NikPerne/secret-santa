@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } fro
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DrawService } from '../../core/api/draw.service';
@@ -24,7 +24,7 @@ import { GiftIdeas } from './gift-ideas';
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    Loader,
     TranslocoPipe,
     MoneyPipe,
     ThemeBadge,

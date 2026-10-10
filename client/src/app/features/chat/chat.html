@@ -23,7 +23,7 @@
 
   <div class="messages" #scroller role="log" aria-live="polite" [attr.aria-busy]="loading()">
     @if (loading()) {
-      <mat-spinner diameter="36" style="margin: 32px auto" />
+      <app-loader block />
     } @else if (error(); as message) {
       <p class="center" role="alert">{{ message }}</p>
     } @else if (!messages().length) {

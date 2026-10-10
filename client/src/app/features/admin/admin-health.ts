@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 import { api } from '../../core/api/api';
@@ -64,7 +64,7 @@ export interface AdminHealth {
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule,
+    Loader,
     TranslocoPipe,
     LocalDatePipe,
   ],

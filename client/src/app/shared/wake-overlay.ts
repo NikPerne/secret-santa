@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from './loader';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { WakeUpService } from '../core/wake-up.service';
 
 @Component({
   selector: 'app-wake-overlay',
-  imports: [MatProgressSpinnerModule, TranslocoPipe],
+  imports: [Loader, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (wake.waking()) {
       <div class="overlay" role="status" aria-live="polite">
         <div class="card">
-          <div class="tree" aria-hidden="true">🎄</div>
+          <app-loader [size]="88" />
           <p class="title">{{ 'wake.title' | transloco }}</p>
           <p class="hint">{{ 'wake.hint' | transloco }}</p>
-          <mat-spinner diameter="36" />
         </div>
       </div>
     }
@@ -41,27 +40,13 @@ import { WakeUpService } from '../core/wake-up.service';
       gap: 8px;
       box-shadow: var(--mat-sys-level3);
     }
-    .tree {
-      font-size: 56px;
-      animation: bounce 1.2s ease-in-out infinite;
-    }
     .title {
       font: var(--mat-sys-title-large);
       margin: 0;
     }
     .hint {
-      margin: 0 0 8px;
+      margin: 0;
       color: var(--mat-sys-on-surface-variant);
-    }
-    @keyframes bounce {
-      50% {
-        transform: translateY(-8px) rotate(-4deg);
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .tree {
-        animation: none;
-      }
     }
   `,
 })

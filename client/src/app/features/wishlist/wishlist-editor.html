@@ -12,7 +12,7 @@
   <p class="muted">{{ 'wishlist.myHint' | transloco }}</p>
 
   @if (loading()) {
-    <mat-spinner diameter="40" style="margin: 32px auto" />
+    <app-loader block />
   } @else {
     <button mat-flat-button class="big-button" (click)="openItem()">
       <mat-icon>add</mat-icon>{{ 'wishlist.addItem' | transloco }}

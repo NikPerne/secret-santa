@@ -13,7 +13,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ChatService } from '../../core/api/chat.service';
@@ -34,7 +34,7 @@ const POLL_MAX_MS = 60_000;
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    Loader,
     TranslocoPipe,
     LocalDatePipe,
   ],

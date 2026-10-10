@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Loader } from '../../shared/loader';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../core/api/auth.service';
@@ -9,7 +9,7 @@ import { NotifyService } from '../../core/notify.service';
 /** Landing page for magic links: exchanges the token for a session cookie. */
 @Component({
   selector: 'app-verify',
-  imports: [MatButtonModule, MatProgressSpinnerModule, RouterLink, TranslocoPipe],
+  imports: [MatButtonModule, Loader, RouterLink, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="page center stack" style="align-items: center">
@@ -19,7 +19,7 @@ import { NotifyService } from '../../core/notify.service';
         <p role="alert">{{ message }}</p>
         <a mat-flat-button routerLink="/signin">{{ 'verify.newLink' | transloco }}</a>
       } @else {
-        <mat-spinner diameter="48" />
+        <app-loader [size]="80" />
         <p role="status">{{ 'verify.signingIn' | transloco }}</p>
       }
     </section>

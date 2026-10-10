@@ -20,7 +20,7 @@
   </div>
 
   @if (loading()) {
-    <mat-spinner diameter="40" style="margin: 32px auto" />
+    <app-loader block />
   } @else if (error(); as message) {
     <p role="alert">{{ message }}</p>
   } @else {

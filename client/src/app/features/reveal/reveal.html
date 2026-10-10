@@ -1,7 +1,7 @@
 <section class="page reveal">
   @switch (phase()) {
     @case ('loading') {
-      <mat-spinner diameter="48" style="margin: 64px auto" />
+      <app-loader block />
     }
     @case ('error') {
       <div class="center stack">
