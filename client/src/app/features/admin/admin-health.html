@@ -11,6 +11,52 @@
     </button>
   </div>
 
+  <!-- Accounts -->
+  <section class="surface-card stack" aria-labelledby="users-h">
+    <div class="title-row">
+      <h2 id="users-h">👥 {{ 'admin.users.title' | transloco }}</h2>
+      <a mat-flat-button routerLink="/admin/register">
+        <mat-icon>person_add</mat-icon>{{ 'admin.users.register' | transloco }}
+      </a>
+    </div>
+    @if (users(); as list) {
+      @if (list.length) {
+        <ul class="users">
+          @for (u of list; track u.id) {
+            <li>
+              <div class="who">
+                <strong>{{ u.name }}</strong>
+                @if (u.isAdmin) {
+                  <span class="pill">admin</span>
+                }
+                <span class="muted small email">{{ u.email }}</span>
+                @if (!u.hasPassword) {
+                  <span class="muted small">⏳ {{ 'admin.users.noPassword' | transloco }}</span>
+                }
+                @if (devLinks()[u.id]; as link) {
+                  <a class="small" [href]="link">{{ 'signin.openLink' | transloco }}</a>
+                }
+              </div>
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="sending() !== null"
+                (click)="sendLink(u)"
+              >
+                <mat-icon>lock_reset</mat-icon>
+                {{ (u.hasPassword ? 'admin.users.reset' : 'admin.users.resendSetup') | transloco }}
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">{{ 'admin.users.empty' | transloco }}</p>
+      }
+    } @else {
+      <app-loader block />
+    }
+  </section>
+
   @if (error(); as message) {
     <p class="error-text" role="alert">{{ message }}</p>
   }

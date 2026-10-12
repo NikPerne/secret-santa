@@ -14,7 +14,6 @@ import { NotifyService } from '../../core/notify.service';
 import { LocalDatePipe, MoneyPipe } from '../../shared/pipes';
 import { Avatar } from '../../shared/avatar';
 import { ThemeBadge } from '../../shared/theme-badge';
-import { MagicLinkSent } from '../auth/magic-link-sent';
 
 @Component({
   selector: 'app-join',
@@ -29,7 +28,6 @@ import { MagicLinkSent } from '../auth/magic-link-sent';
     TranslocoPipe,
     LocalDatePipe,
     MoneyPipe,
-    MagicLinkSent,
     ThemeBadge,
     Avatar,
   ],
@@ -50,8 +48,6 @@ export class Join implements OnInit {
   protected readonly name = signal('');
   protected readonly email = signal('');
   protected readonly busy = signal(false);
-  protected readonly sentTo = signal<string | null>(null);
-  protected readonly devLink = signal<string | undefined>(undefined);
 
   async ngOnInit(): Promise<void> {
     await this.auth.ready();
@@ -73,18 +69,6 @@ export class Join implements OnInit {
     await this.run(async () => {
       const res = await this.groups.join(this.code());
       await this.router.navigate(['/g', res.groupId]);
-    });
-  }
-
-  protected async requestLink(): Promise<void> {
-    await this.run(async () => {
-      const res = await this.auth.requestLink({
-        email: this.email().trim(),
-        name: this.name().trim(),
-        inviteCode: this.code(),
-      });
-      this.devLink.set(res.devLink);
-      this.sentTo.set(this.email().trim());
     });
   }
 

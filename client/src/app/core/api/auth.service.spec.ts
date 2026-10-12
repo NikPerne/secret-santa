@@ -37,9 +37,9 @@ describe('AuthService', () => {
     http.expectOne('/api/auth/me').flush({ user: null });
     expect(await first).toBeNull();
 
-    const verify = auth.verify('token-123456');
-    http.expectOne('/api/auth/verify').flush({ user: ana });
-    await verify;
+    const login = auth.login('ana@example.com', 'secret password');
+    http.expectOne('/api/auth/login').flush({ user: ana });
+    await login;
 
     // Previously this returned the cached "signed out" answer and the guard bounced to sign-in.
     expect(await auth.ready()).toEqual(ana);
@@ -49,9 +49,9 @@ describe('AuthService', () => {
     const ready = auth.ready();
     const meRequest = http.expectOne('/api/auth/me');
 
-    const verify = auth.verify('token-123456');
-    http.expectOne('/api/auth/verify').flush({ user: ana });
-    await verify;
+    const login = auth.login('ana@example.com', 'secret password');
+    http.expectOne('/api/auth/login').flush({ user: ana });
+    await login;
 
     // The old /me request (sent without the cookie) answers last.
     meRequest.flush({ user: null });

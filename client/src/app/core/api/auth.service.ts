@@ -8,7 +8,12 @@ import { api } from './api';
 interface SignInResult {
   user: User;
   groupId?: string;
-  redirect?: string;
+}
+
+export interface PasswordTokenInfo {
+  name: string;
+  email: string;
+  purpose: 'setup' | 'reset';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,27 +49,44 @@ export class AuthService {
     return this.user();
   }
 
-  async requestLink(body: {
-    email: string;
-    name?: string;
-    inviteCode?: string;
-    redirect?: string;
-  }): Promise<{ sent: boolean; devLink?: string }> {
+  async login(email: string, password: string): Promise<User> {
+    const res = await firstValueFrom(
+      this.http.post<{ user: User }>(api('/auth/login'), { email, password }),
+    );
+    await this.signedInAs(res.user);
+    return res.user;
+  }
+
+  /** Who an emailed setup/reset link belongs to (doesn't use the link up). */
+  async checkPasswordToken(token: string): Promise<PasswordTokenInfo> {
     return firstValueFrom(
-      this.http.post<{ sent: boolean; devLink?: string }>(api('/auth/request-link'), {
-        ...body,
-        language: this.language.current(),
-      }),
+      this.http.post<PasswordTokenInfo>(api('/auth/password-token'), { token }),
     );
   }
 
-  async verify(token: string): Promise<SignInResult> {
-    const res = await firstValueFrom(this.http.post<SignInResult>(api('/auth/verify'), { token }));
-    this.version++;
-    this.setUser(res.user);
-    // Drop cached "signed out" API answers the service worker might still serve.
-    await clearApiCaches().catch(() => undefined);
-    return res;
+  /** Sets the password from an emailed link; signs in on success. */
+  async setPassword(token: string, password: string): Promise<User> {
+    const res = await firstValueFrom(
+      this.http.post<{ user: User }>(api('/auth/set-password'), { token, password }),
+    );
+    await this.signedInAs(res.user);
+    return res.user;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(api('/auth/change-password'), { currentPassword, newPassword }),
+    );
+  }
+
+  /** First-time setup for an admin (ADMIN_EMAILS) who has no password yet. */
+  async adminSetup(email: string): Promise<{ sent: boolean; devLink?: string }> {
+    return firstValueFrom(
+      this.http.post<{ sent: boolean; devLink?: string }>(api('/auth/admin-setup'), {
+        email,
+        language: this.language.current(),
+      }),
+    );
   }
 
   /** Development-only instant sign-in / join (no email). */
@@ -79,10 +101,7 @@ export class AuthService {
         language: this.language.current(),
       }),
     );
-    this.version++;
-    this.setUser(res.user);
-    // Drop cached "signed out" API answers the service worker might still serve.
-    await clearApiCaches().catch(() => undefined);
+    await this.signedInAs(res.user);
     return res;
   }
 
@@ -102,6 +121,13 @@ export class AuthService {
   clear(): void {
     this.version++;
     this.user.set(null);
+  }
+
+  private async signedInAs(user: User): Promise<void> {
+    this.version++;
+    this.setUser(user);
+    // Drop cached "signed out" API answers the service worker might still serve.
+    await clearApiCaches().catch(() => undefined);
   }
 
   private setUser(user: User | null): void {

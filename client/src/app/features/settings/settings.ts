@@ -1,5 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -22,6 +30,7 @@ import { GroupsService } from '../../core/api/groups.service';
 import { ImageError, UploadService } from '../../core/api/upload.service';
 import { Avatar } from '../../shared/avatar';
 import { confirmAction } from '../../shared/confirm-dialog';
+import { PasswordFields } from '../auth/password-fields';
 
 @Component({
   selector: 'app-settings',
@@ -36,6 +45,7 @@ import { confirmAction } from '../../shared/confirm-dialog';
     MatProgressBarModule,
     Avatar,
     MatSlideToggleModule,
+    PasswordFields,
     TranslocoPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,6 +74,10 @@ export class Settings implements OnInit {
   protected readonly avatarProgress = signal<number | null>(null);
   private readonly uploadService = inject(UploadService);
   private readonly groupsApi = inject(GroupsService);
+  protected readonly currentPassword = signal('');
+  /** Valid and confirmed, or '' (see PasswordFields). */
+  protected readonly newPassword = signal('');
+  private readonly newPasswordFields = viewChild<PasswordFields>('newPw');
 
   constructor() {
     effect(() => this.name.set(this.auth.user()?.name ?? ''));
@@ -121,6 +135,16 @@ export class Settings implements OnInit {
     await this.run(async () => {
       await this.auth.updateMe({ name });
       this.notify.success('common.saved');
+    });
+  }
+
+  protected async changePassword(): Promise<void> {
+    if (!this.currentPassword() || !this.newPassword()) return;
+    await this.run(async () => {
+      await this.auth.changePassword(this.currentPassword(), this.newPassword());
+      this.currentPassword.set('');
+      this.newPasswordFields()?.clear();
+      this.notify.success('password.changed');
     });
   }
 

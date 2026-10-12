@@ -9,7 +9,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../core/api/auth.service';
 import { GroupsService } from '../../core/api/groups.service';
 import { NotifyService } from '../../core/notify.service';
-import { MagicLinkSent } from './magic-link-sent';
 
 @Component({
   selector: 'app-signin',
@@ -20,47 +19,89 @@ import { MagicLinkSent } from './magic-link-sent';
     MatIconModule,
     MatInputModule,
     TranslocoPipe,
-    MagicLinkSent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="page stack narrow">
-      @if (sentTo(); as email) {
-        <app-magic-link-sent [email]="email" [devLink]="devLink()" (retry)="sentTo.set(null)" />
-      } @else {
-        <h1 class="page-title">{{ 'signin.title' | transloco }}</h1>
-        <p class="muted">{{ 'signin.subtitle' | transloco }}</p>
-        <p class="muted small">{{ 'signin.howItWorks' | transloco }}</p>
-        <form class="stack" (ngSubmit)="submit()" #f="ngForm">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'fields.email' | transloco }}</mat-label>
-            <input
-              matInput
-              type="email"
-              name="email"
-              autocomplete="email"
-              inputmode="email"
-              required
-              email
-              [ngModel]="email()"
-              (ngModelChange)="email.set($event)"
-            />
-          </mat-form-field>
-          <button mat-flat-button class="big-button" type="submit" [disabled]="f.invalid || busy()">
-            <mat-icon>mail</mat-icon>{{ 'signin.send' | transloco }}
+      <h1 class="page-title">{{ 'signin.title' | transloco }}</h1>
+      <p class="muted">{{ 'signin.subtitle' | transloco }}</p>
+      <form class="stack" (ngSubmit)="submit()" #f="ngForm">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.email' | transloco }}</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            autocomplete="username"
+            inputmode="email"
+            required
+            email
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fields.password' | transloco }}</mat-label>
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            name="password"
+            autocomplete="current-password"
+            required
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="'password.show' | transloco"
+            [attr.aria-pressed]="showPassword()"
+          >
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if (instantJoin()) {
-            <button
-              mat-stroked-button
-              type="button"
-              class="big-button"
-              [disabled]="f.invalid || busy()"
-              (click)="instant()"
-            >
-              <mat-icon>bolt</mat-icon>{{ 'signin.instant' | transloco }}
-            </button>
+        </mat-form-field>
+        <button
+          mat-flat-button
+          class="big-button"
+          type="submit"
+          [disabled]="!email().trim() || !password() || busy()"
+        >
+          <mat-icon>login</mat-icon>{{ 'signin.submit' | transloco }}
+        </button>
+        @if (instantJoin()) {
+          <button
+            mat-stroked-button
+            type="button"
+            class="big-button"
+            [disabled]="!email().trim() || busy()"
+            (click)="instant()"
+          >
+            <mat-icon>bolt</mat-icon>{{ 'signin.instant' | transloco }}
+          </button>
+        }
+      </form>
+      <p class="muted small">{{ 'signin.noAccount' | transloco }}</p>
+
+      @if (setupSent()) {
+        <div class="surface-card stack" role="status">
+          <p>{{ 'signin.adminSetupSent' | transloco: { email: email().trim() } }}</p>
+          @if (devLink(); as link) {
+            <p class="muted">{{ 'signin.devLink' | transloco }}</p>
+            <a mat-flat-button [href]="link">{{ 'signin.openLink' | transloco }}</a>
           }
-        </form>
+        </div>
+      } @else {
+        <button
+          mat-button
+          type="button"
+          class="admin-setup"
+          [disabled]="!email().trim() || busy()"
+          (click)="adminSetup()"
+        >
+          {{ 'signin.adminSetup' | transloco }}
+        </button>
       }
     </section>
   `,
@@ -70,7 +111,10 @@ import { MagicLinkSent } from './magic-link-sent';
     }
     .small {
       font: var(--mat-sys-body-small);
-      margin-top: -8px;
+      margin: 0;
+    }
+    .admin-setup {
+      align-self: flex-start;
     }
   `,
 })
@@ -82,10 +126,12 @@ export class SignIn {
   private readonly notify = inject(NotifyService);
 
   protected readonly email = signal('');
+  protected readonly password = signal('');
+  protected readonly showPassword = signal(false);
   protected readonly busy = signal(false);
-  protected readonly sentTo = signal<string | null>(null);
-  protected readonly devLink = signal<string | undefined>(undefined);
   protected readonly instantJoin = signal(false);
+  protected readonly setupSent = signal(false);
+  protected readonly devLink = signal<string | undefined>(undefined);
 
   constructor() {
     this.groups
@@ -103,26 +149,32 @@ export class SignIn {
   }
 
   protected async submit(): Promise<void> {
-    this.busy.set(true);
-    try {
-      const res = await this.auth.requestLink({
-        email: this.email().trim(),
-        redirect: this.redirect() ? this.safeRedirect() : undefined,
-      });
-      this.devLink.set(res.devLink);
-      this.sentTo.set(this.email().trim());
-    } catch (err) {
-      this.notify.error(err);
-    } finally {
-      this.busy.set(false);
-    }
+    await this.run(async () => {
+      await this.auth.login(this.email().trim(), this.password());
+      await this.router.navigateByUrl(this.safeRedirect());
+    });
   }
 
   protected async instant(): Promise<void> {
-    this.busy.set(true);
-    try {
+    await this.run(async () => {
       await this.auth.devLogin({ email: this.email().trim() });
       await this.router.navigateByUrl(this.safeRedirect());
+    });
+  }
+
+  /** An admin from ADMIN_EMAILS signing in for the very first time. */
+  protected async adminSetup(): Promise<void> {
+    await this.run(async () => {
+      const res = await this.auth.adminSetup(this.email().trim());
+      this.devLink.set(res.devLink);
+      this.setupSent.set(true);
+    });
+  }
+
+  private async run(fn: () => Promise<void>): Promise<void> {
+    this.busy.set(true);
+    try {
+      await fn();
     } catch (err) {
       this.notify.error(err);
     } finally {

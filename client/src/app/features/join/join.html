@@ -6,8 +6,6 @@
       <p role="alert">{{ message }}</p>
       <a mat-flat-button routerLink="/">{{ 'common.home' | transloco }}</a>
     </div>
-  } @else if (sentTo(); as sent) {
-    <app-magic-link-sent [email]="sent" [devLink]="devLink()" (retry)="sentTo.set(null)" />
   } @else if (invite(); as inv) {
     <div class="invite-card surface-card">
       @if (inv.coverImage) {
@@ -48,49 +46,53 @@
         <mat-icon>celebration</mat-icon>{{ 'join.joinAs' | transloco: { name: me.name } }}
       </button>
     } @else {
-      <form class="stack" (ngSubmit)="requestLink()" #f="ngForm">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'fields.name' | transloco }}</mat-label>
-          <input
-            matInput
-            name="name"
-            autocomplete="given-name"
-            required
-            maxlength="60"
-            [ngModel]="name()"
-            (ngModelChange)="name.set($event)"
-          />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'fields.email' | transloco }}</mat-label>
-          <input
-            matInput
-            type="email"
-            name="email"
-            autocomplete="email"
-            inputmode="email"
-            required
-            email
-            [ngModel]="email()"
-            (ngModelChange)="email.set($event)"
-          />
-          <mat-hint>{{ 'join.emailHint' | transloco }}</mat-hint>
-        </mat-form-field>
-        <button mat-flat-button class="big-button" type="submit" [disabled]="f.invalid || busy()">
-          <mat-icon>celebration</mat-icon>{{ 'join.join' | transloco }}
-        </button>
-        @if (instantJoin()) {
+      <p class="muted">{{ 'join.signInFirst' | transloco }}</p>
+      <a
+        mat-flat-button
+        class="big-button"
+        routerLink="/signin"
+        [queryParams]="{ redirect: '/join/' + code() }"
+      >
+        <mat-icon>login</mat-icon>{{ 'join.signInToJoin' | transloco }}
+      </a>
+      @if (instantJoin()) {
+        <form class="stack" (ngSubmit)="instant()" #f="ngForm">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'fields.name' | transloco }}</mat-label>
+            <input
+              matInput
+              name="name"
+              autocomplete="given-name"
+              required
+              maxlength="60"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'fields.email' | transloco }}</mat-label>
+            <input
+              matInput
+              type="email"
+              name="email"
+              autocomplete="email"
+              inputmode="email"
+              required
+              email
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+            />
+          </mat-form-field>
           <button
             mat-stroked-button
-            type="button"
+            type="submit"
             class="big-button"
             [disabled]="f.invalid || busy()"
-            (click)="instant()"
           >
             <mat-icon>bolt</mat-icon>{{ 'join.instant' | transloco }}
           </button>
-        }
-      </form>
+        </form>
+      }
     }
   } @else {
     <app-loader block />

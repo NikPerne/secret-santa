@@ -103,3 +103,32 @@ h2 {
     font: var(--mat-sys-label-small);
   }
 }
+
+.users {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--mat-sys-surface-container);
+  }
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    min-width: 0;
+  }
+  .email {
+    overflow-wrap: anywhere;
+  }
+}

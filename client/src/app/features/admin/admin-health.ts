@@ -7,7 +7,12 @@ import { Loader } from '../../shared/loader';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 import { api } from '../../core/api/api';
+import { MatDialog } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
+import { AdminService } from '../../core/api/admin.service';
+import { AdminUser } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
+import { confirmAction } from '../../shared/confirm-dialog';
 import { LocalDatePipe } from '../../shared/pipes';
 
 export interface AdminHealth {
@@ -67,6 +72,7 @@ export interface AdminHealth {
     Loader,
     TranslocoPipe,
     LocalDatePipe,
+    RouterLink,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-health.html',
@@ -79,8 +85,47 @@ export class AdminHealthPage implements OnInit {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
+  private readonly admin = inject(AdminService);
+  private readonly dialog = inject(MatDialog);
+  protected readonly users = signal<AdminUser[] | null>(null);
+  /** Id of the user whose link is being sent. */
+  protected readonly sending = signal<string | null>(null);
+  /** Shown in development without an email provider, keyed by user id. */
+  protected readonly devLinks = signal<Record<string, string>>({});
+
   ngOnInit(): void {
     void this.load();
+    void this.loadUsers();
+  }
+
+  protected async loadUsers(): Promise<void> {
+    try {
+      this.users.set(await this.admin.users());
+    } catch (err) {
+      this.notify.error(err);
+    }
+  }
+
+  /** Reset link for people with a password, a fresh setup link for those who never set one. */
+  protected async sendLink(user: AdminUser): Promise<void> {
+    const ok = await confirmAction(this.dialog, {
+      title: user.hasPassword ? 'admin.users.resetTitle' : 'admin.users.setupTitle',
+      message: user.hasPassword ? 'admin.users.resetMessage' : 'admin.users.setupMessage',
+      confirm: 'admin.users.send',
+      params: { name: user.name, email: user.email },
+    });
+    if (!ok) return;
+    this.sending.set(user.id);
+    try {
+      const res = await this.admin.sendPasswordLink(user.id);
+      if (res.devLink) this.devLinks.update((l) => ({ ...l, [user.id]: res.devLink! }));
+      if (res.sent) this.notify.success('admin.users.sent', { email: user.email });
+      else this.notify.success('admin.users.notSent');
+    } catch (err) {
+      this.notify.error(err);
+    } finally {
+      this.sending.set(null);
+    }
   }
 
   protected async load(): Promise<void> {

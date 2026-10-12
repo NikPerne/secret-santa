@@ -116,6 +116,34 @@
       </button>
     </section>
 
+    <section class="surface-card stack" aria-labelledby="password-h">
+      <h2 id="password-h">{{ 'password.changeTitle' | transloco }}</h2>
+      <form class="stack" (ngSubmit)="changePassword()">
+        <input type="email" name="username" autocomplete="username" [value]="user.email" hidden />
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'password.current' | transloco }}</mat-label>
+          <input
+            matInput
+            type="password"
+            name="currentPassword"
+            autocomplete="current-password"
+            required
+            [ngModel]="currentPassword()"
+            (ngModelChange)="currentPassword.set($event)"
+          />
+        </mat-form-field>
+        <app-password-fields #newPw (valueChange)="newPassword.set($event)" />
+        <button
+          mat-stroked-button
+          type="submit"
+          class="align-start"
+          [disabled]="!currentPassword() || !newPassword() || busy()"
+        >
+          <mat-icon>key</mat-icon>{{ 'password.change' | transloco }}
+        </button>
+      </form>
+    </section>
+
     @if (user.isAdmin) {
       <a mat-stroked-button routerLink="/admin">
         <mat-icon>monitor_heart</mat-icon>{{ 'admin.title' | transloco }}

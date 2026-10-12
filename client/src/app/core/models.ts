@@ -257,3 +257,21 @@ export interface GalleryPhoto {
   mine: boolean;
   createdAt: string;
 }
+
+/** A row of the admin user list. */
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  language: Lang;
+  isAdmin: boolean;
+  /** False until they open their setup link. */
+  hasPassword: boolean;
+  createdAt: string | null;
+}
+
+export interface PasswordLinkResult {
+  sent: boolean;
+  /** Only in development without an email provider. */
+  devLink?: string;
+}

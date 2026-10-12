@@ -24,7 +24,7 @@
     "not_found": "We couldn't find that. The link may be wrong or expired.",
     "validation_error": "Some fields look wrong. Please check them.",
     "rate_limited": "Too many attempts. Please wait a few minutes.",
-    "invalid_token": "This sign-in link is invalid, already used or expired.",
+    "invalid_token": "This link is invalid, already used or expired.",
     "group_finished": "This group has already finished.",
     "already_drawn": "Names have already been drawn in this group.",
     "invalid_exclusion": "That rule isn't valid.",
@@ -41,7 +41,10 @@
     "already_nudged": "Already reminded today. Try again tomorrow.",
     "nothing_to_nudge": "This person is all set. Nothing to remind them about.",
     "preview_failed": "We couldn't read that link. Please fill in the details yourself.",
-    "too_early": "This opens after the gift exchange."
+    "too_early": "This opens after the gift exchange.",
+    "invalid_credentials": "Wrong email or password.",
+    "wrong_password": "Your current password is wrong.",
+    "email_taken": "Someone already has an account with this email."
   },
   "fields": {
     "email": "Email",
@@ -52,7 +55,8 @@
     "description": "Description",
     "budget": "Budget",
     "amount": "Amount",
-    "currency": "Currency"
+    "currency": "Currency",
+    "password": "Password"
   },
   "wake": {
     "title": "Waking up the elves… 🎄",
@@ -80,31 +84,54 @@
   },
   "signin": {
     "title": "Sign in",
-    "subtitle": "Enter your email and we'll send you a sign-in link. No password needed.",
-    "send": "Email me a sign-in link",
+    "subtitle": "Sign in with your email and password.",
     "instant": "Sign in instantly (dev)",
-    "checkInbox": "Check your inbox",
-    "sentTo": "We sent a sign-in link to {{email}}.",
-    "expires": "The link works once and expires in 15 minutes.",
-    "devLink": "Email isn't configured, so here is your link:",
-    "openLink": "Open sign-in link",
-    "differentEmail": "Use a different email",
-    "howItWorks": "Tapping the link in the email signs you in on this device for 60 days. This proves the email is yours, so nobody else can peek at your match."
+    "devLink": "Email isn't configured, so here is the link:",
+    "openLink": "Open link",
+    "submit": "Sign in",
+    "noAccount": "No account yet, or forgot your password? Ask the admin: they'll email you a link to set one.",
+    "adminSetup": "Admin signing in for the first time? Email me a setup link",
+    "adminSetupSent": "If {{email}} is an admin address without a password, a setup link is on its way."
   },
-  "verify": {
-    "signingIn": "Signing you in…",
+  "setPassword": {
+    "titleSetup": "Welcome! Choose your password",
+    "titleReset": "Choose a new password",
+    "hello": "Hi {{name}}! You'll sign in with {{email}} and this password.",
+    "submit": "Save password and sign in",
+    "done": "Password saved. You are signed in.",
     "failed": "That link didn't work",
-    "newLink": "Get a new link"
+    "askAdmin": "Ask the admin to send you a new link."
+  },
+  "password": {
+    "new": "New password",
+    "repeat": "Repeat the new password",
+    "current": "Current password",
+    "minLength": "At least {{min}} characters",
+    "mismatch": "The passwords don't match",
+    "show": "Show password",
+    "changeTitle": "Password",
+    "change": "Change password",
+    "changed": "Password changed. Other devices were signed out."
+  },
+  "register": {
+    "title": "Register a person",
+    "subtitle": "They'll get an email with a link to choose their password. The link is valid for 7 days.",
+    "username": "Username",
+    "usernameHint": "Shown to others in the groups. They can change it later.",
+    "emailLanguage": "Language of the email",
+    "submit": "Create account and send email",
+    "sent": "Account created. We emailed {{email}} a link to set the password.",
+    "notSent": "Account created, but the email to {{email}} couldn't be sent. Use \"Send setup link\" on the admin page to try again."
   },
   "join": {
     "invalid": "Invite not found",
     "invitedBy": "{{name}} invited you to",
     "memberCount": "People joined: {{count}}",
-    "emailHint": "We'll send a link so you can come back any time",
-    "join": "Join the group",
     "joinAs": "Join as {{name}}",
     "instant": "Join instantly (dev)",
-    "lateJoin": "Names are already drawn. You'll be slotted in without spoiling anyone's match."
+    "lateJoin": "Names are already drawn. You'll be slotted in without spoiling anyone's match.",
+    "signInFirst": "Sign in with your account to join. No account yet? Ask the admin to create one for you.",
+    "signInToJoin": "Sign in to join"
   },
   "wizard": {
     "progress": "Progress",
@@ -486,6 +513,21 @@
     "push": "Web push",
     "renderNote": "Render bandwidth and instance hours aren't available via the app: check the Render dashboard → Billing.",
     "dailyJob": "Daily job (reminders & cleanup)",
-    "neverRan": "Hasn't run yet since this database was created."
+    "neverRan": "Hasn't run yet since this database was created.",
+    "users": {
+      "title": "Users",
+      "register": "Register",
+      "empty": "No users yet.",
+      "noPassword": "no password yet",
+      "reset": "Reset password",
+      "resendSetup": "Send setup link",
+      "resetTitle": "Reset password for {{name}}?",
+      "resetMessage": "We'll email {{email}} a link to choose a new password. Their current password keeps working until they use it.",
+      "setupTitle": "Send a setup link to {{name}}?",
+      "setupMessage": "We'll email {{email}} a new link to set their password. Older links stop working.",
+      "send": "Send email",
+      "sent": "Email sent to {{email}}.",
+      "notSent": "The email couldn't be sent. Check the email provider on this page."
+    }
   }
 }

@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards';
+import { adminGuard, authGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/landing/landing').then((m) => m.Landing) },
   { path: 'signin', loadComponent: () => import('./features/auth/signin').then((m) => m.SignIn) },
   {
-    path: 'auth/verify',
-    loadComponent: () => import('./features/auth/verify').then((m) => m.Verify),
+    path: 'auth/set-password',
+    loadComponent: () => import('./features/auth/set-password').then((m) => m.SetPassword),
   },
   { path: 'join/:code', loadComponent: () => import('./features/join/join').then((m) => m.Join) },
   {
@@ -60,8 +60,13 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/admin-health').then((m) => m.AdminHealthPage),
+  },
+  {
+    path: 'admin/register',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/register-user').then((m) => m.RegisterUser),
   },
   {
     path: 'settings',

@@ -24,7 +24,7 @@
     "not_found": "Tega nismo našli. Povezava je morda napačna ali potekla.",
     "validation_error": "Nekatera polja niso pravilna. Preveri jih.",
     "rate_limited": "Preveč poskusov. Počakaj nekaj minut.",
-    "invalid_token": "Ta povezava za prijavo ni veljavna, je že uporabljena ali je potekla.",
+    "invalid_token": "Ta povezava ni veljavna, je že uporabljena ali je potekla.",
     "group_finished": "Ta skupina je že zaključena.",
     "already_drawn": "Imena v tej skupini so že izžrebana.",
     "invalid_exclusion": "To pravilo ni veljavno.",
@@ -41,7 +41,10 @@
     "already_nudged": "Danes je že bil/-a opomnjen/-a. Poskusi jutri.",
     "nothing_to_nudge": "Ta oseba je že vse uredila. Ni je treba opomniti.",
     "preview_failed": "Povezave ni bilo mogoče prebrati. Podatke vpiši sam/-a.",
-    "too_early": "To se odpre po izmenjavi daril."
+    "too_early": "To se odpre po izmenjavi daril.",
+    "invalid_credentials": "Napačen e-naslov ali geslo.",
+    "wrong_password": "Trenutno geslo ni pravilno.",
+    "email_taken": "Nekdo že ima račun s tem e-naslovom."
   },
   "fields": {
     "email": "E-pošta",
@@ -52,7 +55,8 @@
     "description": "Opis",
     "budget": "Proračun",
     "amount": "Znesek",
-    "currency": "Valuta"
+    "currency": "Valuta",
+    "password": "Geslo"
   },
   "wake": {
     "title": "Budimo škrate … 🎄",
@@ -80,31 +84,54 @@
   },
   "signin": {
     "title": "Prijava",
-    "subtitle": "Vpiši e-naslov in poslali ti bomo povezavo za prijavo. Gesla ne potrebuješ.",
-    "send": "Pošlji mi povezavo za prijavo",
+    "subtitle": "Prijavi se z e-naslovom in geslom.",
     "instant": "Takojšnja prijava (razvoj)",
-    "checkInbox": "Preveri e-pošto",
-    "sentTo": "Povezavo za prijavo smo poslali na {{email}}.",
-    "expires": "Povezava deluje enkrat in poteče v 15 minutah.",
-    "devLink": "E-pošta ni nastavljena, zato je tu tvoja povezava:",
-    "openLink": "Odpri povezavo za prijavo",
-    "differentEmail": "Uporabi drug e-naslov",
-    "howItWorks": "Klik na povezavo v e-pošti te prijavi na tej napravi za 60 dni. Tako preverimo, da je e-naslov tvoj, in nihče drug ne more pokukati v tvoj žreb."
+    "devLink": "E-pošta ni nastavljena, zato je tu povezava:",
+    "openLink": "Odpri povezavo",
+    "submit": "Prijava",
+    "noAccount": "Še nimaš računa ali si pozabil/-a geslo? Vprašaj skrbnika: po e-pošti ti bo poslal povezavo za nastavitev gesla.",
+    "adminSetup": "Skrbnik, ki se prijavlja prvič? Pošlji mi povezavo za nastavitev",
+    "adminSetupSent": "Če je {{email}} skrbniški naslov brez gesla, je povezava za nastavitev na poti."
   },
-  "verify": {
-    "signingIn": "Prijavljam …",
+  "setPassword": {
+    "titleSetup": "Dobrodošel/-a! Izberi si geslo",
+    "titleReset": "Izberi novo geslo",
+    "hello": "Živjo, {{name}}! Prijavljal/-a se boš z {{email}} in tem geslom.",
+    "submit": "Shrani geslo in se prijavi",
+    "done": "Geslo je shranjeno. Prijavljen/-a si.",
     "failed": "Povezava ni delovala",
-    "newLink": "Pridobi novo povezavo"
+    "askAdmin": "Prosi skrbnika, naj ti pošlje novo povezavo."
+  },
+  "password": {
+    "new": "Novo geslo",
+    "repeat": "Ponovi novo geslo",
+    "current": "Trenutno geslo",
+    "minLength": "Vsaj {{min}} znakov",
+    "mismatch": "Gesli se ne ujemata",
+    "show": "Pokaži geslo",
+    "changeTitle": "Geslo",
+    "change": "Spremeni geslo",
+    "changed": "Geslo je spremenjeno. Druge naprave so odjavljene."
+  },
+  "register": {
+    "title": "Registriraj osebo",
+    "subtitle": "Prejela bo e-pošto s povezavo za izbiro gesla. Povezava velja 7 dni.",
+    "username": "Uporabniško ime",
+    "usernameHint": "Drugi ga vidijo v skupinah. Kasneje ga lahko spremeni.",
+    "emailLanguage": "Jezik e-pošte",
+    "submit": "Ustvari račun in pošlji e-pošto",
+    "sent": "Račun je ustvarjen. Na {{email}} smo poslali povezavo za nastavitev gesla.",
+    "notSent": "Račun je ustvarjen, a e-pošte na {{email}} ni bilo mogoče poslati. Poskusi znova z »Pošlji povezavo za nastavitev« na skrbniški strani."
   },
   "join": {
     "invalid": "Povabila ni mogoče najti",
     "invitedBy": "{{name}} te vabi v",
     "memberCount": "Pridruženih: {{count}}",
-    "emailHint": "Poslali ti bomo povezavo, da se lahko kadar koli vrneš",
-    "join": "Pridruži se skupini",
     "joinAs": "Pridruži se kot {{name}}",
     "instant": "Takojšnja pridružitev (razvoj)",
-    "lateJoin": "Imena so že izžrebana. Vključen/-a boš, ne da bi komu pokvarili presenečenje."
+    "lateJoin": "Imena so že izžrebana. Vključen/-a boš, ne da bi komu pokvarili presenečenje.",
+    "signInFirst": "Za pridružitev se prijavi s svojim računom. Še nimaš računa? Prosi skrbnika, naj ti ga ustvari.",
+    "signInToJoin": "Prijavi se in pridruži"
   },
   "wizard": {
     "progress": "Napredek",
@@ -486,6 +513,21 @@
     "push": "Potisna obvestila",
     "renderNote": "Prenosa podatkov in ur delovanja na Renderju aplikacija ne vidi: preveri nadzorno ploščo Render → Billing.",
     "dailyJob": "Dnevno opravilo (opomniki in čiščenje)",
-    "neverRan": "Od nastanka te baze se še ni izvedlo."
+    "neverRan": "Od nastanka te baze se še ni izvedlo.",
+    "users": {
+      "title": "Uporabniki",
+      "register": "Registriraj",
+      "empty": "Še ni uporabnikov.",
+      "noPassword": "še brez gesla",
+      "reset": "Ponastavi geslo",
+      "resendSetup": "Pošlji povezavo za nastavitev",
+      "resetTitle": "Ponastavim geslo za {{name}}?",
+      "resetMessage": "Na {{email}} bomo poslali povezavo za izbiro novega gesla. Trenutno geslo deluje, dokler povezave ne uporabi.",
+      "setupTitle": "Pošljem povezavo za nastavitev osebi {{name}}?",
+      "setupMessage": "Na {{email}} bomo poslali novo povezavo za nastavitev gesla. Starejše povezave ne bodo več delovale.",
+      "send": "Pošlji e-pošto",
+      "sent": "E-pošta je poslana na {{email}}.",
+      "notSent": "E-pošte ni bilo mogoče poslati. Preveri ponudnika e-pošte na tej strani."
+    }
   }
 }
