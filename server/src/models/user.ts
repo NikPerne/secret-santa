@@ -24,6 +24,10 @@ const userSchema = new Schema(
     /** Profile picture on Cloudinary (folder users/<id>/avatar). */
     avatar: { type: imageSchema, default: null },
     pushSubscriptions: { type: [pushSubscriptionSchema], default: [] },
+    /** scrypt hash (services/password.ts). Null until the user opens their setup link. */
+    passwordHash: { type: String, default: null, select: false },
+    /** Bumped when the password changes, which signs out every other session. */
+    sessionVersion: { type: Number, default: 0 },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 );

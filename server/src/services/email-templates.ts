@@ -32,15 +32,25 @@ function build(title: string, paragraphs: string[], cta?: { label: string; url: 
 
 const T = {
   en: {
-    magicLink: (name: string, url: string) =>
+    accountSetup: (name: string, email: string, url: string) =>
       build(
-        'Your Secret Santa sign-in link',
+        'Your Secret Santa account is ready 🎅',
         [
           `Hi ${name}!`,
-          'Tap the button below to sign in. The link works once and expires in 15 minutes.',
-          "If you didn't ask for this, you can ignore this email.",
+          `An account was created for you. You will sign in with your email (${email}) and a password.`,
+          'Tap the button below to choose your password. The link works once and expires in 7 days.',
         ],
-        { label: 'Sign in', url },
+        { label: 'Set my password', url },
+      ),
+    passwordReset: (name: string, url: string) =>
+      build(
+        'Reset your Secret Santa password',
+        [
+          `Hi ${name}!`,
+          'Tap the button below to choose a new password. The link works once and expires in 24 hours.',
+          "If you didn't ask for this, you can ignore this email. Your current password still works.",
+        ],
+        { label: 'Choose a new password', url },
       ),
     drawDone: (name: string, group: string, url: string) =>
       build(
@@ -78,7 +88,7 @@ const T = {
         [
           'Hi!',
           `${organizer} is organizing a Secret Santa called "${group}" and would love you to join.`,
-          'Tap the button, enter your name and email, and you are in. No password needed.',
+          'Tap the button, sign in with your account and you are in.',
         ],
         { label: 'Join the group', url },
       ),
@@ -90,15 +100,25 @@ const T = {
       ),
   },
   sl: {
-    magicLink: (name: string, url: string) =>
+    accountSetup: (name: string, email: string, url: string) =>
       build(
-        'Tvoja povezava za prijavo v Skrivnega Božička',
+        'Tvoj račun za Skrivnega Božička je pripravljen 🎅',
         [
           `Živjo, ${name}!`,
-          'Za prijavo tapni gumb spodaj. Povezava deluje enkrat in poteče v 15 minutah.',
-          'Če tega nisi zahteval/-a, lahko to sporočilo prezreš.',
+          `Ustvarili smo ti račun. Prijavil/-a se boš z e-naslovom (${email}) in geslom.`,
+          'Tapni gumb spodaj in si izberi geslo. Povezava deluje enkrat in poteče v 7 dneh.',
         ],
-        { label: 'Prijava', url },
+        { label: 'Nastavi geslo', url },
+      ),
+    passwordReset: (name: string, url: string) =>
+      build(
+        'Ponastavitev gesla za Skrivnega Božička',
+        [
+          `Živjo, ${name}!`,
+          'Tapni gumb spodaj in si izberi novo geslo. Povezava deluje enkrat in poteče v 24 urah.',
+          'Če tega nisi pričakoval/-a, lahko to sporočilo prezreš. Trenutno geslo še vedno deluje.',
+        ],
+        { label: 'Izberi novo geslo', url },
       ),
     drawDone: (name: string, group: string, url: string) =>
       build(
@@ -139,7 +159,7 @@ const T = {
         [
           'Živjo!',
           `${organizer} organizira Skrivnega Božička »${group}« in bi bil/-a vesel/-a, če se pridružiš.`,
-          'Tapni gumb, vpiši ime in e-naslov in že si zraven. Gesla ne potrebuješ.',
+          'Tapni gumb, prijavi se s svojim računom in že si zraven.',
         ],
         { label: 'Pridruži se skupini', url },
       ),

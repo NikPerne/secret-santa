@@ -13,12 +13,12 @@ declare module 'express-serve-static-core' {
 export const loadUser: RequestHandler = async (req, res, next) => {
   const token = req.cookies?.[SESSION_COOKIE];
   if (!token) return next();
-  const userId = verifySession(token);
-  const user = userId ? await UserModel.findById(userId) : null;
-  if (user) {
+  const session = verifySession(token);
+  const user = session ? await UserModel.findById(session.userId) : null;
+  if (user && (user.sessionVersion ?? 0) === session?.version) {
     req.user = user;
   } else {
-    // Stale cookie (user deleted or bad signature): drop it.
+    // Stale cookie (user deleted, password changed or bad signature): drop it.
     const { maxAge: _maxAge, ...opts } = sessionCookieOptions();
     res.clearCookie(SESSION_COOKIE, opts);
   }

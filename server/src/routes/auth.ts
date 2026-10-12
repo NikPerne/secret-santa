@@ -1,27 +1,22 @@
 import { Router, type Response } from 'express';
 import { z } from 'zod';
-import { emailEnabled, env, instantJoinEnabled, isProd } from '../config/env.js';
+import { adminEmails, instantJoinEnabled } from '../config/env.js';
 import { currentUser, requireAuth } from '../middleware/auth.js';
 import { authLimiter } from '../middleware/rate-limit.js';
 import { imageInput, parse, trimmed } from '../middleware/validate.js';
 import { deleteImages, isOwnedImage, userScope } from '../services/cloudinary.js';
-import { LoginTokenModel, UserModel, type UserDoc } from '../models/index.js';
-import { sendEmail } from '../services/email.js';
-import { templates } from '../services/email-templates.js';
+import { PasswordTokenModel, UserModel, type UserDoc } from '../models/index.js';
 import { findGroupByInvite, joinGroup } from '../services/membership.js';
 import { deleteAccount } from '../services/account.js';
+import { PASSWORD_MAX, PASSWORD_MIN, hashPassword, verifyPassword } from '../services/password.js';
+import { sendPasswordLink } from '../services/password-links.js';
 import { serializeUser } from '../services/serializers.js';
-import {
-  MAGIC_LINK_TTL_MS,
-  SESSION_COOKIE,
-  hashToken,
-  randomToken,
-  sessionCookieOptions,
-  signSession,
-} from '../services/tokens.js';
-import { badRequest, forbidden } from '../utils/http-error.js';
+import { SESSION_COOKIE, hashToken, sessionCookieOptions, signSession } from '../services/tokens.js';
+import { HttpError, badRequest, forbidden } from '../utils/http-error.js';
 
 export const authRouter = Router();
+
+const unauthorizedCode = (code: string, message: string) => new HttpError(401, code, message);
 
 const email = z.string().trim().toLowerCase().email().max(200);
 const name = trimmed(60).min(1);
@@ -31,19 +26,8 @@ const inviteCode = z
   .trim()
   .max(40)
   .regex(/^[A-Za-z0-9_-]+$/);
-/** Only same-app relative paths, never `//host` or absolute URLs (open-redirect protection). */
-const redirect = z
-  .string()
-  .max(300)
-  .regex(/^\/(?!\/)[^\s\\]*$/);
-
-const requestLinkSchema = z.object({
-  email,
-  name: name.optional(),
-  language: language.optional(),
-  inviteCode: inviteCode.optional(),
-  redirect: redirect.optional(),
-});
+const password = z.string().min(PASSWORD_MIN).max(PASSWORD_MAX);
+const passwordToken = z.string().min(10).max(200);
 
 interface SignInInput {
   email: string;
@@ -89,59 +73,77 @@ async function completeSignIn(res: Response, input: SignInInput) {
     await joinGroup(user, group);
     groupId = group.id;
   }
-  res.cookie(SESSION_COOKIE, signSession(user.id), sessionCookieOptions());
+  res.cookie(SESSION_COOKIE, signSession(user.id, user.sessionVersion), sessionCookieOptions());
   return { user: serializeUser(user), groupId };
 }
 
-/** Sends a magic link. Always answers the same way so it can't be used to probe emails. */
-authRouter.post('/request-link', authLimiter, async (req, res) => {
-  const body = parse(requestLinkSchema, req.body);
-  if (body.inviteCode) await findGroupByInvite(body.inviteCode);
-
-  const token = randomToken();
-  await LoginTokenModel.create({
-    tokenHash: hashToken(token),
-    email: body.email,
-    name: body.name,
-    language: body.language,
-    inviteCode: body.inviteCode,
-    redirect: body.redirect,
-    expiresAt: new Date(Date.now() + MAGIC_LINK_TTL_MS),
-  });
-
-  const existing = await UserModel.findOne({ email: body.email }, { name: 1, language: 1, needsName: 1 });
-  const link = `${env.CLIENT_URL}/auth/verify?token=${encodeURIComponent(token)}`;
-  const lang = existing?.language ?? body.language;
-  await sendEmail(
-    body.email,
-    templates(lang).magicLink(
-      (existing && !existing.needsName ? existing.name : body.name) || body.email.split('@')[0],
-      link,
-    ),
-  );
-
-  // Convenience for local development without SMTP: hand the link back directly.
-  const devLink = !isProd && !emailEnabled ? link : undefined;
-  res.json({ sent: true, devLink });
+/** Email + password. Accounts are created by an admin (see routes/admin.ts). */
+authRouter.post('/login', authLimiter, async (req, res) => {
+  const body = parse(z.object({ email, password: z.string().min(1).max(PASSWORD_MAX) }), req.body);
+  const user = await UserModel.findOne({ email: body.email }).select('+passwordHash');
+  // Always runs the hash check, so the answer can't tell whether the email has an account.
+  const ok = await verifyPassword(body.password, user?.passwordHash);
+  if (!user || !ok) throw unauthorizedCode('invalid_credentials', 'Wrong email or password');
+  res.cookie(SESSION_COOKIE, signSession(user.id, user.sessionVersion), sessionCookieOptions());
+  res.json({ user: serializeUser(user) });
 });
 
-authRouter.post('/verify', authLimiter, async (req, res) => {
-  const { token } = parse(z.object({ token: z.string().min(10).max(200) }), req.body);
+async function findPasswordToken(token: string) {
+  return PasswordTokenModel.findOne({
+    tokenHash: hashToken(token),
+    usedAt: null,
+    expiresAt: { $gt: new Date() },
+  });
+}
+
+/** Lets the set-password page greet the user before they pick a password. Doesn't use the link up. */
+authRouter.post('/password-token', authLimiter, async (req, res) => {
+  const { token } = parse(z.object({ token: passwordToken }), req.body);
+  const record = await findPasswordToken(token);
+  const user = record ? await UserModel.findById(record.userId) : null;
+  if (!record || !user) throw badRequest('invalid_token', 'This link is invalid or has expired');
+  res.json({ name: user.name, email: user.email, purpose: record.purpose });
+});
+
+/** Sets the password from an emailed setup/reset link and signs the user in. */
+authRouter.post('/set-password', authLimiter, async (req, res) => {
+  const body = parse(z.object({ token: passwordToken, password }), req.body);
   // Atomic single use: only one request can flip usedAt from null.
-  const record = await LoginTokenModel.findOneAndUpdate(
-    { tokenHash: hashToken(token), usedAt: null, expiresAt: { $gt: new Date() } },
+  const record = await PasswordTokenModel.findOneAndUpdate(
+    { tokenHash: hashToken(body.token), usedAt: null, expiresAt: { $gt: new Date() } },
     { $set: { usedAt: new Date() } },
     { returnDocument: 'after' },
   );
-  if (!record) throw badRequest('invalid_token', 'This sign-in link is invalid or has expired');
+  const user = record ? await UserModel.findById(record.userId) : null;
+  if (!record || !user) throw badRequest('invalid_token', 'This link is invalid or has expired');
 
-  const result = await completeSignIn(res, {
-    email: record.email,
-    name: record.name ?? undefined,
-    language: (record.language as 'en' | 'sl' | null) ?? undefined,
-    inviteCode: record.inviteCode,
-  });
-  res.json({ ...result, redirect: record.redirect ?? undefined });
+  user.passwordHash = await hashPassword(body.password);
+  user.sessionVersion = (user.sessionVersion ?? 0) + 1;
+  await user.save();
+  await PasswordTokenModel.deleteMany({ userId: user._id });
+  res.cookie(SESSION_COOKIE, signSession(user.id, user.sessionVersion), sessionCookieOptions());
+  res.json({ user: serializeUser(user) });
+});
+
+/**
+ * First-time setup for the emails in ADMIN_EMAILS: creates the account if needed and emails a setup
+ * link, but only while that admin has no password yet. Answers the same way for everyone.
+ */
+authRouter.post('/admin-setup', authLimiter, async (req, res) => {
+  const body = parse(z.object({ email, language: language.optional() }), req.body);
+  let devLink: string | undefined;
+  if (adminEmails.has(body.email)) {
+    const user =
+      (await UserModel.findOne({ email: body.email }).select('+passwordHash')) ??
+      (await UserModel.create({
+        email: body.email,
+        name: body.email.split('@')[0],
+        needsName: true,
+        language: body.language ?? 'sl',
+      }));
+    if (!user.passwordHash) devLink = (await sendPasswordLink(user, 'setup')).devLink;
+  }
+  res.json({ sent: true, devLink });
 });
 
 /** Development only: sign in / join instantly without an email round-trip. */
@@ -194,6 +196,23 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
   if (body.name) user.needsName = false;
   await user.save();
   res.json({ user: serializeUser(user) });
+});
+
+authRouter.post('/change-password', requireAuth, authLimiter, async (req, res) => {
+  const body = parse(
+    z.object({ currentPassword: z.string().min(1).max(PASSWORD_MAX), newPassword: password }),
+    req.body,
+  );
+  const user = await UserModel.findById(currentUser(req)._id).select('+passwordHash');
+  if (!user || !(await verifyPassword(body.currentPassword, user.passwordHash))) {
+    throw badRequest('wrong_password', 'The current password is wrong');
+  }
+  user.passwordHash = await hashPassword(body.newPassword);
+  user.sessionVersion = (user.sessionVersion ?? 0) + 1;
+  await user.save();
+  // Other devices are signed out; this one gets a fresh session.
+  res.cookie(SESSION_COOKIE, signSession(user.id, user.sessionVersion), sessionCookieOptions());
+  res.json({ ok: true });
 });
 
 /** "Delete my data" */

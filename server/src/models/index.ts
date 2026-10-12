@@ -2,7 +2,7 @@ export * from './assignment.js';
 export * from './gallery-photo.js';
 export * from './group.js';
 export * from './image.js';
-export * from './login-token.js';
+export * from './password-token.js';
 export * from './membership.js';
 export * from './message.js';
 export * from './notification-log.js';

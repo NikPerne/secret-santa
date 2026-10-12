@@ -5,7 +5,9 @@ import type { CookieOptions } from 'express';
 
 export const SESSION_COOKIE = 'ss_session';
 const SESSION_DAYS = 60;
-export const MAGIC_LINK_TTL_MS = 15 * 60 * 1000;
+/** A new account's setup link and an admin-sent reset link. */
+export const SETUP_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+export const RESET_LINK_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const randomToken = (bytes = 32) => randomBytes(bytes).toString('base64url');
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
@@ -17,14 +19,16 @@ export function generateInviteCode(length = 8): string {
   return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
 }
 
-export function signSession(userId: string): string {
-  return jwt.sign({ sub: userId }, env.JWT_SECRET, { expiresIn: `${SESSION_DAYS}d` });
+/** `v` is the user's `sessionVersion`: changing the password bumps it and ends older sessions. */
+export function signSession(userId: string, version = 0): string {
+  return jwt.sign({ sub: userId, v: version }, env.JWT_SECRET, { expiresIn: `${SESSION_DAYS}d` });
 }
 
-export function verifySession(token: string): string | null {
+export function verifySession(token: string): { userId: string; version: number } | null {
   try {
     const payload = jwt.verify(token, env.JWT_SECRET);
-    return typeof payload === 'object' && typeof payload.sub === 'string' ? payload.sub : null;
+    if (typeof payload !== 'object' || typeof payload.sub !== 'string') return null;
+    return { userId: payload.sub, version: typeof payload.v === 'number' ? payload.v : 0 };
   } catch {
     return null;
   }

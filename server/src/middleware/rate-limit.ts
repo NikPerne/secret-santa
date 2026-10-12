@@ -46,3 +46,14 @@ export const inviteLimiter = rateLimit({
   skip,
   message,
 });
+
+/** Account setup / reset emails sent by an admin: a safety net for the email provider's quota. */
+export const adminMailLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 30,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  keyGenerator: byUserOrIp,
+  skip,
+  message,
+});
