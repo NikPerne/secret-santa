@@ -44,7 +44,8 @@
     "too_early": "To se odpre po izmenjavi daril.",
     "invalid_credentials": "Napačen e-naslov ali geslo.",
     "wrong_password": "Trenutno geslo ni pravilno.",
-    "email_taken": "Nekdo že ima račun s tem e-naslovom."
+    "email_taken": "Nekdo že ima račun s tem e-naslovom.",
+    "cannot_delete_self": "Sebe tukaj ne moreš izbrisati. Uporabi »Izbriši moje podatke« v nastavitvah."
   },
   "fields": {
     "email": "E-pošta",
@@ -527,7 +528,12 @@
       "setupMessage": "Na {{email}} bomo poslali novo povezavo za nastavitev gesla. Starejše povezave ne bodo več delovale.",
       "send": "Pošlji e-pošto",
       "sent": "E-pošta je poslana na {{email}}.",
-      "notSent": "E-pošte ni bilo mogoče poslati. Preveri ponudnika e-pošte na tej strani."
+      "notSent": "E-pošte ni bilo mogoče poslati. Preveri ponudnika e-pošte na tej strani.",
+      "delete": "Izbriši: {{name}}",
+      "deleteTitle": "Izbrišem uporabnika {{name}}?",
+      "deleteMessage": "Račun {{email}} bo izbrisan skupaj s seznami želja in sporočili. Skupine, ki jih organizira, bodo izbrisane za vse. V drugih skupinah bo njegov/njen Božiček dobil novega obdarovanca. Tega ni mogoče razveljaviti.",
+      "deleteConfirm": "Izbriši uporabnika",
+      "deleted": "{{name}} je izbrisan/-a."
     }
   }
 }

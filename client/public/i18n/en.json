@@ -44,7 +44,8 @@
     "too_early": "This opens after the gift exchange.",
     "invalid_credentials": "Wrong email or password.",
     "wrong_password": "Your current password is wrong.",
-    "email_taken": "Someone already has an account with this email."
+    "email_taken": "Someone already has an account with this email.",
+    "cannot_delete_self": "You can't delete yourself here. Use \"Delete my data\" in Settings."
   },
   "fields": {
     "email": "Email",
@@ -527,7 +528,12 @@
       "setupMessage": "We'll email {{email}} a new link to set their password. Older links stop working.",
       "send": "Send email",
       "sent": "Email sent to {{email}}.",
-      "notSent": "The email couldn't be sent. Check the email provider on this page."
+      "notSent": "The email couldn't be sent. Check the email provider on this page.",
+      "delete": "Delete {{name}}",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteMessage": "The account of {{email}} is deleted with their wishlists and messages. Groups they organize are deleted for everyone. In other groups their Santa gets a new match. This can't be undone.",
+      "deleteConfirm": "Delete user",
+      "deleted": "{{name}} was deleted."
     }
   }
 }

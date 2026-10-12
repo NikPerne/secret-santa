@@ -6,7 +6,7 @@ import { devSignIn, newUser } from './helpers';
  * screen because e2e has no email provider), sign in with it, change it, and the admin can send a
  * reset link from the user list.
  */
-test('admin registers a user → set password → sign in → change password → reset', async ({
+test('admin registers a user → set password → sign in → change password → reset → delete', async ({
   browser,
 }) => {
   const stamp = Date.now();
@@ -62,6 +62,17 @@ test('admin registers a user → set password → sign in → change password �
   await admin.getByRole('dialog').getByRole('button', { name: 'Send email' }).click();
   await expect(admin.getByText(`Email sent to ${email}.`)).toBeVisible();
   await expect(row.getByRole('link', { name: 'Open link' })).toBeVisible();
+
+  // ---------- Admin deletes Petra ----------
+  await row.getByRole('button', { name: 'Delete Petra' }).click();
+  await admin.getByRole('dialog').getByRole('button', { name: 'Delete user' }).click();
+  await expect(admin.getByText('Petra was deleted.')).toBeVisible();
+  await expect(admin.getByRole('listitem').filter({ hasText: email })).toHaveCount(0);
+  // The admin can't delete themselves from the list.
+  const adminRow = admin.getByRole('listitem').filter({ hasText: 'admin@e2e.test' });
+  await expect(adminRow.getByRole('button', { name: /^Delete/ })).toHaveCount(0);
+  await petra.reload();
+  await expect(petra.getByRole('link', { name: 'Already have an account? Sign in' })).toBeVisible();
 });
 
 test('non-admins cannot open the register page', async ({ browser }) => {

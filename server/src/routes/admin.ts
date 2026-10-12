@@ -9,6 +9,7 @@ import {
   GroupModel,
   MembershipModel,
   MessageModel,
+  PasswordTokenModel,
   SystemStatModel,
   UserModel,
   WishlistItemModel,
@@ -17,8 +18,9 @@ import {
 import { z } from 'zod';
 import { adminMailLimiter } from '../middleware/rate-limit.js';
 import { objectId, parse, trimmed } from '../middleware/validate.js';
+import { deleteAccount } from '../services/account.js';
 import { sendPasswordLink } from '../services/password-links.js';
-import { conflict, forbidden, notFound } from '../utils/http-error.js';
+import { badRequest, conflict, forbidden, notFound } from '../utils/http-error.js';
 
 export const adminRouter = Router();
 
@@ -203,4 +205,20 @@ adminRouter.post('/users/:userId/password-link', adminMailLimiter, async (req, r
   const purpose = user.passwordHash ? 'reset' : 'setup';
   const { sent, devLink } = await sendPasswordLink(user, purpose);
   res.json({ sent, purpose, devLink });
+});
+
+/**
+ * Deletes an account the same way "Delete my data" does: groups they organize are deleted for
+ * everyone, in other groups their Santa gets a new match. Admins delete themselves from Settings.
+ */
+adminRouter.delete('/users/:userId', async (req, res) => {
+  const { userId } = parse(z.object({ userId: objectId }), req.params);
+  if (userId === currentUser(req).id) {
+    throw badRequest('cannot_delete_self', 'Use "Delete my data" in Settings to delete your own account');
+  }
+  const user = await UserModel.findById(userId);
+  if (!user) throw notFound('User not found');
+  await deleteAccount(user);
+  await PasswordTokenModel.deleteMany({ userId: user._id });
+  res.json({ ok: true });
 });

@@ -10,6 +10,7 @@ import { api } from '../../core/api/api';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../core/api/admin.service';
+import { AuthService } from '../../core/api/auth.service';
 import { AdminUser } from '../../core/models';
 import { NotifyService } from '../../core/notify.service';
 import { confirmAction } from '../../shared/confirm-dialog';
@@ -87,6 +88,7 @@ export class AdminHealthPage implements OnInit {
 
   private readonly admin = inject(AdminService);
   private readonly dialog = inject(MatDialog);
+  protected readonly auth = inject(AuthService);
   protected readonly users = signal<AdminUser[] | null>(null);
   /** Id of the user whose link is being sent. */
   protected readonly sending = signal<string | null>(null);
@@ -103,6 +105,27 @@ export class AdminHealthPage implements OnInit {
       this.users.set(await this.admin.users());
     } catch (err) {
       this.notify.error(err);
+    }
+  }
+
+  protected async deleteUser(user: AdminUser): Promise<void> {
+    const ok = await confirmAction(this.dialog, {
+      title: 'admin.users.deleteTitle',
+      message: 'admin.users.deleteMessage',
+      confirm: 'admin.users.deleteConfirm',
+      params: { name: user.name, email: user.email },
+      danger: true,
+    });
+    if (!ok) return;
+    this.sending.set(user.id);
+    try {
+      await this.admin.deleteUser(user.id);
+      this.users.update((list) => list?.filter((u) => u.id !== user.id) ?? null);
+      this.notify.success('admin.users.deleted', { name: user.name });
+    } catch (err) {
+      this.notify.error(err);
+    } finally {
+      this.sending.set(null);
     }
   }
 

@@ -126,6 +126,7 @@ h2 {
     background: var(--mat-sys-surface-container);
   }
   .who {
+    flex: 1 1 auto;
     display: grid;
     gap: 2px;
     min-width: 0;
@@ -135,16 +136,29 @@ h2 {
     align-items: center;
     gap: 8px;
   }
+  /* Long addresses end in "…" (full address on hover) instead of breaking mid-word. */
   .email {
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .pending {
     color: var(--mat-sys-tertiary);
   }
+  .row-actions {
+    flex: 0 1 auto;
+    max-width: 60%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .delete-button {
+    flex: none;
+    color: var(--mat-sys-error);
+  }
   /* Compact, and allowed to wrap so long (Slovenian) labels don't push the row apart. */
   .link-button {
-    flex: none;
-    max-width: 50%;
+    min-width: 0;
     height: auto;
     min-height: 36px;
     padding-block: 6px;

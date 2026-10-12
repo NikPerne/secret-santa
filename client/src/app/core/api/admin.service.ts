@@ -24,6 +24,11 @@ export class AdminService {
     );
   }
 
+  /** Deletes the account like "Delete my data" (groups they organize are deleted too). */
+  async deleteUser(userId: string): Promise<void> {
+    await firstValueFrom(this.http.delete(api(`/admin/users/${userId}`)));
+  }
+
   /** Emails a reset link (or a fresh setup link if they never set a password). */
   async sendPasswordLink(userId: string) {
     return firstValueFrom(

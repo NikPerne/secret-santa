@@ -31,7 +31,7 @@
                     <span class="pill">admin</span>
                   }
                 </div>
-                <span class="muted small email">{{ u.email }}</span>
+                <span class="muted small email" [title]="u.email">{{ u.email }}</span>
                 @if (!u.hasPassword) {
                   <span class="small pending">⏳ {{ 'admin.users.noPassword' | transloco }}</span>
                 }
@@ -39,16 +39,33 @@
                   <a class="small" [href]="link">{{ 'signin.openLink' | transloco }}</a>
                 }
               </div>
-              <button
-                mat-stroked-button
-                type="button"
-                class="link-button"
-                [disabled]="sending() !== null"
-                (click)="sendLink(u)"
-              >
-                <mat-icon>{{ u.hasPassword ? 'lock_reset' : 'mail' }}</mat-icon>
-                {{ (u.hasPassword ? 'admin.users.reset' : 'admin.users.resendSetup') | transloco }}
-              </button>
+              <div class="row-actions">
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="link-button"
+                  [disabled]="sending() !== null"
+                  (click)="sendLink(u)"
+                >
+                  <mat-icon>{{ u.hasPassword ? 'lock_reset' : 'mail' }}</mat-icon>
+                  {{
+                    (u.hasPassword ? 'admin.users.reset' : 'admin.users.resendSetup') | transloco
+                  }}
+                </button>
+                @if (u.id !== auth.user()?.id) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="delete-button"
+                    [disabled]="sending() !== null"
+                    (click)="deleteUser(u)"
+                    [attr.aria-label]="'admin.users.delete' | transloco: { name: u.name }"
+                    [title]="'admin.users.delete' | transloco: { name: u.name }"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </div>
             </li>
           }
         </ul>

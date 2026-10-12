@@ -189,6 +189,38 @@ describe('password accounts', () => {
     expect(again.body).toEqual({ sent: true });
   });
 
+  it('admin deletes a user: removed from groups, groups they organize are deleted', async () => {
+    const { group, members } = await createGroupWith(['Org', 'Ana', 'Bo']);
+    const [org, ana, bo] = members;
+    const admin = await signIn('boss@example.com', 'Boss');
+
+    expect((await admin.agent.delete(`/api/admin/users/${ana.user.id}`)).status).toBe(200);
+    expect(await UserModel.exists({ email: 'ana@example.com' })).toBeNull();
+    expect((await ana.agent.get('/api/auth/me')).body.user).toBeNull();
+    const detail = await bo.agent.get(`/api/groups/${group.id}`);
+    expect(detail.body.members.map((m: { name: string }) => m.name)).toEqual(['Org', 'Bo']);
+
+    await admin.agent.delete(`/api/admin/users/${org.user.id}`);
+    expect((await bo.agent.get(`/api/groups/${group.id}`)).status).toBe(404);
+
+    const users = await admin.agent.get('/api/admin/users');
+    expect(users.body.users.map((u: { name: string }) => u.name).sort()).toEqual(['Bo', 'Boss']);
+  });
+
+  it('admins cannot delete themselves here, and only admins can delete', async () => {
+    const admin = await signIn('boss@example.com', 'Boss');
+    const self = await admin.agent.delete(`/api/admin/users/${admin.user.id}`);
+    expect(self.status).toBe(400);
+    expect(self.body.error.code).toBe('cannot_delete_self');
+
+    const regular = await signIn('regular@example.com');
+    expect((await regular.agent.delete(`/api/admin/users/${admin.user.id}`)).status).toBe(403);
+    expect(await UserModel.exists({ email: 'boss@example.com' })).not.toBeNull();
+
+    const missing = await admin.agent.delete('/api/admin/users/64b000000000000000000000');
+    expect(missing.status).toBe(404);
+  });
+
   it('the old magic-link endpoints are gone', async () => {
     const res = await request(app).post('/api/auth/request-link').send({ email: 'a@example.com' });
     expect(res.status).toBe(404);
