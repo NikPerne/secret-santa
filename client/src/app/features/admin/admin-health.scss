@@ -104,31 +104,52 @@ h2 {
   }
 }
 
+.users-head {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .users {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: 6px;
 
   li {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 12px;
     padding: 10px 12px;
     border-radius: 12px;
     background: var(--mat-sys-surface-container);
   }
   .who {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 8px;
+    display: grid;
+    gap: 2px;
     min-width: 0;
+  }
+  .name-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .email {
     overflow-wrap: anywhere;
+  }
+  .pending {
+    color: var(--mat-sys-tertiary);
+  }
+  /* Compact, and allowed to wrap so long (Slovenian) labels don't push the row apart. */
+  .link-button {
+    flex: none;
+    max-width: 50%;
+    height: auto;
+    min-height: 36px;
+    padding-block: 6px;
+    white-space: normal;
+    line-height: 1.2;
+    font: var(--mat-sys-label-medium);
   }
 }

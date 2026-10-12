@@ -13,7 +13,7 @@
 
   <!-- Accounts -->
   <section class="surface-card stack" aria-labelledby="users-h">
-    <div class="title-row">
+    <div class="title-row users-head">
       <h2 id="users-h">👥 {{ 'admin.users.title' | transloco }}</h2>
       <a mat-flat-button routerLink="/admin/register">
         <mat-icon>person_add</mat-icon>{{ 'admin.users.register' | transloco }}
@@ -25,13 +25,15 @@
           @for (u of list; track u.id) {
             <li>
               <div class="who">
-                <strong>{{ u.name }}</strong>
-                @if (u.isAdmin) {
-                  <span class="pill">admin</span>
-                }
+                <div class="name-line">
+                  <strong>{{ u.name }}</strong>
+                  @if (u.isAdmin) {
+                    <span class="pill">admin</span>
+                  }
+                </div>
                 <span class="muted small email">{{ u.email }}</span>
                 @if (!u.hasPassword) {
-                  <span class="muted small">⏳ {{ 'admin.users.noPassword' | transloco }}</span>
+                  <span class="small pending">⏳ {{ 'admin.users.noPassword' | transloco }}</span>
                 }
                 @if (devLinks()[u.id]; as link) {
                   <a class="small" [href]="link">{{ 'signin.openLink' | transloco }}</a>
@@ -40,10 +42,11 @@
               <button
                 mat-stroked-button
                 type="button"
+                class="link-button"
                 [disabled]="sending() !== null"
                 (click)="sendLink(u)"
               >
-                <mat-icon>lock_reset</mat-icon>
+                <mat-icon>{{ u.hasPassword ? 'lock_reset' : 'mail' }}</mat-icon>
                 {{ (u.hasPassword ? 'admin.users.reset' : 'admin.users.resendSetup') | transloco }}
               </button>
             </li>

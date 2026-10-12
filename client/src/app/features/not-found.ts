@@ -9,7 +9,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="page center">
-      <div style="font-size: 64px" aria-hidden="true">🦌</div>
+      <div style="font-size: 64px; line-height: 1" aria-hidden="true">🦌</div>
       <h1 class="page-title">{{ 'notFound.title' | transloco }}</h1>
       <p class="muted">{{ 'notFound.text' | transloco }}</p>
       <a mat-flat-button routerLink="/">{{ 'common.home' | transloco }}</a>

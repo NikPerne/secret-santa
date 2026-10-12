@@ -121,7 +121,7 @@
     "emailLanguage": "Jezik e-pošte",
     "submit": "Ustvari račun in pošlji e-pošto",
     "sent": "Račun je ustvarjen. Na {{email}} smo poslali povezavo za nastavitev gesla.",
-    "notSent": "Račun je ustvarjen, a e-pošte na {{email}} ni bilo mogoče poslati. Poskusi znova z »Pošlji povezavo za nastavitev« na skrbniški strani."
+    "notSent": "Račun je ustvarjen, a e-pošte na {{email}} ni bilo mogoče poslati. Poskusi znova z »Pošlji povezavo« na skrbniški strani."
   },
   "join": {
     "invalid": "Povabila ni mogoče najti",
@@ -520,7 +520,7 @@
       "empty": "Še ni uporabnikov.",
       "noPassword": "še brez gesla",
       "reset": "Ponastavi geslo",
-      "resendSetup": "Pošlji povezavo za nastavitev",
+      "resendSetup": "Pošlji povezavo",
       "resetTitle": "Ponastavim geslo za {{name}}?",
       "resetMessage": "Na {{email}} bomo poslali povezavo za izbiro novega gesla. Trenutno geslo deluje, dokler povezave ne uporabi.",
       "setupTitle": "Pošljem povezavo za nastavitev osebi {{name}}?",

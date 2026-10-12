@@ -24,7 +24,7 @@ import { NotifyService } from '../../core/notify.service';
   template: `
     <section class="page stack narrow">
       <h1 class="page-title">{{ 'signin.title' | transloco }}</h1>
-      <p class="muted">{{ 'signin.subtitle' | transloco }}</p>
+      <p class="muted lead">{{ 'signin.subtitle' | transloco }}</p>
       <form class="stack" (ngSubmit)="submit()" #f="ngForm">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'fields.email' | transloco }}</mat-label>
@@ -82,39 +82,73 @@ import { NotifyService } from '../../core/notify.service';
           </button>
         }
       </form>
-      <p class="muted small">{{ 'signin.noAccount' | transloco }}</p>
-
-      @if (setupSent()) {
-        <div class="surface-card stack" role="status">
-          <p>{{ 'signin.adminSetupSent' | transloco: { email: email().trim() } }}</p>
-          @if (devLink(); as link) {
-            <p class="muted">{{ 'signin.devLink' | transloco }}</p>
-            <a mat-flat-button [href]="link">{{ 'signin.openLink' | transloco }}</a>
-          }
-        </div>
-      } @else {
-        <button
-          mat-button
-          type="button"
-          class="admin-setup"
-          [disabled]="!email().trim() || busy()"
-          (click)="adminSetup()"
-        >
-          {{ 'signin.adminSetup' | transloco }}
-        </button>
-      }
+      <div class="help stack">
+        <p class="muted small">
+          <mat-icon aria-hidden="true">help_outline</mat-icon>
+          <span>{{ 'signin.noAccount' | transloco }}</span>
+        </p>
+        @if (setupSent()) {
+          <div class="surface-card stack" role="status">
+            <p class="small">
+              {{ 'signin.adminSetupSent' | transloco: { email: email().trim() } }}
+            </p>
+            @if (devLink(); as link) {
+              <p class="muted small">{{ 'signin.devLink' | transloco }}</p>
+              <a mat-stroked-button [href]="link">{{ 'signin.openLink' | transloco }}</a>
+            }
+          </div>
+        } @else {
+          <button
+            mat-button
+            type="button"
+            class="admin-setup"
+            [disabled]="!email().trim() || busy()"
+            (click)="adminSetup()"
+          >
+            <mat-icon>admin_panel_settings</mat-icon>
+            {{ 'signin.adminSetup' | transloco }}
+          </button>
+        }
+      </div>
     </section>
   `,
   styles: `
     .narrow {
       max-width: 460px;
     }
+    .lead {
+      margin: 0 0 8px;
+    }
     .small {
       font: var(--mat-sys-body-small);
       margin: 0;
     }
+    .help {
+      margin-top: 16px;
+      padding-top: 20px;
+      border-top: 1px solid var(--mat-sys-outline-variant);
+
+      p {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      mat-icon {
+        flex: none;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+    /* A long label: wrap it, left-aligned, instead of a centered pill. */
     .admin-setup {
       align-self: flex-start;
+      height: auto;
+      min-height: 40px;
+      padding-block: 8px;
+      text-align: left;
+      white-space: normal;
+      line-height: 1.3;
     }
   `,
 })

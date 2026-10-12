@@ -26,10 +26,10 @@ import { PasswordFields } from './password-fields';
     <section class="page stack narrow">
       @if (error(); as message) {
         <div class="center stack" style="align-items: center">
-          <div style="font-size: 64px" aria-hidden="true">🥶</div>
+          <div style="font-size: 64px; line-height: 1" aria-hidden="true">🥶</div>
           <h1 class="page-title">{{ 'setPassword.failed' | transloco }}</h1>
-          <p role="alert">{{ message }}</p>
-          <p class="muted">{{ 'setPassword.askAdmin' | transloco }}</p>
+          <p role="alert" class="tight">{{ message }}</p>
+          <p class="muted tight">{{ 'setPassword.askAdmin' | transloco }}</p>
           <a mat-flat-button routerLink="/signin">{{ 'signin.title' | transloco }}</a>
         </div>
       } @else if (info(); as i) {
@@ -61,6 +61,9 @@ import { PasswordFields } from './password-fields';
   styles: `
     .narrow {
       max-width: 460px;
+    }
+    .tight {
+      margin: 0;
     }
   `,
 })

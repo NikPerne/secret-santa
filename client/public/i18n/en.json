@@ -121,7 +121,7 @@
     "emailLanguage": "Language of the email",
     "submit": "Create account and send email",
     "sent": "Account created. We emailed {{email}} a link to set the password.",
-    "notSent": "Account created, but the email to {{email}} couldn't be sent. Use \"Send setup link\" on the admin page to try again."
+    "notSent": "Account created, but the email to {{email}} couldn't be sent. Use \"Send link\" on the admin page to try again."
   },
   "join": {
     "invalid": "Invite not found",
@@ -520,7 +520,7 @@
       "empty": "No users yet.",
       "noPassword": "no password yet",
       "reset": "Reset password",
-      "resendSetup": "Send setup link",
+      "resendSetup": "Send link",
       "resetTitle": "Reset password for {{name}}?",
       "resetMessage": "We'll email {{email}} a link to choose a new password. Their current password keeps working until they use it.",
       "setupTitle": "Send a setup link to {{name}}?",

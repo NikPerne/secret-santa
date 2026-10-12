@@ -31,7 +31,7 @@ import { NotifyService } from '../../core/notify.service';
         <mat-icon>arrow_back</mat-icon>{{ 'admin.title' | transloco }}
       </a>
       <h1 class="page-title">{{ 'register.title' | transloco }}</h1>
-      <p class="muted">{{ 'register.subtitle' | transloco }}</p>
+      <p class="muted lead">{{ 'register.subtitle' | transloco }}</p>
 
       @if (created(); as c) {
         <div class="surface-card stack" role="status">
@@ -100,6 +100,9 @@ import { NotifyService } from '../../core/notify.service';
     }
     .back {
       align-self: flex-start;
+    }
+    .lead {
+      margin: 0 0 8px;
     }
     .lang {
       gap: 6px;
