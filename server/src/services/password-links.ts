@@ -9,7 +9,7 @@ export type PasswordLinkPurpose = 'setup' | 'reset';
 /**
  * Emails the user a single-use link to set their password. Older unused links for the same user
  * stop working, so only the newest email counts. `devLink` is returned only in development
- * without an email provider (like the old magic links).
+ * without an email provider.
  */
 export async function sendPasswordLink(user: UserDoc, purpose: PasswordLinkPurpose) {
   const token = randomToken();

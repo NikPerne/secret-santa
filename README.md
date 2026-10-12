@@ -22,7 +22,7 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 - **Invite by email** and a one-tap **nudge** for people who haven't unwrapped their match or filled their wishlist.
 
 ### For participants
-- **No password needed** — join with your name and email; sign back in with a magic link.
+- **Simple accounts** — the admin registers you with a username and email; you choose your password from the emailed link and sign in with email + password. Change it any time in Settings.
 - **Animated reveal** — "unwrap" your match; reveal again any time.
 - **Wishlist with photos** — add items with a title, link, price, notes and an uploaded image (photo of the exact mug, the size label, etc.).
 - **"Please no" list** — things you don't want, sizes, favorite colors.
@@ -53,7 +53,7 @@ Built with **Angular** (installable PWA) and **Node.js**, hosted on **Render**, 
 | Backend | Node.js (current LTS), Express, Mongoose, Zod validation | Simple, well-known |
 | Database | MongoDB Atlas **Free (M0)** | Free forever, always on, no time limit |
 | Images | Cloudinary **Free plan** (signed uploads) | Free CDN, resizing/thumbnails, no local disk needed |
-| Email | Any SMTP / transactional provider with a free tier (e.g. Resend, Brevo) | Magic links and reminders |
+| Email | Any SMTP / transactional provider with a free tier (e.g. Resend, Brevo) | Account setup / password reset links and reminders |
 | Push | Web Push (VAPID) via `web-push` | Free, no third party |
 | Hosting | Render — **one free Web Service** (Express serves the API *and* the Angular app) | Free tier, deploy from GitHub |
 
@@ -120,7 +120,7 @@ The Angular dev server proxies `/api` to the API (`client/proxy.conf.json`).
 With the default `server/.env`:
 - `SEED_DEMO=true` seeds a demo group **"Family Christmas"** with 6 people (Nika is the organizer; Ana, Marko, Eva, Luka, Maja), two "don't pair" rules and wishlists. Invite code `DEMOxmas`.
 - `DEV_INSTANT_JOIN=true` adds **"Sign in instantly (dev)"** buttons, so you can sign in as e.g. `nika@example.com` or `ana@example.com` without email. (Ignored in production.)
-- Magic links are logged to the API console *and* shown on screen.
+- Account setup and reset links are logged to the API console *and* shown on screen (on the register page, the admin user list and the first-time admin setup).
 
 ### 3. Configure real services (optional locally, required in production)
 Edit `server/.env` (see `server/.env.example` for every option):
@@ -131,7 +131,7 @@ Edit `server/.env` (see `server/.env.example` for every option):
 | `JWT_SECRET` | Long random string for session cookies. |
 | `CLIENT_URL` | URL of the web app (CORS + links in emails). |
 | `CLOUDINARY_*` | Photo uploads (signed, direct from the browser). |
-| `BREVO_API_KEY` *or* `RESEND_API_KEY` *or* `SMTP_*`, plus `MAIL_FROM` | Magic links and reminders. Use an HTTPS API key (Brevo/Resend) on Render: free instances block outbound SMTP ports. None set → logged to the console. |
+| `BREVO_API_KEY` *or* `RESEND_API_KEY` *or* `SMTP_*`, plus `MAIL_FROM` | Account setup / password reset links and reminders. Use an HTTPS API key (Brevo/Resend) on Render: free instances block outbound SMTP ports. None set → logged to the console. |
 | `VAPID_*` | Web Push. Generate with `npx web-push generate-vapid-keys`. |
 | `DATA_RETENTION_DAYS` | Delete group data this many days after the exchange (default 60). |
 | `DAILY_JOB_CRON` | When the reminder/cleanup job runs (UTC, default `0 8 * * *`). |
@@ -141,7 +141,7 @@ To seed the demo group into a real database: `npm run seed` (uses `MONGODB_URI`)
 ### 4. Test, lint, build
 ```bash
 npm test                     # server (draw algorithm + API) and client
-npm run test:e2e             # Playwright: create → join → draw → reveal → chat (first: npx --prefix e2e playwright install chromium)
+npm run test:e2e             # Playwright: accounts + create → join → draw → reveal → chat (first: npx --prefix e2e playwright install chromium)
 npm run lint                 # ESLint + Prettier (+ i18n key parity for the client)
 npm run build
 ```
@@ -163,7 +163,9 @@ Set `CLIENT_URL=http://localhost:3000` in `server/.env` so email links match.
 5. Push this repo to GitHub, then in Render choose **New → Blueprint** and select it. `render.yaml` creates **one free Web Service** named `nik-secret-santa` (https://nik-secret-santa.onrender.com). It builds both apps, and Express serves the API under `/api` plus the Angular app for everything else.
 6. Fill in the env vars Render asks for (`MONGODB_URI`, Cloudinary, `BREVO_API_KEY`/`RESEND_API_KEY` + `MAIL_FROM`, VAPID). `CLIENT_URL` is preset to `https://nik-secret-santa.onrender.com`. If Render assigned a different URL (it adds a suffix when a name is taken), change `CLIENT_URL` to match.
 7. Keep this the **only free web service** in your Render workspace, so the 750 free instance-hours cover running 24/7.
-8. **Health page:** sign in as an address listed in `ADMIN_EMAILS` (preset to the owner in `render.yaml`) and open **Settings → Health & free-tier limits** (`/admin`) to watch MongoDB size, email sends per day, Cloudinary credits, memory and the daily job.
+8. **First admin sign-in:** on the sign-in page, type an address listed in `ADMIN_EMAILS` (preset to the owner in `render.yaml`) and tap **"Admin signing in for the first time? Email me a setup link"**. This only works while that admin has no password yet.
+9. **Admin page** (**Settings → Health & free-tier limits**, `/admin`): the **Users** list with a **Reset password** button per person (or **Send setup link** for people who never set one), a **Register** button (`/admin/register`: username + email → the person gets a link to choose their password), plus MongoDB size, email sends per day, Cloudinary credits, memory and the daily job.
+10. **Moving from magic links:** existing accounts keep their groups but have no password. Send each person a setup link from the Users list once.
 
 **Always on:** the server pings its own public URL (`RENDER_EXTERNAL_URL`, set by Render) every 10 minutes, so it never reaches the 15-minute idle sleep. As a backup, add a free [UptimeRobot](https://uptimerobot.com) HTTP monitor on `https://nik-secret-santa.onrender.com/api/health` every 5–10 minutes. It also wakes the service if a restart ever leaves it asleep. To disable the self-ping, set `KEEP_ALIVE_URL=off`.
 
@@ -187,7 +189,8 @@ The algorithm lives in `server/src/services/draw.ts` (pure functions with a seed
 
 ## 🔒 Security & privacy
 
-- Magic-link tokens are single-use, short-lived and stored hashed.
+- Accounts are created only by admins. Passwords are hashed with scrypt (salted). Setup/reset links are single-use, expire (7 days / 24 hours), are stored hashed, and only the newest link per user works.
+- Changing or resetting a password signs out all other sessions. Login errors don't reveal whether an email has an account.
 - Each participant can only read their own match, and only their own match's wishlist.
 - Rate limiting on auth, upload and chat endpoints, `helmet`, strict CORS, Zod validation on every input.
 - Uploads: signed Cloudinary uploads, image types only, size limit, EXIF location stripped.

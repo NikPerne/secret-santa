@@ -38,6 +38,7 @@ export default defineConfig({
       DEV_INSTANT_JOIN: 'true',
       CLIENT_URL: baseURL,
       SEED_DEMO: 'false',
+      ADMIN_EMAILS: 'admin@e2e.test',
       LOG_LEVEL: 'warn',
     },
   },
