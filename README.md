@@ -209,4 +209,4 @@ The algorithm lives in `server/src/services/draw.ts` (pure functions with a seed
 Issues and pull requests are welcome. Please run the tests and linter before opening a PR.
 
 ## 📄 License
-MIT
+[Apache License 2.0](LICENSE) © 2026 Nik Perne

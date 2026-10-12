@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "seed": "tsx --env-file-if-exists=.env src/scripts/seed.ts"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "dependencies": {
     "cloudinary": "^2.11.0",

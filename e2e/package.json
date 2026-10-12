@@ -10,7 +10,7 @@
     "test:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.64.0",

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Secret Santa PWA — Angular client + Express API",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=24"
   },
